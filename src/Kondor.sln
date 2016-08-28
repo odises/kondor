@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Service", "Kondor.Service\Kondor.Service.csproj", "{F77DC05E-7790-46E2-82D8-FF4237B395D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Worker", "Kondor.Worker\Kondor.Worker.csproj", "{0E1623FF-7265-4E24-B0BD-77C806F2B29F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F77DC05E-7790-46E2-82D8-FF4237B395D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77DC05E-7790-46E2-82D8-FF4237B395D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F77DC05E-7790-46E2-82D8-FF4237B395D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F77DC05E-7790-46E2-82D8-FF4237B395D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1623FF-7265-4E24-B0BD-77C806F2B29F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1623FF-7265-4E24-B0BD-77C806F2B29F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1623FF-7265-4E24-B0BD-77C806F2B29F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1623FF-7265-4E24-B0BD-77C806F2B29F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
