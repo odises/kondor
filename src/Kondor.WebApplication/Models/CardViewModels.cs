@@ -19,7 +19,7 @@ namespace Kondor.WebApplication.Models
         [Display(Name = "Examples")]
         public string Examples { get; set; }
 
-        [Display(Name = "Image Url")]
-        public string ImageUrl { get; set; }
+        [Display(Name = "Medium Urls")]
+        public string MediumUrls { get; set; }
     }
 }

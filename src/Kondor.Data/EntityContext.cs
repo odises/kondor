@@ -1,12 +1,13 @@
 ﻿using System.Data.Entity;
+using Kondor.Data.DataModel;
 
-namespace Kondor.Service.DataModel
+namespace Kondor.Data
 {
     public class EntityContext : DbContext
     {
         public EntityContext() : base("name=MainEntities")
         {
-            Database.SetInitializer<EntityContext>(new DropCreateDatabaseIfModelChanges<EntityContext>());
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EntityContext>());
         }
 
         public DbSet<Word> Words { get; set; }

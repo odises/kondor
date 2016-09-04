@@ -1,8 +1,7 @@
-﻿namespace Kondor.Service.DataModel
+﻿namespace Kondor.Data.DataModel
 {
-    public class Message
+    public class Message : Entity
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
         public string Username { get; set; }
         public int UpdateId { get; set; }

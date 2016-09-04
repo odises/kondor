@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Kondor.Service.DataModel;
-using Kondor.Service.Enums;
+using Kondor.Data;
+using Kondor.Data.DataModel;
+using Kondor.Data.Enums;
 using Kondor.Service.Extensions;
 
 namespace Kondor.Service.Leitner
@@ -11,7 +12,7 @@ namespace Kondor.Service.Leitner
     {
         private readonly EntityContext _entityContext;
         protected int OverStoppingTolerance;
-        protected const TimeUnit TimeUnit = Enums.TimeUnit.Minute;
+        protected const TimeUnit TimeUnit = Data.Enums.TimeUnit.Minute;
         protected int MaximumCardInFirstPosition;
 
         /// <summary>

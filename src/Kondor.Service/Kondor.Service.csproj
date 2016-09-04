@@ -59,28 +59,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataModel\Example.cs" />
-    <Compile Include="DataModel\Medium.cs" />
-    <Compile Include="DataModel\Message.cs" />
-    <Compile Include="DataModel\User.cs" />
-    <Compile Include="DataModel\EntityContext.cs" />
-    <Compile Include="Enums\CardStatus.cs" />
-    <Compile Include="Enums\MediumType.cs" />
-    <Compile Include="Enums\TimeUnit.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Leitner\LeitnerService.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Enums\Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vocabulary.cs" />
-    <Compile Include="DataModel\Word.cs" />
-    <Compile Include="DataModel\Card.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kondor.Data\Kondor.Data.csproj">
+      <Project>{b5f0a400-ad33-456f-a087-ed0dae2366c8}</Project>
+      <Name>Kondor.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

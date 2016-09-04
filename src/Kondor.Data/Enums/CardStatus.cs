@@ -1,4 +1,4 @@
-﻿namespace Kondor.Service.Enums
+﻿namespace Kondor.Data.Enums
 {
     public enum CardStatus
     {

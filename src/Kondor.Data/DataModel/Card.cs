@@ -1,11 +1,10 @@
 ﻿using System;
-using Kondor.Service.Enums;
+using Kondor.Data.Enums;
 
-namespace Kondor.Service.DataModel
+namespace Kondor.Data.DataModel
 {
-    public class Card
+    public class Card : Entity
     {
-        public int Id { get; set; }
         public Position CardPosition { get; set; }
         public int WordId { get; set; }
         public DateTime CreationDateTime { get; set; }

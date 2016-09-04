@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace Kondor.Service.DataModel
+namespace Kondor.Data.DataModel
 {
-    public class User
+    public class User : Entity
     {
-        public int Id { get; set; }
+        public User()
+        {
+            Cards = new HashSet<Card>();
+        }
+
         public string TelegramUsername { get; set; }
         public int TelegramUserId { get; set; }
         public ICollection<Card> Cards { get; set; } 
