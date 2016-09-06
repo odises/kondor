@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.WebApplication.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Kondor.WebApplication.Controllers
 {
@@ -18,11 +20,13 @@ namespace Kondor.WebApplication.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult Create(CardViewModel model)
         {
@@ -65,7 +69,8 @@ namespace Kondor.WebApplication.Controllers
                 var word = new Word
                 {
                     Vocabulary = model.FrontSide,
-                    Definition = model.BackSide
+                    Definition = model.BackSide,
+                    UserId = HttpContext.User.Identity.GetUserId()
                 };
 
                 foreach (var example in examples)
