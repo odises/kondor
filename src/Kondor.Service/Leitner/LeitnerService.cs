@@ -291,7 +291,7 @@ namespace Kondor.Service.Leitner
         /// <exception cref="ValidationException">There is no user with passed Telegram Id</exception>
         protected virtual int GetUserIdByTelegramUserId(int telegramUserId)
         {
-            var user = _entityContext.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
+            var user = _entityContext.CustomUsers.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
             if (user == null)
             {
                 throw new ValidationException();

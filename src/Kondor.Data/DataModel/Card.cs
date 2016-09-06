@@ -13,6 +13,6 @@ namespace Kondor.Data.DataModel
         public int UserId { get; set; }
         public CardStatus Status { get; set; }
         public virtual Word Word { get; set; }
-        public virtual User User { get; set; }
+        public virtual CustomUser User { get; set; }
     }
 }

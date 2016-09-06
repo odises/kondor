@@ -2,9 +2,9 @@
 
 namespace Kondor.Data.DataModel
 {
-    public class User : Entity
+    public class CustomUser : Entity
     {
-        public User()
+        public CustomUser()
         {
             Cards = new HashSet<Card>();
         }
