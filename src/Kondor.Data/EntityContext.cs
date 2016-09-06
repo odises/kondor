@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Kondor.Data.DataModel;
@@ -16,6 +17,10 @@ namespace Kondor.Data
             // Add custom user claims here
             return userIdentity;
         }
+
+        public string TelegramUsername { get; set; }
+        public int TelegramUserId { get; set; }
+        public ICollection<Card> Cards { get; set; }
     }
 
     public class EntityContext : IdentityDbContext<ApplicationUser>
@@ -27,7 +32,6 @@ namespace Kondor.Data
 
         public DbSet<Word> Words { get; set; }
         public DbSet<Card> Cards { get; set; }
-        public DbSet<CustomUser> CustomUsers { get; set; } 
         public DbSet<Message> Messages { get; set; }
 
         public static EntityContext Create()

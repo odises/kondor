@@ -30,7 +30,7 @@ namespace Kondor.Service.Leitner
         /// </summary>
         /// <param name="userId"></param>
         /// <exception cref="OverflowException">Maximum card in first position exceeded.</exception>
-        protected virtual void ValidateMaximumCardInFirstPosition(int userId)
+        protected virtual void ValidateMaximumCardInFirstPosition(string userId)
         {
             var count =
                 _entityContext.Cards.Count(
@@ -266,7 +266,7 @@ namespace Kondor.Service.Leitner
         /// <param name="userId"></param>
         /// <param name="wordId"></param>
         /// <returns></returns>
-        protected virtual Card GenerateNewCard(Position position, int userId, int wordId)
+        protected virtual Card GenerateNewCard(Position position, string userId, int wordId)
         {
             var stopTime = GetStopTimeForPositionInMinute(position, TimeUnit);
 
@@ -289,9 +289,9 @@ namespace Kondor.Service.Leitner
         /// <param name="telegramUserId"></param>
         /// <returns>User Id</returns>
         /// <exception cref="ValidationException">There is no user with passed Telegram Id</exception>
-        protected virtual int GetUserIdByTelegramUserId(int telegramUserId)
+        protected virtual string GetUserIdByTelegramUserId(int telegramUserId)
         {
-            var user = _entityContext.CustomUsers.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
+            var user = _entityContext.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
             if (user == null)
             {
                 throw new ValidationException();
