@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Kondor.Data;
+using Kondor.Service.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -402,6 +403,14 @@ namespace Kondor.WebApplication.Controllers
         public ActionResult ExternalLoginFailure()
         {
             return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult NewUser(string id)
+        {
+            var base64Decoded = id.GetBase64Decode();
+            var decrypted = Service.StringCipher.Decrypt(base64Decoded, "testkey");
+            return Content(decrypted);
         }
 
         protected override void Dispose(bool disposing)

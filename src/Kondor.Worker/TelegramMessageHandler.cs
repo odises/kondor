@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using Kondor.Data;
 using Kondor.Data.DataModel;
+using Kondor.Service.Extensions;
 using Kondor.Service.Leitner;
 using Newtonsoft.Json;
 using YourDictionary.Worker.ApiModels;
@@ -189,6 +190,12 @@ namespace YourDictionary.Worker
                                 }
 
                                 SendMessage(message.ChatId, GenerateExamHtml(card), GenerateKeyboardMarkup("Yes", "No"));
+                            }
+                            else if(message.MessageText == "Register")
+                            {
+                                var encrypted = Kondor.Service.StringCipher.Encrypt($"{message.UserId}:{message.Username}", "testkey");
+                                var base64Encoded = encrypted.GetBase64Encode();
+                                SendMessage(message.ChatId, base64Encoded, GenerateKeyboardMarkup("Link"));
                             }
                         }
                         catch (Exception exception)

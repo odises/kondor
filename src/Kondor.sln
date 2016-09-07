@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.WebApplication", "Ko
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Data", "Kondor.Data\Kondor.Data.csproj", "{B5F0A400-AD33-456F-A087-ED0DAE2366C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Test", "Kondor.Test\Kondor.Test.csproj", "{FF2747E3-0EB3-4208-A843-C53EE544FA31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B5F0A400-AD33-456F-A087-ED0DAE2366C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5F0A400-AD33-456F-A087-ED0DAE2366C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5F0A400-AD33-456F-A087-ED0DAE2366C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
