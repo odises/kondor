@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
@@ -101,6 +100,25 @@ namespace Kondor.WebApplication.Controllers
             else
             {
                 return View();
+            }
+        }
+
+        [Authorize]
+        [ChildActionOnly]
+        public ActionResult SearchOnCards(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var entityContext = new EntityContext();
+                var result = entityContext
+                    .Words
+                    .Where(p => p.Vocabulary.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
+                    .ToList();
+                return Json(result.Select(p => new { wordId = p.Id, content = p.Vocabulary }), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { }, JsonRequestBehavior.AllowGet);
             }
         }
 
