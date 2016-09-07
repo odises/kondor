@@ -10,8 +10,6 @@ namespace Kondor.Service
             var leitnerCore = new LeitnerService(20, 10);
 
             Console.WriteLine(leitnerCore.BoxCleanUp());
-            
-
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Kondor.Service.Leitner
     {
         private readonly EntityContext _entityContext;
         protected int OverStoppingTolerance;
-        protected const TimeUnit TimeUnit = Data.Enums.TimeUnit.Minute;
+        protected TimeUnit TimeUnit = TimeUnit.Minute;
         protected int MaximumCardInFirstPosition;
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Kondor.Service.Leitner
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var mems = _entityContext.Mems.ToList().Where(m => !_entityContext.Cards.Any(p => p.MemId == m.Id)).ToList();
+            var mems = _entityContext.Mems.Where(m => !_entityContext.Cards.Any(p => p.MemId == m.Id) && m.UserId == userId).ToList();
 
             if (mems.Count == 0)
             {
