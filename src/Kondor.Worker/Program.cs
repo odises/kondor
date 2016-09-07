@@ -1,4 +1,5 @@
 ﻿using System;
+using Kondor.Service;
 using Kondor.Service.Leitner;
 
 namespace YourDictionary.Worker
@@ -20,7 +21,7 @@ namespace YourDictionary.Worker
         {
             try
             {
-                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test");
+                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://yahoo.com/account/newuser");
                 telegramMessageHandler.GetMessages();
                 telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");

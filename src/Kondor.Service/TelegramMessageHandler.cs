@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Kondor.Data;
+using Kondor.Data.ApiModels;
 using Kondor.Data.DataModel;
 using Kondor.Service.Extensions;
 using Kondor.Service.Leitner;
 using Newtonsoft.Json;
-using YourDictionary.Worker.ApiModels;
 
-namespace YourDictionary.Worker
+namespace Kondor.Service
 {
     public class TelegramMessageHandler
     {
@@ -19,13 +19,17 @@ namespace YourDictionary.Worker
         private readonly string _apiKey;
         private readonly string _directory;
         private readonly List<Tuple<int, Card>> _userActiveCard;
+        private readonly string _cipherKey;
+        private readonly string _baseUri;
 
-        public TelegramMessageHandler(string apiKey, string directory)
+        public TelegramMessageHandler(string apiKey, string directory, string cipherKey, string baseUri)
         {
             _userActiveCard = new List<Tuple<int, Card>>();
             _leitnerService = new LeitnerService(20, 15);
             _apiKey = apiKey;
             _directory = directory;
+            _cipherKey = cipherKey;
+            _baseUri = baseUri;
         }
 
         protected string GenerateKeyboardMarkup(params string[] input)
@@ -43,23 +47,27 @@ namespace YourDictionary.Worker
 
             return JsonConvert.SerializeObject(result);
         }
-
         protected void SendMessage(int chatId, string text, string replyMarkup = null)
         {
             if (string.IsNullOrEmpty(replyMarkup))
             {
                 var webClient = new WebClient();
                 var response = webClient.DownloadString(
-                    $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=html");
+                    $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown");
             }
             else
             {
                 var webClient = new WebClient();
                 var response = webClient.DownloadString(
-                    $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=html&reply_markup={replyMarkup}");
+                    $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
             }
         }
-
+        public string GetRegistrationLink(int telegramUserId, string telegramUsername, string baseUri)
+        {
+            var encrypted = StringCipher.Encrypt($"{telegramUserId}:{telegramUsername}", _cipherKey);
+            var base64Encoded = encrypted.GetBase64Encode();
+            return $"{baseUri}/{base64Encoded}";
+        }
         public int GetMessages()
         {
             var count = 0;
@@ -119,7 +127,6 @@ namespace YourDictionary.Worker
                 return count;
             }
         }
-
         public string GenerateExamHtml(Card card)
         {
             return GenerateMemHtml(card.Mem);
@@ -129,7 +136,6 @@ namespace YourDictionary.Worker
             var result = "<b>This is just a test</b><i>Believe me</i>";
             return result;
         }
-
         public int ProcessMessages()
         {
             using (var entities = new EntityContext())
@@ -191,11 +197,10 @@ namespace YourDictionary.Worker
 
                                 SendMessage(message.ChatId, GenerateExamHtml(card), GenerateKeyboardMarkup("Yes", "No"));
                             }
-                            else if(message.MessageText == "Register")
+                            else if (message.MessageText == "Register")
                             {
-                                var encrypted = Kondor.Service.StringCipher.Encrypt($"{message.UserId}:{message.Username}", "testkey");
-                                var base64Encoded = encrypted.GetBase64Encode();
-                                SendMessage(message.ChatId, base64Encoded, GenerateKeyboardMarkup("Link"));
+                                var registrationLink = GetRegistrationLink(message.UserId, message.Username, _baseUri);
+                                SendMessage(message.ChatId, $"[Registration Link]({registrationLink})");
                             }
                         }
                         catch (Exception exception)
