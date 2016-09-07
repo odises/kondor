@@ -63,7 +63,7 @@
     <Compile Include="DataModel\Example.cs" />
     <Compile Include="DataModel\Medium.cs" />
     <Compile Include="DataModel\Message.cs" />
-    <Compile Include="DataModel\Word.cs" />
+    <Compile Include="DataModel\Mem.cs" />
     <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />

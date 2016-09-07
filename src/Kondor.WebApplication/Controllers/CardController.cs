@@ -65,16 +65,16 @@ namespace Kondor.WebApplication.Controllers
 
 
                 var entityContext = new EntityContext();
-                var word = new Word
+                var mem = new Mem
                 {
-                    Vocabulary = model.FrontSide,
+                    MemBody = model.FrontSide,
                     Definition = model.BackSide,
                     UserId = HttpContext.User.Identity.GetUserId()
                 };
 
                 foreach (var example in examples)
                 {
-                    word.Examples.Add(new Example
+                    mem.Examples.Add(new Example
                     {
                         Sentence = example
                     });
@@ -84,7 +84,7 @@ namespace Kondor.WebApplication.Controllers
                 {
                     if (mimeTypeWhitelist.Contains(file.Item1))
                     {
-                        word.Media.Add(new Medium
+                        mem.Media.Add(new Medium
                         {
                             ContentType = file.Item1,
                             MediumContent = file.Item2
@@ -92,7 +92,7 @@ namespace Kondor.WebApplication.Controllers
                     }
                 }
 
-                entityContext.Words.Add(word);
+                entityContext.Mems.Add(mem);
                 entityContext.SaveChanges();
 
                 return RedirectToAction("Index");
@@ -111,10 +111,10 @@ namespace Kondor.WebApplication.Controllers
             {
                 var entityContext = new EntityContext();
                 var result = entityContext
-                    .Words
-                    .Where(p => p.Vocabulary.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
+                    .Mems
+                    .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
                     .ToList();
-                return Json(result.Select(p => new { wordId = p.Id, content = p.Vocabulary }), JsonRequestBehavior.AllowGet);
+                return Json(result.Select(p => new { memId = p.Id, content = p.MemBody }), JsonRequestBehavior.AllowGet);
             }
             else
             {

@@ -30,7 +30,7 @@ namespace Kondor.Data
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EntityContext>());
         }
 
-        public DbSet<Word> Words { get; set; }
+        public DbSet<Mem> Mems { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Message> Messages { get; set; }
 

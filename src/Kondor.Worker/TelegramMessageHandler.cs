@@ -121,9 +121,9 @@ namespace YourDictionary.Worker
 
         public string GenerateExamHtml(Card card)
         {
-            return GenerateWordHtml(card.Word);
+            return GenerateMemHtml(card.Mem);
         }
-        public string GenerateWordHtml(Word word)
+        public string GenerateMemHtml(Mem mem)
         {
             var result = "<b>This is just a test</b><i>Believe me</i>";
             return result;
@@ -148,13 +148,13 @@ namespace YourDictionary.Worker
                             {
                                 try
                                 {
-                                    var newVocab = _leitnerService.GetNewVocabulary(message.UserId);
-                                    var response = GenerateWordHtml(newVocab);
+                                    var newVocab = _leitnerService.GetNewMem(message.UserId);
+                                    var response = GenerateMemHtml(newVocab);
                                     SendMessage(message.ChatId, response, GenerateKeyboardMarkup("New", "Exam", "Status"));
                                 }
                                 catch (IndexOutOfRangeException)
                                 {
-                                    SendMessage(message.UserId, "This is no new vocabulary.", GenerateKeyboardMarkup("Status"));
+                                    SendMessage(message.UserId, "There is no new Mem.", GenerateKeyboardMarkup("Status"));
                                 }
                                 catch (ValidationException)
                                 {

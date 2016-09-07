@@ -72,35 +72,35 @@ namespace Kondor.Service.Leitner
         }
 
         /// <summary>
-        /// Gets new vocabulary
+        /// Gets new Mem
         /// </summary>
         /// <param name="telegramUserId"></param>
         /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException">There is no new vocabulary</exception>
+        /// <exception cref="IndexOutOfRangeException">There is no new Mem</exception>
         /// <exception cref="ValidationException">UserId is not valid</exception>
         /// <exception cref="OverflowException">Maximum card in first position exceeded.</exception>
-        public Word GetNewVocabulary(int telegramUserId)
+        public Mem GetNewMem(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var words = _entityContext.Words.ToList().Where(w => !_entityContext.Cards.Any(p => p.WordId == w.Id)).ToList();
+            var mems = _entityContext.Mems.ToList().Where(m => !_entityContext.Cards.Any(p => p.MemId == m.Id)).ToList();
 
-            if (words.Count == 0)
+            if (mems.Count == 0)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var word = words.GetRandom();
+            var mem = mems.GetRandom();
             
 
-            var newCard = GenerateNewCard(Position.First, userId, word.Id);
+            var newCard = GenerateNewCard(Position.First, userId, mem.Id);
 
             _entityContext.Cards.Add(newCard);
             _entityContext.SaveChanges();
 
-            return word;
+            return mem;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Kondor.Service.Leitner
             card.ModifiedDateTime = DateTime.Now;
 
             var nextPosition = GetNextPosition(card.CardPosition);
-            var newCard = GenerateNewCard(nextPosition, card.UserId, card.WordId);
+            var newCard = GenerateNewCard(nextPosition, card.UserId, card.MemId);
 
             _entityContext.Cards.Add(newCard);
             _entityContext.SaveChanges();
@@ -156,7 +156,7 @@ namespace Kondor.Service.Leitner
             card.ModifiedDateTime = DateTime.Now;
 
             var prevPosition = GetPreviousPosition(card.CardPosition);
-            var newCard = GenerateNewCard(prevPosition, card.UserId, card.WordId);
+            var newCard = GenerateNewCard(prevPosition, card.UserId, card.MemId);
 
             _entityContext.Cards.Add(newCard);
             _entityContext.SaveChanges();
@@ -264,9 +264,9 @@ namespace Kondor.Service.Leitner
         /// </summary>
         /// <param name="position"></param>
         /// <param name="userId"></param>
-        /// <param name="wordId"></param>
+        /// <param name="memId"></param>
         /// <returns></returns>
-        protected virtual Card GenerateNewCard(Position position, string userId, int wordId)
+        protected virtual Card GenerateNewCard(Position position, string userId, int memId)
         {
             var stopTime = GetStopTimeForPositionInMinute(position, TimeUnit);
 
@@ -277,7 +277,7 @@ namespace Kondor.Service.Leitner
                 ExaminationDateTime = DateTime.Now.AddMinutes(stopTime).GetRounded(),
                 Status = CardStatus.NewInPosition,
                 UserId = userId,
-                WordId = wordId
+                MemId = memId
             };
 
             return newCard;

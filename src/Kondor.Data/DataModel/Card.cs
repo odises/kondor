@@ -6,13 +6,13 @@ namespace Kondor.Data.DataModel
     public class Card : Entity
     {
         public Position CardPosition { get; set; }
-        public int WordId { get; set; }
+        public int MemId { get; set; }
         public DateTime CreationDateTime { get; set; }
         public DateTime ExaminationDateTime { get; set; }
         public DateTime? ModifiedDateTime { get; set; }
         public string UserId { get; set; }
         public CardStatus Status { get; set; }
-        public virtual Word Word { get; set; }
+        public virtual Mem Mem { get; set; }
         public virtual ApplicationUser User { get; set; }
     }
 }
