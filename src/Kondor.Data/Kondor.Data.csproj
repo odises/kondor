@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\GetUpdatesModels.cs" />
-    <Compile Include="ApiModels\ReplyMarkupModel.cs" />
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="EntityContext.cs" />
@@ -74,12 +73,29 @@
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TelegramTypes\CallbackQuery.cs" />
+    <Compile Include="TelegramTypes\ChosenInlineResult.cs" />
+    <Compile Include="TelegramTypes\InlineQuery.cs" />
+    <Compile Include="TelegramTypes\Update.cs" />
+    <Compile Include="TelegramTypes\Voice.cs" />
+    <Compile Include="TelegramTypes\Audio.cs" />
+    <Compile Include="TelegramTypes\Chat.cs" />
+    <Compile Include="TelegramTypes\Contact.cs" />
+    <Compile Include="TelegramTypes\Document.cs" />
     <Compile Include="TelegramTypes\ForceReply.cs" />
     <Compile Include="TelegramTypes\InlineKeyboardButton.cs" />
     <Compile Include="TelegramTypes\InlineKeyboardMarkup.cs" />
     <Compile Include="TelegramTypes\KeyboardButton.cs" />
+    <Compile Include="TelegramTypes\Location.cs" />
+    <Compile Include="TelegramTypes\Message.cs" />
+    <Compile Include="TelegramTypes\MessageEntity.cs" />
+    <Compile Include="TelegramTypes\PhotoSize.cs" />
     <Compile Include="TelegramTypes\ReplyKeyboardHide.cs" />
     <Compile Include="TelegramTypes\ReplyKeyboardMarkup.cs" />
+    <Compile Include="TelegramTypes\Sticker.cs" />
+    <Compile Include="TelegramTypes\User.cs" />
+    <Compile Include="TelegramTypes\Venue.cs" />
+    <Compile Include="TelegramTypes\Video.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

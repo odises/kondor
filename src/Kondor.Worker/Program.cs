@@ -23,7 +23,7 @@ namespace YourDictionary.Worker
             {
                 var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://yahoo.com/account/newuser");
                 telegramMessageHandler.GetMessages();
-                telegramMessageHandler.ProcessMessages();
+                //telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");
             }
             catch (Exception exception)

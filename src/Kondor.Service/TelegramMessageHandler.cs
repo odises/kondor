@@ -33,21 +33,6 @@ namespace Kondor.Service
             _baseUri = baseUri;
         }
 
-        protected string GenerateKeyboardMarkup(params string[] input)
-        {
-            var result = new ReplyMarkupModel();
-            result.keyboard = new List<List<Keyboard>>();
-
-
-            foreach (var s in input)
-            {
-                var keys = new List<Keyboard>();
-                keys.Add(new Keyboard { text = s });
-                result.keyboard.Add(keys);
-            }
-
-            return JsonConvert.SerializeObject(result);
-        }
         protected void SendMessage(int chatId, string text, string replyMarkup = null)
         {
             if (string.IsNullOrEmpty(replyMarkup))
@@ -99,21 +84,21 @@ namespace Kondor.Service
                 try
                 {
                     var responseModel = JsonConvert.DeserializeObject<GetUpdatesResult>(response);
-                    count = responseModel.result.Count;
-                    foreach (var item in responseModel.result)
+                    count = responseModel.Result.Count;
+                    foreach (var item in responseModel.Result)
                     {
-                        if (!entities.Messages.Any(p => p.UpdateId == item.update_id))
+                        if (!entities.Messages.Any(p => p.UpdateId == item.UpdateId))
                         {
-                            entities.Messages.Add(new Message
+                            entities.Messages.Add(new Data.DataModel.Message
                             {
-                                UpdateId = item.update_id,
+                                UpdateId = item.UpdateId,
                                 Status = 1,
-                                SerializedResult = JsonConvert.SerializeObject(item.message),
-                                MessageText = item.message.text ?? "empty",
-                                ChatId = item.message.chat.id,
-                                ChatType = item.message.chat.type,
-                                UserId = item.message.from.id,
-                                Username = item.message.@from.username ?? ""
+                                SerializedResult = JsonConvert.SerializeObject(item.Message),
+                                MessageText = item.Message.Text ?? "empty",
+                                ChatId = item.Message.Chat.Id,
+                                ChatType = item.Message.Chat.Type,
+                                UserId = item.Message.From.Id,
+                                Username = item.Message.From.Username ?? ""
                             });
                         }
                     }
@@ -158,19 +143,19 @@ namespace Kondor.Service
                                 {
                                     var newVocab = _leitnerService.GetNewMem(message.UserId);
                                     var response = GenerateMemHtml(newVocab);
-                                    SendMessage(message.ChatId, response, GenerateKeyboardMarkup("New", "Exam", "Status"));
+                                    //SendMessage(message.ChatId, response, GenerateKeyboardMarkup("New", "Exam", "Status"));
                                 }
                                 catch (IndexOutOfRangeException)
                                 {
-                                    SendMessage(message.UserId, "There is no new Mem.", GenerateKeyboardMarkup("Status"));
+                                    //SendMessage(message.UserId, "There is no new Mem.", GenerateKeyboardMarkup("Status"));
                                 }
                                 catch (ValidationException)
                                 {
-                                    SendMessage(message.UserId, "UserId is not valid.", GenerateKeyboardMarkup("Status"));
+                                    //SendMessage(message.UserId, "UserId is not valid.", GenerateKeyboardMarkup("Status"));
                                 }
                                 catch (OverflowException)
                                 {
-                                    SendMessage(message.UserId, "Maximum card in first position exceeded.", GenerateKeyboardMarkup("Exam", "Status"));
+                                    //SendMessage(message.UserId, "Maximum card in first position exceeded.", GenerateKeyboardMarkup("Exam", "Status"));
                                 }
                             }
                             else if (message.MessageText == "Exam")
@@ -190,13 +175,13 @@ namespace Kondor.Service
                                     }
                                     catch (IndexOutOfRangeException)
                                     {
-                                        SendMessage(message.ChatId, "There is no card for exam yet", GenerateKeyboardMarkup("New", "Status"));
+                                        //SendMessage(message.ChatId, "There is no card for exam yet", GenerateKeyboardMarkup("New", "Status"));
                                         message.Status = 0;
                                         continue;
                                     }
                                 }
 
-                                SendMessage(message.ChatId, GenerateExamHtml(card), GenerateKeyboardMarkup("Yes", "No"));
+                                //SendMessage(message.ChatId, GenerateExamHtml(card), GenerateKeyboardMarkup("Yes", "No"));
                             }
                             else if (message.MessageText == "Register")
                             {
