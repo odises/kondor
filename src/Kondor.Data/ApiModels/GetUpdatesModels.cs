@@ -45,10 +45,19 @@ namespace Kondor.Data.ApiModels
         public NewChatMember new_chat_member { get; set; }
     }
 
+    public class CallbackQuery
+    {
+        public string id { get; set; }
+        public From from { get; set; }
+        public TelegramMessage message { get; set; }
+        public string data { get; set; }
+    }
+
     public class Result
     {
         public int update_id { get; set; }
         public TelegramMessage message { get; set; }
+        public CallbackQuery callback_query { get; set; }
     }
 
     public class GetUpdatesResult

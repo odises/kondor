@@ -8,11 +8,8 @@ namespace Kondor.Test
     {
         static void Main(string[] args)
         {
-            var result = StringCipher.Encrypt("salam", "testkey");
-            var base64Encoded = result.GetBase64Encode();
-            var base64Decoded = base64Encoded.GetBase64Decode();
-            var original = StringCipher.Decrypt(base64Decoded, "testkey");
-            Console.WriteLine(original);
+            //TelegramHelper telegramHelper = new TelegramHelper();
+            //var result = telegramHelper.GenerateReplyKeyboardMarkup(new KeyboardButton[,] { {new KeyboardButton() {text = "Hi"}, new KeyboardButton() {text = "Bye"}, } }, false, false, false);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Net;
 using Kondor.Data;
 using Kondor.Data.ApiModels;
 using Kondor.Data.DataModel;
+using Kondor.Data.TelegramTypes;
 using Kondor.Service.Extensions;
 using Kondor.Service.Leitner;
 using Newtonsoft.Json;
@@ -200,7 +201,18 @@ namespace Kondor.Service
                             else if (message.MessageText == "Register")
                             {
                                 var registrationLink = GetRegistrationLink(message.UserId, message.Username, _baseUri);
-                                SendMessage(message.ChatId, $"[Registration Link]({registrationLink})");
+                                SendMessage(message.ChatId, $"[Registration Link]({registrationLink})", TelegramHelper.GenerateReplyKeyboardMarkup(new KeyboardButton[,] { { new KeyboardButton() { Text = "Hi" }, new KeyboardButton() { Text = "Phone", RequestContact = true }, }, { new KeyboardButton() { Text = "Bye" }, new KeyboardButton() { Text = "Test" } } }, false, false, false));
+                            }
+                            else
+                            {
+                                SendMessage(message.ChatId, "Test",
+                                    TelegramHelper
+                                    .GetInlineKeyboardMarkup(new[,]
+                                    {
+                                        {
+                                            new InlineKeyboardButton{ Text = "inline test", CallbackData = "salam"}
+                                        }
+                                    }));
                             }
                         }
                         catch (Exception exception)
