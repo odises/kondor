@@ -9,7 +9,7 @@ namespace Kondor.Data.DataModel
         public UpdateType UpdateType { get; set; }
         public string SerializedUpdate { get; set; }
         public DateTime CreationDatetime { get; set; }
-        public int Status { get; set; }
+        public UpdateStatus Status { get; set; }
         public DateTime ModifiedDatetime { get; set; }
     }
 }

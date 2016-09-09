@@ -190,7 +190,7 @@ namespace Kondor.Service
                     }
                     catch (Exception exception)
                     {
-                        
+
                     }
                     update.Status = UpdateStatus.Processed;
                 }
@@ -204,7 +204,8 @@ namespace Kondor.Service
 
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
-            throw new NotImplementedException();
+            var telegramApiManager = new TelegramApiManager(_apiKey);
+            telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "test", true);
         }
 
         private void ChosenInlineResultProcessor(ChosenInlineResult chosenInlineResult)
@@ -224,7 +225,13 @@ namespace Kondor.Service
 
         public void MessageProcessor(Message message)
         {
-
+            switch (message.Text)
+            {
+                case "Learn":
+                    break;
+                case "Exam":
+                    break;
+            }
         }
     }
 }

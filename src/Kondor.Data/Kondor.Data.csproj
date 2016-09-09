@@ -72,6 +72,7 @@
     <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />
+    <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TelegramTypes\CallbackQuery.cs" />
