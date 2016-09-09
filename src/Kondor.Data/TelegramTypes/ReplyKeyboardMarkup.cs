@@ -5,7 +5,7 @@ namespace Kondor.Data.TelegramTypes
     public class ReplyKeyboardMarkup
     {
         [JsonProperty("keyboard")]
-        public KeyboardButton[,] Keyboard { get; set; }
+        public KeyboardButton[][] Keyboard { get; set; }
 
         [JsonProperty("resize_keyboard")]
         public bool ResizeKeyboard { get; set; }

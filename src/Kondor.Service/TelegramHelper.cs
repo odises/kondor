@@ -5,7 +5,7 @@ namespace Kondor.Service
 {
     public class TelegramHelper
     {
-        public static string GenerateReplyKeyboardMarkup(KeyboardButton[,] keyboard, bool resizeKeyboard, bool oneTimeKeyboard,
+        public static string GenerateReplyKeyboardMarkup(KeyboardButton[][] keyboard, bool resizeKeyboard, bool oneTimeKeyboard,
             bool selective)
         {
             var replyKeyboardMarkup = new ReplyKeyboardMarkup
@@ -20,7 +20,7 @@ namespace Kondor.Service
             return serialized;
         }
 
-        public static string GetInlineKeyboardMarkup(InlineKeyboardButton[,] inlineKeyboard)
+        public static string GetInlineKeyboardMarkup(InlineKeyboardButton[][] inlineKeyboard)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup {InlineKeyboard = inlineKeyboard};
             var serialized = JsonConvert.SerializeObject(inlineKeyboardMarkup, Formatting.None, new JsonSerializerSettings()

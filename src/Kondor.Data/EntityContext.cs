@@ -32,7 +32,7 @@ namespace Kondor.Data
 
         public DbSet<Mem> Mems { get; set; }
         public DbSet<Card> Cards { get; set; }
-        public DbSet<Message> Messages { get; set; }
+        public DbSet<Update> Updates { get; set; }
 
         public static EntityContext Create()
         {

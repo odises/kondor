@@ -7,6 +7,7 @@ using System.Net;
 using Kondor.Data;
 using Kondor.Data.ApiModels;
 using Kondor.Data.DataModel;
+using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Extensions;
 using Kondor.Service.Leitner;
@@ -61,11 +62,12 @@ namespace Kondor.Service
             using (var entities = new EntityContext())
             {
                 var lastUpdateId = 0;
-                var firstOrDefault = entities.Messages.OrderByDescending(p => p.UpdateId).FirstOrDefault();
+                var firstOrDefault = entities.Updates.OrderByDescending(p => p.UpdateId).FirstOrDefault();
                 if (firstOrDefault != null)
                 {
                     lastUpdateId = firstOrDefault.UpdateId;
                 }
+
                 var webClient = new WebClient();
 
                 string response;
@@ -87,18 +89,46 @@ namespace Kondor.Service
                     count = responseModel.Result.Count;
                     foreach (var item in responseModel.Result)
                     {
-                        if (!entities.Messages.Any(p => p.UpdateId == item.UpdateId))
+                        UpdateType updateType;
+
+                        if (item.Message != null)
                         {
-                            entities.Messages.Add(new Data.DataModel.Message
+                            updateType = UpdateType.Message;
+                        }
+                        else if (item.EditedMessage != null)
+                        {
+                            updateType = UpdateType.EditedMessage;
+                        }
+                        else if (item.InlineQuery != null)
+                        {
+                            updateType = UpdateType.InlineQuery;
+                        }
+                        else if (item.ChosenInlineResult != null)
+                        {
+                            updateType = UpdateType.ChosenInlineResult;
+                        }
+                        else if (item.CallbackQuery != null)
+                        {
+                            updateType = UpdateType.CallbackQuery;
+                        }
+                        else
+                        {
+                            updateType = UpdateType.Unclear;
+                        }
+
+                        if (!entities.Updates.Any(p => p.UpdateId == item.UpdateId))
+                        {
+                            entities.Updates.Add(new Data.DataModel.Update
                             {
                                 UpdateId = item.UpdateId,
-                                Status = 1,
-                                SerializedResult = JsonConvert.SerializeObject(item.Message),
-                                MessageText = item.Message.Text ?? "empty",
-                                ChatId = item.Message.Chat.Id,
-                                ChatType = item.Message.Chat.Type,
-                                UserId = item.Message.From.Id,
-                                Username = item.Message.From.Username ?? ""
+                                Status = UpdateStatus.Unprocessed,
+                                CreationDatetime = DateTime.Now,
+                                ModifiedDatetime = DateTime.Now,
+                                UpdateType = updateType,
+                                SerializedUpdate = JsonConvert.SerializeObject(item, Formatting.None, new JsonSerializerSettings()
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                })
                             });
                         }
                     }
@@ -126,95 +156,74 @@ namespace Kondor.Service
         {
             using (var entities = new EntityContext())
             {
-                var unprocessed = entities.Messages.Where(p => p.Status == 1).ToList();
+                var unprocessed = entities.Updates.Where(p => p.Status == UpdateStatus.Unprocessed).ToList();
 
-                foreach (var message in unprocessed)
+                foreach (var update in unprocessed)
                 {
-                    if (message.ChatType == "group")
+                    var model = JsonConvert.DeserializeObject<Data.TelegramTypes.Update>(update.SerializedUpdate);
+                    try
                     {
-                    }
-                    else
-                    {
-                        try
+                        if (model.Message != null)
                         {
-                            if (message.MessageText == "New")
-                            {
-                                try
-                                {
-                                    var newVocab = _leitnerService.GetNewMem(message.UserId);
-                                    var response = GenerateMemHtml(newVocab);
-                                    //SendMessage(message.ChatId, response, GenerateKeyboardMarkup("New", "Exam", "Status"));
-                                }
-                                catch (IndexOutOfRangeException)
-                                {
-                                    //SendMessage(message.UserId, "There is no new Mem.", GenerateKeyboardMarkup("Status"));
-                                }
-                                catch (ValidationException)
-                                {
-                                    //SendMessage(message.UserId, "UserId is not valid.", GenerateKeyboardMarkup("Status"));
-                                }
-                                catch (OverflowException)
-                                {
-                                    //SendMessage(message.UserId, "Maximum card in first position exceeded.", GenerateKeyboardMarkup("Exam", "Status"));
-                                }
-                            }
-                            else if (message.MessageText == "Exam")
-                            {
-                                Card card;
-                                var userActiveCard = _userActiveCard.FirstOrDefault(p => p.Item1 == message.UserId);
-                                if (userActiveCard != null)
-                                {
-                                    card = userActiveCard.Item2;
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        card = _leitnerService.GetCardForExam(message.UserId);
-                                        _userActiveCard.Add(new Tuple<int, Card>(message.UserId, card));
-                                    }
-                                    catch (IndexOutOfRangeException)
-                                    {
-                                        //SendMessage(message.ChatId, "There is no card for exam yet", GenerateKeyboardMarkup("New", "Status"));
-                                        message.Status = 0;
-                                        continue;
-                                    }
-                                }
-
-                                //SendMessage(message.ChatId, GenerateExamHtml(card), GenerateKeyboardMarkup("Yes", "No"));
-                            }
-                            else if (message.MessageText == "Register")
-                            {
-                                var registrationLink = GetRegistrationLink(message.UserId, message.Username, _baseUri);
-                                SendMessage(message.ChatId, $"[Registration Link]({registrationLink})", TelegramHelper.GenerateReplyKeyboardMarkup(new KeyboardButton[,] { { new KeyboardButton() { Text = "Hi" }, new KeyboardButton() { Text = "Phone", RequestContact = true }, }, { new KeyboardButton() { Text = "Bye" }, new KeyboardButton() { Text = "Test" } } }, false, false, false));
-                            }
-                            else
-                            {
-                                SendMessage(message.ChatId, "Test",
-                                    TelegramHelper
-                                    .GetInlineKeyboardMarkup(new[,]
-                                    {
-                                        {
-                                            new InlineKeyboardButton{ Text = "inline test", CallbackData = "salam"}
-                                        }
-                                    }));
-                            }
+                            MessageProcessor(model.Message);
                         }
-                        catch (Exception exception)
+                        else if (model.EditedMessage != null)
                         {
-                            using (var writer = new StreamWriter(_directory + "/" + DateTime.Now.ToString("yy-MM-dd") + ".txt", true))
-                            {
-                                writer.WriteLine(exception.ToString());
-                            }
+                            EditedMessageProcessor(model.Message);
+                        }
+                        else if (model.InlineQuery != null)
+                        {
+                            InlineQueryProcessor(model.InlineQuery);
+                        }
+                        else if (model.ChosenInlineResult != null)
+                        {
+                            ChosenInlineResultProcessor(model.ChosenInlineResult);
+                        }
+                        else if (model.CallbackQuery != null)
+                        {
+                            CallbackQueryProcessor(model.CallbackQuery);
+                        }
+                        else
+                        {
+                            throw new InvalidDataException();
                         }
                     }
-                    message.Status = 0;
+                    catch (Exception exception)
+                    {
+                        
+                    }
+                    update.Status = UpdateStatus.Processed;
                 }
                 entities.SaveChanges();
             }
 
 
             return 0;
+
+        }
+
+        private void CallbackQueryProcessor(CallbackQuery callbackQuery)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ChosenInlineResultProcessor(ChosenInlineResult chosenInlineResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void InlineQueryProcessor(InlineQuery inlineQuery)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EditedMessageProcessor(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MessageProcessor(Message message)
+        {
 
         }
     }
