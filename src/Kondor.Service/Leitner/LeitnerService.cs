@@ -12,16 +12,17 @@ namespace Kondor.Service.Leitner
     {
         private readonly EntityContext _entityContext;
         protected int OverStoppingTolerance;
-        protected TimeUnit TimeUnit = TimeUnit.Minute;
+        private readonly TimeUnit _timeUnit;
         protected int MaximumCardInFirstPosition;
 
         /// <summary>
         /// Initialization
         /// </summary>
-        public LeitnerService(int overStoppingTolerance, int maximumCardInFirstPosition)
+        public LeitnerService(int overStoppingTolerance, int maximumCardInFirstPosition, TimeUnit timeUnit)
         {
             _entityContext = new EntityContext();
             MaximumCardInFirstPosition = maximumCardInFirstPosition;
+            _timeUnit = timeUnit;
             OverStoppingTolerance = overStoppingTolerance;
         }
 
@@ -56,7 +57,7 @@ namespace Kondor.Service.Leitner
                 var diff = DateTime.Now.GetRounded() - card.ExaminationDateTime;
                 if (diff.TotalMinutes > 0)
                 {
-                    var positionStopTime = GetStopTimeForPositionInMinute(card.CardPosition, TimeUnit);
+                    var positionStopTime = GetStopTimeForPositionInMinute(card.CardPosition, _timeUnit);
                     var tolerance = positionStopTime * (double)OverStoppingTolerance / 100;
 
                     if (diff.TotalMinutes > tolerance)
@@ -119,6 +120,12 @@ namespace Kondor.Service.Leitner
             {
                 throw new IndexOutOfRangeException();
             }
+            return card;
+        }
+
+        public Card GetCard(int cardId)
+        {
+            var card = _entityContext.Cards.FirstOrDefault(p => p.Id == cardId);
             return card;
         }
 
@@ -268,7 +275,7 @@ namespace Kondor.Service.Leitner
         /// <returns></returns>
         protected virtual Card GenerateNewCard(Position position, string userId, int memId)
         {
-            var stopTime = GetStopTimeForPositionInMinute(position, TimeUnit);
+            var stopTime = GetStopTimeForPositionInMinute(position, _timeUnit);
 
             var newCard = new Card
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Kondor.Data.Enums;
 using Kondor.Service;
 using Kondor.Service.Leitner;
 
@@ -21,7 +22,7 @@ namespace YourDictionary.Worker
         {
             try
             {
-                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi());
+                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute));
                 telegramMessageHandler.GetMessages();
                 telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");
@@ -37,7 +38,7 @@ namespace YourDictionary.Worker
         {
             try
             {
-                var leitnerService = new LeitnerService(20, 15);
+                var leitnerService = new LeitnerService(20, 15, TimeUnit.Minute);
                 var cleanerResult = leitnerService.BoxCleanUp();
                 Console.WriteLine(cleanerResult);
             }
