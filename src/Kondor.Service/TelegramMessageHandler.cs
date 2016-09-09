@@ -210,17 +210,7 @@ namespace Kondor.Service
                     // todo: check if user has entered once
 
                     SendMessage(callbackQuery.Message.Chat.Id, "What do you want to do?",
-                        TelegramHelper.GetInlineKeyboardMarkup(
-                            new[]
-                            {
-                                    new[]
-                                    {
-                                        new InlineKeyboardButton {Text = "Exam", CallbackData = "Exam"},
-                                        new InlineKeyboardButton {Text = "Learn", CallbackData = "Learn"}
-                                    },
-                            }
-                            )
-                        );
+                        TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
                 }
                 else
                 {
@@ -276,8 +266,28 @@ namespace Kondor.Service
                 switch (message.Text)
                 {
                     case "Learn":
+                        try
+                        {
+                            var newVocab = _leitnerService.GetNewMem(message.From.Id);
+                            var response = GenerateMemHtml(newVocab);
+                            SendMessage(message.Chat.Id, response, TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            SendMessage(message.Chat.Id, "There is no new Mem.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                        }
+                        catch (ValidationException)
+                        {
+                            SendMessage(message.Chat.Id, "UserId is not valid.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                        }
+                        catch (OverflowException)
+                        {
+                            SendMessage(message.Chat.Id, "Maximum card in first position exceeded.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                        }
                         break;
                     case "Exam":
+                        break;
+                    case "/start":
                         break;
                 }
             }
