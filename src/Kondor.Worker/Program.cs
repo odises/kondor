@@ -21,7 +21,7 @@ namespace YourDictionary.Worker
         {
             try
             {
-                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://yahoo.com/account/newuser");
+                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi());
                 telegramMessageHandler.GetMessages();
                 telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");

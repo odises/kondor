@@ -82,6 +82,7 @@
     <Compile Include="TelegramApiManager.cs" />
     <Compile Include="TelegramHelper.cs" />
     <Compile Include="TelegramMessageHandler.cs" />
+    <Compile Include="UserApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

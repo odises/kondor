@@ -22,16 +22,18 @@ namespace Kondor.Service
         private readonly string _directory;
         private readonly List<Tuple<int, Card>> _userActiveCard;
         private readonly string _cipherKey;
-        private readonly string _baseUri;
+        private readonly string _registrationBaseUri;
+        private readonly UserApi _userApi;
 
-        public TelegramMessageHandler(string apiKey, string directory, string cipherKey, string baseUri)
+        public TelegramMessageHandler(string apiKey, string directory, string cipherKey, string registrationBaseUri, UserApi userApi)
         {
             _userActiveCard = new List<Tuple<int, Card>>();
             _leitnerService = new LeitnerService(20, 15);
             _apiKey = apiKey;
             _directory = directory;
             _cipherKey = cipherKey;
-            _baseUri = baseUri;
+            _registrationBaseUri = registrationBaseUri;
+            _userApi = userApi;
         }
 
         protected void SendMessage(int chatId, string text, string replyMarkup = null)
@@ -49,12 +51,7 @@ namespace Kondor.Service
                     $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
             }
         }
-        public string GetRegistrationLink(int telegramUserId, string telegramUsername, string baseUri)
-        {
-            var encrypted = StringCipher.Encrypt($"{telegramUserId}:{telegramUsername}", _cipherKey);
-            var base64Encoded = encrypted.GetBase64Encode();
-            return $"{baseUri}/{base64Encoded}";
-        }
+
         public int GetMessages()
         {
             var count = 0;
@@ -205,6 +202,32 @@ namespace Kondor.Service
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
             var telegramApiManager = new TelegramApiManager(_apiKey);
+
+            if (callbackQuery.Data == "Enter")
+            {
+                if (_userApi.IsRegisteredUser(callbackQuery.From.Id))
+                {
+                    // todo: check if user has entered once
+
+                    SendMessage(callbackQuery.Message.Chat.Id, "What do you want to do?",
+                        TelegramHelper.GetInlineKeyboardMarkup(
+                            new[]
+                            {
+                                    new[]
+                                    {
+                                        new InlineKeyboardButton {Text = "Exam"},
+                                        new InlineKeyboardButton {Text = "Learn"}
+                                    },
+                            }
+                            )
+                        );
+                }
+                else
+                {
+                    telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "Your are not registered yet.", true);
+                }
+            }
+
             telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "test", true);
         }
 
@@ -225,12 +248,38 @@ namespace Kondor.Service
 
         public void MessageProcessor(Message message)
         {
-            switch (message.Text)
+            if (!_userApi.IsRegisteredUser(message.From.Id))
             {
-                case "Learn":
-                    break;
-                case "Exam":
-                    break;
+                // send introduction message
+
+                // send registration link
+                SendMessage(message.Chat.Id, "Register",
+                    TelegramHelper.GetInlineKeyboardMarkup(new[]
+                    {
+                        new[]
+                        {
+                            new InlineKeyboardButton()
+                            {
+                                Text = "Enter",
+                                CallbackData = "Enter"
+                            },
+                            new InlineKeyboardButton()
+                            {
+                                Text = "Register",
+                                Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, _registrationBaseUri, _cipherKey)
+                            }
+                        }
+                    }));
+            }
+            else
+            {
+                switch (message.Text)
+                {
+                    case "Learn":
+                        break;
+                    case "Exam":
+                        break;
+                }
             }
         }
     }
