@@ -215,8 +215,8 @@ namespace Kondor.Service
                             {
                                     new[]
                                     {
-                                        new InlineKeyboardButton {Text = "Exam"},
-                                        new InlineKeyboardButton {Text = "Learn"}
+                                        new InlineKeyboardButton {Text = "Exam", CallbackData = "Exam"},
+                                        new InlineKeyboardButton {Text = "Learn", CallbackData = "Learn"}
                                     },
                             }
                             )

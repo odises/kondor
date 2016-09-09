@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -141,7 +139,16 @@ namespace Kondor.WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            var telegramUserId = Session["telegramUserId"] as string;
+            var telegramUsername = Session["telegramUsername"] as string;
+            if (telegramUsername == null || telegramUserId == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = new RegisterViewModel {Username = telegramUsername};
+
+            return View(model);
         }
 
         //
@@ -151,9 +158,12 @@ namespace Kondor.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            var telegramUserId = Session["telegramUserId"] as string;
+            var telegramUsername = Session["telegramUsername"] as string;
+
+            if (ModelState.IsValid && telegramUserId != null && telegramUsername != null)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, TelegramUserId = int.Parse(telegramUserId), TelegramUsername = telegramUsername};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -397,20 +407,33 @@ namespace Kondor.WebApplication.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [AllowAnonymous]
+        public ActionResult NewUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var base64Decoded = id.GetBase64Decode();
+            var decrypted = Service.StringCipher.Decrypt(base64Decoded, "testkey");
+            var splitted = decrypted.Split(new[] { ':' }, StringSplitOptions.None);
+
+            var telegramUserId = splitted[0];
+            var telegramUsername = splitted[1];
+
+            Session["telegramUserId"] = telegramUserId;
+            Session["telegramUsername"] = telegramUsername;
+
+            return RedirectToAction("Register");
+        }
+
         //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
             return View();
-        }
-
-        [AllowAnonymous]
-        public ActionResult NewUser(string id)
-        {
-            var base64Decoded = id.GetBase64Decode();
-            var decrypted = Service.StringCipher.Decrypt(base64Decoded, "testkey");
-            return Content(decrypted);
         }
 
         protected override void Dispose(bool disposing)
