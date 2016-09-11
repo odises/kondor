@@ -7,6 +7,7 @@ using Kondor.Data.ApiModels;
 using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kondor.Service
 {
@@ -36,14 +37,14 @@ namespace Kondor.Service
                     $"https://api.telegram.org/{_apiKey}/getupdates");
             }
 
-            var responseModel = JsonConvert.DeserializeObject<GetUpdatesResult>(response);
+            var responseModel = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
 
             if (responseModel.Ok)
             {
-                return responseModel.Result;
+                return responseModel.Result.ToObject<List<Update>>();
             }
 
-            return new List<Update>();
+            throw new InvalidDataException();
         }
 
         public Message SendMessage(int chatId, string text, string replyMarkup = null)
@@ -64,7 +65,16 @@ namespace Kondor.Service
                         $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
                 }
 
-                return JsonConvert.DeserializeObject<Message>(response);
+                var parsedResponse = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
+
+                if (parsedResponse.Ok)
+                {
+                    return parsedResponse.Result.ToObject<Message>();
+                }
+                else
+                {
+                    throw new InvalidDataException();
+                }
             }
             catch (WebException exception)
             {
@@ -116,7 +126,7 @@ namespace Kondor.Service
         }
 
         public void EditMessageText(int chatId, int messageId, string text, string parseMode, bool disableWebPagePreview,
-            InlineKeyboardMarkup replyMarkup)
+            InlineKeyboardMarkup replyMarkup = null)
         {
             var nameValueCollection = new NameValueCollection
             {
@@ -125,8 +135,12 @@ namespace Kondor.Service
                 {"text", text},
                 {"parse_mode", parseMode},
                 {"disable_web_page_preview", disableWebPagePreview.ToString()},
-                {"reply_markup", JsonConvert.SerializeObject(replyMarkup)}
             };
+
+            if (replyMarkup != null)
+            {
+                nameValueCollection.Add("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+            }
 
             EditMessageText(nameValueCollection);
         }
@@ -158,7 +172,7 @@ namespace Kondor.Service
                     queryString.Add(key, value);
                 }
 
-                var baseUri = $"https://api.telegram.org/{_apiKey}/eidtMessageText";
+                var baseUri = $"https://api.telegram.org/{_apiKey}/editMessageText";
 
                 var uri = baseUri + "?" + queryString.ToString();
 

@@ -64,7 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\GetUpdatesModels.cs" />
+    <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="EntityContext.cs" />
