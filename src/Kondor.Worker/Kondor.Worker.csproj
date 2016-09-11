@@ -64,11 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TelegramTask.cs" />
-    <Compile Include="CleanerTask.cs" />
+    <Compile Include="TaskManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Telegram\Processor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
