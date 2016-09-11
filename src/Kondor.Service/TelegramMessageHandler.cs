@@ -86,10 +86,7 @@ namespace Kondor.Service
                             CreationDatetime = DateTime.Now,
                             ModifiedDatetime = DateTime.Now,
                             UpdateType = updateType,
-                            SerializedUpdate = JsonConvert.SerializeObject(update, Formatting.None, new JsonSerializerSettings()
-                            {
-                                NullValueHandling = NullValueHandling.Ignore
-                            })
+                            SerializedUpdate = update.ToJson()
                         });
                     }
                 }

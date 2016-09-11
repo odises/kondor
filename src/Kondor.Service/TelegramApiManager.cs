@@ -139,7 +139,7 @@ namespace Kondor.Service
 
             if (replyMarkup != null)
             {
-                nameValueCollection.Add("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+                nameValueCollection.Add("reply_markup", replyMarkup.ToJson());
             }
 
             EditMessageText(nameValueCollection);
@@ -154,7 +154,7 @@ namespace Kondor.Service
                 {"text", text},
                 {"parse_mode", parseMode},
                 {"disable_web_page_preview", disableWebPagePreview.ToString()},
-                {"reply_markup", JsonConvert.SerializeObject(replyMarkup)}
+                {"reply_markup", replyMarkup.ToJson()}
             };
 
             EditMessageText(nameValueCollection);
