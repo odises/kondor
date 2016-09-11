@@ -22,8 +22,8 @@ namespace YourDictionary.Worker
         {
             try
             {
-                var telegramMessageHandler = new TelegramMessageHandler("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E", @"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute));
-                telegramMessageHandler.GetMessages();
+                var telegramMessageHandler = new TelegramMessageHandler(@"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute), new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"));
+                telegramMessageHandler.SaveUpdates();
                 telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");
             }

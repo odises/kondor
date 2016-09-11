@@ -29,17 +29,14 @@ namespace Kondor.Service
                 Selective = selective
             };
 
-            var serialized = JsonConvert.SerializeObject(replyKeyboardMarkup);
+            var serialized = replyKeyboardMarkup.ToJson();
             return serialized;
         }
 
         public static string GetInlineKeyboardMarkup(InlineKeyboardButton[][] inlineKeyboard)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup {InlineKeyboard = inlineKeyboard};
-            var serialized = JsonConvert.SerializeObject(inlineKeyboardMarkup, Formatting.None, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            var serialized = inlineKeyboardMarkup.ToJson();
             return serialized;
         }
     }

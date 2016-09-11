@@ -2,7 +2,7 @@
 
 namespace Kondor.Data.TelegramTypes
 {
-    public class Update
+    public class Update : JsonSerializable
     {
         [JsonProperty("update_id")]
         public int UpdateId { get; set; }

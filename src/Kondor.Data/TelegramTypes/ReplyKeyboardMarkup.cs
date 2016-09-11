@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Kondor.Data.TelegramTypes
 {
-    public class ReplyKeyboardMarkup
+    public class ReplyKeyboardMarkup : JsonSerializable
     {
         [JsonProperty("keyboard")]
         public KeyboardButton[][] Keyboard { get; set; }

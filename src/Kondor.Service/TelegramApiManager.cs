@@ -1,7 +1,13 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Web;
+using Kondor.Data.ApiModels;
+using Kondor.Data.Enums;
+using Kondor.Data.TelegramTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kondor.Service
 {
@@ -12,6 +18,77 @@ namespace Kondor.Service
         public TelegramApiManager(string apiKey)
         {
             _apiKey = apiKey;
+        }
+
+        public List<Update> GetUpdates(int? lastUpdateId = null)
+        {
+            var webClient = new WebClient();
+
+            string response;
+
+            if (lastUpdateId != null)
+            {
+                response = webClient.DownloadString(
+                    $"https://api.telegram.org/{_apiKey}/getupdates?offset={lastUpdateId}");
+            }
+            else
+            {
+                response = webClient.DownloadString(
+                    $"https://api.telegram.org/{_apiKey}/getupdates");
+            }
+
+            var responseModel = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
+
+            if (responseModel.Ok)
+            {
+                return responseModel.Result.ToObject<List<Update>>();
+            }
+
+            throw new InvalidDataException();
+        }
+
+        public Message SendMessage(int chatId, string text, string replyMarkup = null)
+        {
+            try
+            {
+                string response;
+                if (string.IsNullOrEmpty(replyMarkup))
+                {
+                    var webClient = new WebClient();
+                    response = webClient.DownloadString(
+                        $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown");
+                }
+                else
+                {
+                    var webClient = new WebClient();
+                    response = webClient.DownloadString(
+                        $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
+                }
+
+                var parsedResponse = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
+
+                if (parsedResponse.Ok)
+                {
+                    return parsedResponse.Result.ToObject<Message>();
+                }
+                else
+                {
+                    throw new InvalidDataException();
+                }
+            }
+            catch (WebException exception)
+            {
+                var errorResponse = (HttpWebResponse)exception.Response;
+                var responseStream = errorResponse.GetResponseStream();
+                if (responseStream != null)
+                {
+                    var reader = new StreamReader(responseStream);
+                    var error = reader.ReadToEnd();
+                    throw new WebException(error);
+                }
+
+                throw;
+            }
         }
 
         public void AnswerCallbackQuery(string callbackQueryId, string text, bool showAlert)
@@ -29,6 +106,73 @@ namespace Kondor.Service
                 {"show_alert", showAlert.ToString()}
             };
                 var baseUri = $"https://api.telegram.org/{_apiKey}/answerCallbackQuery";
+
+                var uri = baseUri + "?" + queryString.ToString();
+
+                var webClient = new WebClient();
+                var response = webClient.DownloadString(uri);
+            }
+            catch (WebException exception)
+            {
+                var errorResponse = (HttpWebResponse)exception.Response;
+                var responseStream = errorResponse.GetResponseStream();
+                if (responseStream != null)
+                {
+                    var reader = new StreamReader(responseStream);
+                    var error = reader.ReadToEnd();
+                    throw new WebException(error);
+                }
+            }
+        }
+
+        public void EditMessageText(int chatId, int messageId, string text, string parseMode, bool disableWebPagePreview,
+            InlineKeyboardMarkup replyMarkup = null)
+        {
+            var nameValueCollection = new NameValueCollection
+            {
+                {"chat_id", chatId.ToString()},
+                {"message_id", messageId.ToString()},
+                {"text", text},
+                {"parse_mode", parseMode},
+                {"disable_web_page_preview", disableWebPagePreview.ToString()},
+            };
+
+            if (replyMarkup != null)
+            {
+                nameValueCollection.Add("reply_markup", replyMarkup.ToJson());
+            }
+
+            EditMessageText(nameValueCollection);
+        }
+
+        public void EditMessageText(string inlineMessageId, string text, string parseMode, bool disableWebPagePreview,
+            InlineKeyboardMarkup replyMarkup)
+        {
+            var nameValueCollection = new NameValueCollection
+            {
+                {"inline_message_id", inlineMessageId},
+                {"text", text},
+                {"parse_mode", parseMode},
+                {"disable_web_page_preview", disableWebPagePreview.ToString()},
+                {"reply_markup", replyMarkup.ToJson()}
+            };
+
+            EditMessageText(nameValueCollection);
+        }
+
+        protected void EditMessageText(NameValueCollection nameValueCollection)
+        {
+            try
+            {
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+                foreach (string key in nameValueCollection)
+                {
+                    var value = nameValueCollection[key];
+                    queryString.Add(key, value);
+                }
+
+                var baseUri = $"https://api.telegram.org/{_apiKey}/editMessageText";
 
                 var uri = baseUri + "?" + queryString.ToString();
 

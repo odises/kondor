@@ -158,10 +158,33 @@ namespace Kondor.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            var validationErrorMessage = "Registration link is not valid. Please get a valid link from Telegram.";
+
             var telegramUserId = Session["telegramUserId"] as string;
             var telegramUsername = Session["telegramUsername"] as string;
 
-            if (ModelState.IsValid && telegramUserId != null && telegramUsername != null)
+            if (string.IsNullOrEmpty(telegramUserId) || string.IsNullOrEmpty(telegramUsername))
+            {
+                ModelState.AddModelError("Username", validationErrorMessage);
+            }
+            else
+            {
+                try
+                {
+                    var parsedTelegramUserId = int.Parse(telegramUserId);
+                    var entityContext = new EntityContext();
+                    if (entityContext.Users.Any(p => p.TelegramUserId == parsedTelegramUserId))
+                    {
+                        ModelState.AddModelError("Username", validationErrorMessage);
+                    }
+                }
+                catch (FormatException)
+                {
+                    ModelState.AddModelError("Username", validationErrorMessage);
+                }
+            }
+
+            if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Username, Email = model.Email, TelegramUserId = int.Parse(telegramUserId), TelegramUsername = telegramUsername};
                 var result = await UserManager.CreateAsync(user, model.Password);
