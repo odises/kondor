@@ -8,8 +8,9 @@ namespace Kondor.Test
     {
         static void Main(string[] args)
         {
-            //TelegramHelper telegramHelper = new TelegramHelper();
-            //var result = telegramHelper.GenerateReplyKeyboardMarkup(new KeyboardButton[,] { {new KeyboardButton() {text = "Hi"}, new KeyboardButton() {text = "Bye"}, } }, false, false, false);
+            var telegramApiManager = new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E");
+            var message = telegramApiManager.SendMessage(42274705, "This is just a test", TelegramHelper.GenerateReplyKeyboardMarkup("Hi", "Bye"));
+            
         }
     }
 }
