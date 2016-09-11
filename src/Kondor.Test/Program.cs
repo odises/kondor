@@ -1,4 +1,7 @@
-﻿namespace Kondor.Test
+﻿using System;
+using Kondor.Service;
+
+namespace Kondor.Test
 {
     class Program
     {

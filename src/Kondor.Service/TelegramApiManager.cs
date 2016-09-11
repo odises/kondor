@@ -4,10 +4,8 @@ using System.IO;
 using System.Net;
 using System.Web;
 using Kondor.Data.ApiModels;
-using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kondor.Service
 {
@@ -41,7 +39,7 @@ namespace Kondor.Service
 
             if (responseModel.Ok)
             {
-                return responseModel.Result.ToObject<List<Update>>();
+                return JsonConvert.DeserializeObject<List<Update>>(responseModel.Result.ToString());
             }
 
             throw new InvalidDataException();
@@ -69,7 +67,7 @@ namespace Kondor.Service
 
                 if (parsedResponse.Ok)
                 {
-                    return parsedResponse.Result.ToObject<Message>();
+                    return JsonConvert.DeserializeObject<Message>(parsedResponse.Result.ToString());
                 }
                 else
                 {
@@ -126,7 +124,7 @@ namespace Kondor.Service
         }
 
         public void EditMessageText(int chatId, int messageId, string text, string parseMode, bool disableWebPagePreview,
-            InlineKeyboardMarkup replyMarkup = null)
+            string replyMarkup = null)
         {
             var nameValueCollection = new NameValueCollection
             {
@@ -137,25 +135,29 @@ namespace Kondor.Service
                 {"disable_web_page_preview", disableWebPagePreview.ToString()},
             };
 
-            if (replyMarkup != null)
+            if (!string.IsNullOrEmpty(replyMarkup))
             {
-                nameValueCollection.Add("reply_markup", replyMarkup.ToJson());
+                nameValueCollection.Add("reply_markup", replyMarkup);
             }
 
             EditMessageText(nameValueCollection);
         }
 
         public void EditMessageText(string inlineMessageId, string text, string parseMode, bool disableWebPagePreview,
-            InlineKeyboardMarkup replyMarkup)
+            string replyMarkup = null)
         {
             var nameValueCollection = new NameValueCollection
             {
                 {"inline_message_id", inlineMessageId},
                 {"text", text},
                 {"parse_mode", parseMode},
-                {"disable_web_page_preview", disableWebPagePreview.ToString()},
-                {"reply_markup", replyMarkup.ToJson()}
+                {"disable_web_page_preview", disableWebPagePreview.ToString()}
             };
+
+            if (!string.IsNullOrEmpty(replyMarkup))
+            {
+                nameValueCollection.Add("reply_markup", replyMarkup);
+            }
 
             EditMessageText(nameValueCollection);
         }

@@ -9,6 +9,6 @@ namespace Kondor.Data.ApiModels
         public bool Ok { get; set; }
 
         [JsonProperty("result")]
-        public JObject Result { get; set; }
+        public object Result { get; set; }
     }
 }

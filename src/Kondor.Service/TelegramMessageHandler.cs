@@ -163,8 +163,11 @@ namespace Kondor.Service
                 {
                     // todo: check if user has entered once
 
-                    _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, "What do you want to do?",
-                        TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                    _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                    {
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = "Learn"},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = "Exam"}
+                    }}));
                 }
                 else
                 {
