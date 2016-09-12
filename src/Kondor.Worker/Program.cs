@@ -9,10 +9,10 @@ namespace YourDictionary.Worker
     {
         static void Main(string[] args)
         {
-            var telegramTask = new TaskManager(1, TelegramJob);
+            var telegramTask = new TaskManager(800, TelegramJob);
             telegramTask.Start();
 
-            var cleanerTask = new TaskManager(120, CleanerJob);
+            var cleanerTask = new TaskManager(120000, CleanerJob);
             cleanerTask.Start();
 
             Console.ReadLine();

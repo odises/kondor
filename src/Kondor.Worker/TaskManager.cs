@@ -11,11 +11,11 @@ namespace YourDictionary.Worker
         /// <summary>
         /// Cleaner task
         /// </summary>
-        /// <param name="interval">In seconds</param>
+        /// <param name="interval">In miliseconds</param>
         /// <param name="method">An action that this task runs</param>
         public TaskManager(int interval, Action method)
         {
-            _timer = new Timer(interval * 1000);
+            _timer = new Timer(interval);
             _timer.Elapsed += Timer_Elapsed;
             _action = method;
         }

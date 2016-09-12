@@ -132,7 +132,8 @@ namespace Kondor.Service
                     }
                     catch (Exception exception)
                     {
-
+                        // log error
+                        Console.WriteLine(exception.Message);
                     }
                     update.Status = UpdateStatus.Processed;
                 }
