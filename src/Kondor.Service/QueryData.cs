@@ -4,12 +4,12 @@ namespace Kondor.Service
 {
     public class QueryData
     {
-        public QueryData(string command, string action, string data, long ticks)
+        public QueryData(string command, string action, string data)
         {
             Command = command;
             Action = action;
             Data = data;
-            Ticks = ticks;
+            Ticks = DateTime.Now.Ticks;
         }
 
         public string Command { get; set; }
@@ -26,19 +26,19 @@ namespace Kondor.Service
             }
             else
             {
-                return new QueryData(splitted[0], splitted[1], splitted[2], string.IsNullOrEmpty(splitted[3]) ? 0 : long.Parse(splitted[3]));
+                return new QueryData(splitted[0], splitted[1], splitted[2]);
             }
         }
 
-        protected static QueryData New(string command, string action, string data, long ticks)
+        protected static QueryData New(string command, string action, string data)
         {
-            var queryData = new QueryData(command, action, data, ticks);
+            var queryData = new QueryData(command, action, data);
             return queryData;
         }
 
-        public static string NewQueryString(string command, string action, string data, long ticks)
+        public static string NewQueryString(string command, string action, string data)
         {
-            var queryData = new QueryData(command, action, data, ticks);
+            var queryData = new QueryData(command, action, data);
             return queryData.ToString();
         }
 

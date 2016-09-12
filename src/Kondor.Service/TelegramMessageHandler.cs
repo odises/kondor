@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using Kondor.Data;
@@ -184,7 +183,7 @@ namespace Kondor.Service
                             new InlineKeyboardButton()
                             {
                                 Text = "Enter",
-                                CallbackData = QueryData.NewQueryString("Enter", null, null, 0)
+                                CallbackData = QueryData.NewQueryString("Enter", null, null)
                             },
                             new InlineKeyboardButton()
                             {
@@ -204,7 +203,7 @@ namespace Kondor.Service
                             new InlineKeyboardButton()
                             {
                                 Text = "Enter",
-                                CallbackData = QueryData.NewQueryString("Enter", null, null, 0)
+                                CallbackData = QueryData.NewQueryString("Enter", null, null)
                             }
                         }
                     }));

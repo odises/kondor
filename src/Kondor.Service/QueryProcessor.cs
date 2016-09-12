@@ -16,7 +16,6 @@ namespace Kondor.Service
         private readonly LeitnerService _leitnerService;
         private readonly List<Tuple<int, Card>> _userActiveCard;
 
-
         public QueryProcessor(UserApi userApi, TelegramApiManager telegramApiManager, LeitnerService leitnerService, List<Tuple<int, Card>> userActiveCard)
         {
             _userApi = userApi;
@@ -73,16 +72,16 @@ namespace Kondor.Service
 
             _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
                     }}));
         }
         protected virtual void ProcessIgnoreCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
             _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
                     }}));
         }
         protected virtual void ProcessEnterCommand(QueryData queryData, CallbackQuery callbackQuery)
@@ -93,8 +92,8 @@ namespace Kondor.Service
 
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
                     }}));
             }
             else
@@ -110,8 +109,8 @@ namespace Kondor.Service
                 var response = newMem.ToMarkdown();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
                     }}));
             }
             catch (IndexOutOfRangeException)
@@ -154,12 +153,12 @@ namespace Kondor.Service
                 new InlineKeyboardButton
                 {
                     Text = "Display",
-                    CallbackData = QueryData.NewQueryString("Display", null, card.Id.ToString(), DateTime.Now.Ticks)
+                    CallbackData = QueryData.NewQueryString("Display", null, card.Id.ToString())
                 },
                 new InlineKeyboardButton
                 {
                     Text = "Ignore",
-                    CallbackData = QueryData.NewQueryString("Ignore", null, null, 0)
+                    CallbackData = QueryData.NewQueryString("Ignore", null, null)
                 }
             }}));
         }
@@ -171,8 +170,8 @@ namespace Kondor.Service
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", true);
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
                     }}));
             }
             else
@@ -182,8 +181,8 @@ namespace Kondor.Service
                 {
                       new []
                       {
-                          new InlineKeyboardButton {Text = "Accept", CallbackData = QueryData.NewQueryString("Answer", "Accept", card.Id.ToString(), DateTime.Now.Ticks)},
-                          new InlineKeyboardButton {Text = "Reject", CallbackData = QueryData.NewQueryString("Answer", "Reject", card.Id.ToString(), DateTime.Now.Ticks)}
+                          new InlineKeyboardButton {Text = "Accept", CallbackData = QueryData.NewQueryString("Answer", "Accept", card.Id.ToString())},
+                          new InlineKeyboardButton {Text = "Reject", CallbackData = QueryData.NewQueryString("Answer", "Reject", card.Id.ToString())}
                       }
                     }));
             }
