@@ -16,6 +16,12 @@ namespace Kondor.Data.DataModel
         public ICollection<Card> Cards { get; set; }
         public ICollection<Example> Examples { get; set; }
         public ICollection<Medium> Media { get; set; }
-        public virtual ApplicationUser User { get; set; } 
+        public virtual ApplicationUser User { get; set; }
+
+        public string ToMarkdown()
+        {
+            var result = $"*{this.MemBody}*\n\n_{this.Definition}_";
+            return result;
+        }
     }
 }

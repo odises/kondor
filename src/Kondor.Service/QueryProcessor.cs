@@ -107,7 +107,7 @@ namespace Kondor.Service
             try
             {
                 var newMem = _leitnerService.GetNewMem(callbackQuery.From.Id);
-                var response = GenerateMemMarkdown(newMem);
+                var response = newMem.ToMarkdown();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
@@ -178,7 +178,7 @@ namespace Kondor.Service
             else
             {
                 var card = _leitnerService.GetCard(int.Parse(queryData.Data));
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), GenerateMemMarkdown(card.Mem), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), card.Mem.ToMarkdown(), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
                 {
                       new []
                       {
@@ -187,11 +187,6 @@ namespace Kondor.Service
                       }
                     }));
             }
-        }
-        protected virtual string GenerateMemMarkdown(Mem mem)
-        {
-            var result = $"*{mem.MemBody}*\n\n_{mem.Definition}_";
-            return result;
         }
     }
 }
