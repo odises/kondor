@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Kondor.Data.DataModel;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Leitner;
@@ -11,12 +13,15 @@ namespace Kondor.Service
         private readonly UserApi _userApi;
         private readonly TelegramApiManager _telegramApiManager;
         private readonly LeitnerService _leitnerService;
+        private readonly List<Tuple<int, Card>> _userActiveCard;
 
-        public QueryProcessor(UserApi userApi, TelegramApiManager telegramApiManager, LeitnerService leitnerService)
+
+        public QueryProcessor(UserApi userApi, TelegramApiManager telegramApiManager, LeitnerService leitnerService, List<Tuple<int, Card>> userActiveCard)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _leitnerService = leitnerService;
+            _userActiveCard = userActiveCard;
         }
 
         public void Process(CallbackQuery callbackQuery)
@@ -90,33 +95,51 @@ namespace Kondor.Service
         }
         protected virtual void ProcessExamCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
-            var datetime = new DateTime(queryData.Ticks);
-            if (datetime < DateTime.Now.AddSeconds(-30))
+            Card card;
+            var userActiveCard = _userActiveCard.FirstOrDefault(p => p.Item1 == callbackQuery.From.Id);
+            if (userActiveCard != null)
             {
-                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", false);
+                card = userActiveCard.Item2;
             }
             else
             {
-                var cardId = int.Parse(queryData.Data);
-                var card = _leitnerService.GetCard(cardId);
-                if (queryData.Action == "Accept")
+                try
                 {
-                    _leitnerService.MoveNext(card);
-                    _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, "The card moved one step forward.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                    card = _leitnerService.GetCardForExam(callbackQuery.From.Id);
+                    _userActiveCard.Add(new Tuple<int, Card>(callbackQuery.From.Id, card));
                 }
-                else
+                catch (IndexOutOfRangeException)
                 {
-                    _leitnerService.MoveBack(card);
-                    _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, "The card moved one step backward.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is not card for exam yet.", true);
+                    return;
                 }
             }
+
+            _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"*{card.Mem.MemBody}*", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new [] {new []
+            {
+                new InlineKeyboardButton
+                {
+                    Text = "Display",
+                    CallbackData = QueryData.NewQueryString("Display", null, null, DateTime.Now.Ticks)
+                },
+                new InlineKeyboardButton()
+                {
+                    Text = "Ignore",
+                    CallbackData = QueryData.NewQueryString("Ignore", null, null, 0)
+                }
+            }}));
         }
         protected virtual void ProcessDisplayCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
             var datetime = new DateTime(queryData.Ticks);
             if (datetime < DateTime.Now.AddSeconds(-30))
             {
-                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", false);
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", true);
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                    {
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                    }}));
             }
             else
             {

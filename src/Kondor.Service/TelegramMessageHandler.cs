@@ -16,11 +16,12 @@ namespace Kondor.Service
     {
         private readonly LeitnerService _leitnerService;
         private readonly string _directory;
-        private readonly List<Tuple<int, Card>> _userActiveCard;
         private readonly string _cipherKey;
         private readonly string _registrationBaseUri;
         private readonly UserApi _userApi;
         private readonly TelegramApiManager _telegramApiManager;
+        private readonly List<Tuple<int, Card>> _userActiveCard;
+
 
         public TelegramMessageHandler(string directory, string cipherKey, string registrationBaseUri, UserApi userApi, LeitnerService leitnerService, TelegramApiManager telegramApiManager)
         {
@@ -145,7 +146,7 @@ namespace Kondor.Service
 
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
-            var queryProcessor = new QueryProcessor(_userApi, _telegramApiManager, _leitnerService);
+            var queryProcessor = new QueryProcessor(_userApi, _telegramApiManager, _leitnerService, _userActiveCard);
             queryProcessor.Process(callbackQuery);
         }
 
