@@ -1,2 +1,2 @@
 # kondor
-A telegram robot which helps users to memorize new vocabularies
+A telegram robot which helps users to memorize new things.
