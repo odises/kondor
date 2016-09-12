@@ -33,8 +33,6 @@ namespace Kondor.Service
             _telegramApiManager = telegramApiManager;
         }
 
-
-
         public void SaveUpdates()
         {
             using (var entities = new EntityContext())
@@ -94,15 +92,7 @@ namespace Kondor.Service
                 entities.SaveChanges();
             }
         }
-        public string GenerateExamMarkdown(Card card)
-        {
-            return GenerateMemMarkdown(card.Mem);
-        }
-        public string GenerateMemMarkdown(Mem mem)
-        {
-            var result = $"*{mem.MemBody}*\n_{mem.MemBody}_";
-            return result;
-        }
+        
         public int ProcessMessages()
         {
             using (var entities = new EntityContext())
@@ -155,72 +145,8 @@ namespace Kondor.Service
 
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
-            var query = callbackQuery.Data.Split(new[] { ':' }, StringSplitOptions.None);
-
-            if (query[0] == "Enter")
-            {
-                if (_userApi.IsRegisteredUser(callbackQuery.From.Id))
-                {
-                    // todo: check if user has entered once
-
-                    _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
-                    {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = "Learn"},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = "Exam"}
-                    }}));
-                }
-                else
-                {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "Your are not registered yet.", true);
-                }
-            }
-            else if (query[0] == "Display")
-            {
-                var ticks = query[1];
-                var cardId = query[2];
-                var datetime = new DateTime(long.Parse(ticks));
-                if (datetime < DateTime.Now.AddSeconds(-30))
-                {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", false);
-                    //SendMessage(callbackQuery.Message.Chat.Id, "This thread is expired.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                }
-                else
-                {
-                    var card = _leitnerService.GetCard(int.Parse(cardId));
-                    _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, GenerateMemMarkdown(card.Mem), TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
-                      new []
-                      {
-                          new InlineKeyboardButton {Text = "Accept", CallbackData = $"Exam:{card.Id}:Accept:{datetime.Ticks}"},
-                          new InlineKeyboardButton {Text = "Reject", CallbackData = $"Exam:{card.Id}:Reject:{datetime.Ticks}"}
-                      }
-                    }));
-                }
-            }
-            else if (query[0] == "Exam")
-            {
-                var ticks = query[3];
-                var datetime = new DateTime(long.Parse(ticks));
-                if (datetime < DateTime.Now.AddSeconds(-30))
-                {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "This thread is expired.", false);
-                }
-                else
-                {
-                    var cardId = int.Parse(query[1]);
-                    var card = _leitnerService.GetCard(cardId);
-                    if (query[2] == "Accept")
-                    {
-                        _leitnerService.MoveNext(card);
-                        _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, "The card moved one step forward.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                    }
-                    else
-                    {
-                        _leitnerService.MoveBack(card);
-                        _telegramApiManager.SendMessage(callbackQuery.Message.Chat.Id, "The card moved one step backward.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                    }
-                }
-            }
+            var queryProcessor = new QueryProcessor(_userApi, _telegramApiManager, _leitnerService);
+            queryProcessor.Process(callbackQuery);
         }
 
         private void ChosenInlineResultProcessor(ChosenInlineResult chosenInlineResult)
@@ -240,10 +166,13 @@ namespace Kondor.Service
 
         public void MessageProcessor(Message message)
         {
+            if (message.Text == "/start")
+            {
+                _telegramApiManager.SendMessage(message.Chat.Id, "Welcome *message* from config");
+            }
+
             if (!_userApi.IsRegisteredUser(message.From.Id))
             {
-                // send introduction message
-
                 // send registration link
                 _telegramApiManager.SendMessage(message.Chat.Id, "Register",
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
@@ -253,7 +182,7 @@ namespace Kondor.Service
                             new InlineKeyboardButton()
                             {
                                 Text = "Enter",
-                                CallbackData = "Enter"
+                                CallbackData = QueryData.NewQueryString("Enter", null, null, 0)
                             },
                             new InlineKeyboardButton()
                             {
@@ -265,60 +194,18 @@ namespace Kondor.Service
             }
             else
             {
-                switch (message.Text)
-                {
-                    case "Learn":
-                        try
+                _telegramApiManager.SendMessage(message.Chat.Id, "You are already registered in our system. Please Enter.",
+                    TelegramHelper.GetInlineKeyboardMarkup(new[]
+                    {
+                        new[]
                         {
-                            var newVocab = _leitnerService.GetNewMem(message.From.Id);
-                            var response = GenerateMemMarkdown(newVocab);
-                            _telegramApiManager.SendMessage(message.Chat.Id, response, TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            _telegramApiManager.SendMessage(message.Chat.Id, "There is no new Mem.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                        }
-                        catch (ValidationException)
-                        {
-                            _telegramApiManager.SendMessage(message.Chat.Id, "UserId is not valid.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                        }
-                        catch (OverflowException)
-                        {
-                            _telegramApiManager.SendMessage(message.Chat.Id, "Maximum card in first position exceeded.", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                        }
-                        break;
-                    case "Exam":
-                        Card card;
-                        var userActiveCard = _userActiveCard.FirstOrDefault(p => p.Item1 == message.From.Id);
-                        if (userActiveCard != null)
-                        {
-                            card = userActiveCard.Item2;
-                        }
-                        else
-                        {
-                            try
+                            new InlineKeyboardButton()
                             {
-                                card = _leitnerService.GetCardForExam(message.From.Id);
-                                _userActiveCard.Add(new Tuple<int, Card>(message.From.Id, card));
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-                                _telegramApiManager.SendMessage(message.Chat.Id, "There is no card for exam yet", TelegramHelper.GenerateReplyKeyboardMarkup("Learn", "Exam"));
-                                break;
+                                Text = "Enter",
+                                CallbackData = QueryData.NewQueryString("Enter", null, null, 0)
                             }
                         }
-                        _telegramApiManager.SendMessage(message.Chat.Id, $"*{card.Mem.MemBody}*", TelegramHelper.GetInlineKeyboardMarkup(new[]
-                        {
-                            new [] {new InlineKeyboardButton
-                            {
-                                Text = "Display Definition",
-                                CallbackData = $"Display:{DateTime.Now.Ticks}:{card.Id}"
-                            }}
-                        }));
-                        break;
-                    case "/start":
-                        break;
-                }
+                    }));
             }
         }
     }
