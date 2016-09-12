@@ -48,7 +48,19 @@ namespace Kondor.Service
                 case "Accept":
                     ProcessAcceptCommand(queryData);
                     break;
+                case "Ignore":
+                    ProcessIgnoreCommand(queryData, callbackQuery);
+                    break;
             }
+        }
+
+        protected virtual void ProcessIgnoreCommand(QueryData queryData, CallbackQuery callbackQuery)
+        {
+            _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                    {
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null, DateTime.Now.Ticks)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null, DateTime.Now.Ticks)}
+                    }}));
         }
 
         protected virtual void ProcessEnterCommand(QueryData queryData, CallbackQuery callbackQuery)
