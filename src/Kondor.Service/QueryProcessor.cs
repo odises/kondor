@@ -53,16 +53,16 @@ namespace Kondor.Service
 
         protected virtual void ProcessAnswerCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
-            var card = _leitnerService.GetCard(int.Parse(queryData.Data));
+            var cardId = int.Parse(queryData.Data);
 
             if (queryData.Action == "Reject")
             {
-                _leitnerService.MoveBack(card);
+                _leitnerService.MoveBack(cardId);
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "Moved back", true);
             }
             else if (queryData.Action == "Accept")
             {
-                _leitnerService.MoveNext(card);
+                _leitnerService.MoveNext(cardId);
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "Moved next", true);
             }
             else

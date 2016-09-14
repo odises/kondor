@@ -146,6 +146,27 @@ namespace Kondor.Service.Leitner
         }
 
         /// <summary>
+        /// Moves the card one step next
+        /// </summary>
+        /// <param name="cardId"></param>
+        public void MoveNext(int cardId)
+        {
+            var card = GetCard(cardId);
+            MoveNext(card);
+        }
+
+        /// <summary>
+        /// Moves the card one step back
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <param name="overStoppingMode"></param>
+        public void MoveBack(int cardId, bool overStoppingMode = false)
+        {
+            var card = GetCard(cardId);
+            MoveBack(card, overStoppingMode);
+        }
+
+        /// <summary>
         /// Moves the card one step back
         /// </summary>
         /// <param name="card"></param>
