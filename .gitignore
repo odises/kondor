@@ -250,3 +250,8 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+
+# Configurations
+src/Kondor.WebApplication/Configurations/
+src/Kondor.Worker/Configurations/
