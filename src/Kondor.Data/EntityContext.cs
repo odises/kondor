@@ -27,7 +27,7 @@ namespace Kondor.Data
     {
         public EntityContext() : base("name=MainEntities", throwIfV1Schema: false)
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EntityContext>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<EntityContext>());
         }
 
         public DbSet<Mem> Mems { get; set; }
