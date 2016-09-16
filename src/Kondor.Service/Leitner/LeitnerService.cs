@@ -100,6 +100,17 @@ namespace Kondor.Service.Leitner
 
             var newCard = GenerateNewCard(Position.First, userId, mem.Id);
 
+
+            foreach (var example in mem.Examples)
+            {
+                _entityContext.ExampleViews.Add(new ExampleView
+                {
+                    ExampleId = example.Id,
+                    UserId = example.Mem.UserId,
+                    Views = 0
+                });
+            }
+
             _entityContext.Cards.Add(newCard);
             _entityContext.SaveChanges();
 
@@ -194,23 +205,21 @@ namespace Kondor.Service.Leitner
 
         public string GetExample(int telegramUserId)
         {
+            var user = GetUserByTelegramId(telegramUserId);
             using (var entities = new EntityContext())
             {
-                var user = entities.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
-                var examples = new List<Example>();
-
-                foreach (var card in user.Cards)
-                {
-                    examples.AddRange(card.Mem.Examples);
-                }
-
-                if (!examples.Any())
+                var example =
+                    entities.ExampleViews.Where(p => p.UserId == user.Id).GroupBy(p => p.Views).OrderBy(p => p.Key).FirstOrDefault().GetRandom();
+                if (example == null)
                 {
                     throw new IndexOutOfRangeException();
                 }
                 else
                 {
-                    return examples.FirstOrDefault().Sentence;
+                    example.Views = example.Views + 1;
+                    entities.SaveChanges();
+
+                    return example.Example.Sentence;
                 }
             }
         }

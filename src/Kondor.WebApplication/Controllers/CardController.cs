@@ -95,6 +95,7 @@ namespace Kondor.WebApplication.Controllers
                 entityContext.Mems.Add(mem);
                 entityContext.SaveChanges();
 
+
                 return RedirectToAction("Index");
             }
             else

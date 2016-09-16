@@ -9,13 +9,22 @@ namespace Kondor.Service.Extensions
         /// <summary>
         /// Gets a random element of source sequence
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T GetRandom<T>(this IEnumerable<T> source)
+        public static TSource GetRandom<TSource>(this IEnumerable<TSource> source)
         {
-            var enumerable = source as IList<T> ?? source.ToList();
+            if (source == null)
+            {
+                return default(TSource);
+            }
+
+            var enumerable = source as IList<TSource> ?? source.ToList();
             var count = enumerable.Count;
+            if (count == 0)
+            {
+                return default(TSource);
+            }
             var rand = new Random();
             var randomNumber = rand.Next(0, count - 1);
             return enumerable.ElementAt(randomNumber);

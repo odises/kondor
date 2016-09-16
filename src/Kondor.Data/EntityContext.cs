@@ -14,8 +14,8 @@ namespace Kondor.Data
         public DbSet<Mem> Mems { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Update> Updates { get; set; }
-
         public DbSet<Example> Examples { get; set; }
+        public DbSet<ExampleView> ExampleViews { get; set; }
 
         public static EntityContext Create()
         {

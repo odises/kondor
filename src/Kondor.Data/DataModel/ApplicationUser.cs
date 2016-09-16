@@ -20,6 +20,7 @@ namespace Kondor.Data.DataModel
         public int TelegramUserId { get; set; }
         public int WelcomeMessageId { get; set; }
 
-        public virtual ICollection<Card> Cards { get; set; }    
+        public virtual ICollection<Card> Cards { get; set; }
+        public virtual ICollection<ExampleView> ExampleViews { get; set; } 
     }
 }

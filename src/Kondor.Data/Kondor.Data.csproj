@@ -95,6 +95,7 @@
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
     <Compile Include="DataModel\ApplicationUser.cs" />
     <Compile Include="DataModel\Card.cs" />
+    <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="DataModel\Example.cs" />
@@ -115,6 +116,10 @@
     <Compile Include="Migrations\201609160401145_WelcomeMessageId.cs" />
     <Compile Include="Migrations\201609160401145_WelcomeMessageId.Designer.cs">
       <DependentUpon>201609160401145_WelcomeMessageId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609160857244_ExampleViewAdded.cs" />
+    <Compile Include="Migrations\201609160857244_ExampleViewAdded.Designer.cs">
+      <DependentUpon>201609160857244_ExampleViewAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -152,6 +157,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609160401145_WelcomeMessageId.resx">
       <DependentUpon>201609160401145_WelcomeMessageId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609160857244_ExampleViewAdded.resx">
+      <DependentUpon>201609160857244_ExampleViewAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
