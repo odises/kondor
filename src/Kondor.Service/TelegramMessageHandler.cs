@@ -169,7 +169,16 @@ namespace Kondor.Service
         {
             if (message.Text == "/start")
             {
-                _telegramApiManager.SendMessage(message.Chat.Id, "Welcome *message* from config");
+                var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, "Welcome *message* from config");
+                using (var entities = new EntityContext())
+                {
+                    var user = entities.Users.FirstOrDefault(p => p.TelegramUserId == message.From.Id);
+                    if (user != null)
+                    {
+                        user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
+                        entities.SaveChanges();
+                    }
+                }
             }
 
             if (!_userApi.IsRegisteredUser(message.From.Id))

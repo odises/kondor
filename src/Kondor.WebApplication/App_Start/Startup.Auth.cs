@@ -1,5 +1,6 @@
 ﻿using System;
 using Kondor.Data;
+using Kondor.Data.DataModel;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;

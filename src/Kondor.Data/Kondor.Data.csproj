@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
+    <Compile Include="DataModel\ApplicationUser.cs" />
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="EntityContext.cs" />
@@ -110,6 +111,10 @@
     <Compile Include="Migrations\201609090321083_InitialCreate.cs" />
     <Compile Include="Migrations\201609090321083_InitialCreate.Designer.cs">
       <DependentUpon>201609090321083_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609160401145_WelcomeMessageId.cs" />
+    <Compile Include="Migrations\201609160401145_WelcomeMessageId.Designer.cs">
+      <DependentUpon>201609160401145_WelcomeMessageId.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -144,6 +149,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201609090321083_InitialCreate.resx">
       <DependentUpon>201609090321083_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609160401145_WelcomeMessageId.resx">
+      <DependentUpon>201609160401145_WelcomeMessageId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
