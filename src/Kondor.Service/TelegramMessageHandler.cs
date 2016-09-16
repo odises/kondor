@@ -209,5 +209,23 @@ namespace Kondor.Service
                     }));
             }
         }
+
+        public void RemoveBuffer()
+        {
+            foreach (var key in MessageBuffer.Instance.Data.Keys)
+            {
+                var ticks = long.Parse(MessageBuffer.Instance.Data[key].Get("datetime"));
+                var datetime = new DateTime(ticks);
+                if (datetime < DateTime.Now.AddSeconds(-30))
+                {
+                    var messageId = MessageBuffer.Instance.Data[key].Get("messageId");
+                    _telegramApiManager.EditMessageText(key, int.Parse(messageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                    {
+                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
+                    }}), false);
+                }
+            }
+        }
     }
 }

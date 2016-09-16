@@ -15,6 +15,9 @@ namespace YourDictionary.Worker
             var cleanerTask = new TaskManager(120000, CleanerJob);
             cleanerTask.Start();
 
+            var bufferCleaner = new TaskManager(1000, ClearBuffer);
+            bufferCleaner.Start();
+
             Console.ReadLine();
         }
 
@@ -46,6 +49,20 @@ namespace YourDictionary.Worker
             {
                 Console.WriteLine("Cleaner:");
                 Console.WriteLine(exception.Message);
+            }
+        }
+
+        private static void ClearBuffer()
+        {
+            try
+            {
+                var telegramMessageHandler = new TelegramMessageHandler(@"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute), new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"));
+                telegramMessageHandler.RemoveBuffer();
+            }
+            catch (Exception)
+            {
+                
+                throw;
             }
         }
     }

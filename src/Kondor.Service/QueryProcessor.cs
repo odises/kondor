@@ -74,7 +74,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+                    }}), false);
         }
         protected virtual void ProcessIgnoreCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
@@ -82,7 +82,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+                    }}), false);
         }
         protected virtual void ProcessEnterCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
@@ -94,7 +94,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+                    }}), false);
             }
             else
             {
@@ -172,7 +172,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+                    }}), false);
             }
             else
             {
