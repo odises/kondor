@@ -92,7 +92,7 @@ namespace Kondor.Service
                 entities.SaveChanges();
             }
         }
-        
+
         public int ProcessMessages()
         {
             using (var entities = new EntityContext())
@@ -189,12 +189,12 @@ namespace Kondor.Service
                     {
                         new[]
                         {
-                            new InlineKeyboardButton()
+                            new InlineKeyboardButton
                             {
                                 Text = "Enter",
                                 CallbackData = QueryData.NewQueryString("Enter", null, null)
                             },
-                            new InlineKeyboardButton()
+                            new InlineKeyboardButton
                             {
                                 Text = "Register",
                                 Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, _registrationBaseUri, _cipherKey)
@@ -204,6 +204,20 @@ namespace Kondor.Service
             }
             else
             {
+                _telegramApiManager.SendMessage(message.Chat.Id,
+                    "*Example Board*\n\nIn this board you can see a lot of example by tapping on Refresh key.",
+                    TelegramHelper.GetInlineKeyboardMarkup(new[]
+                    {
+                        new[]
+                        {
+                            new InlineKeyboardButton
+                            {
+                                Text = "Refresh",
+                                CallbackData = QueryData.NewQueryString("Refresh", null, null)
+                            }
+                        }
+                    }));
+
                 _telegramApiManager.SendMessage(message.Chat.Id, "You are already registered in our system. Please Enter.",
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                     {

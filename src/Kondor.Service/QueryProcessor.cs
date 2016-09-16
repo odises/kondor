@@ -90,8 +90,6 @@ namespace Kondor.Service
         {
             if (_userApi.IsRegisteredUser(callbackQuery.From.Id))
             {
-                // todo: check if user has entered once
-
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), "What do you want to do?", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
@@ -111,8 +109,9 @@ namespace Kondor.Service
                 var response = newMem.ToMarkdown();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Back", CallbackData = QueryData.NewQueryString("Back", null, null)},
-                        new InlineKeyboardButton {Text = "Images", Url = $"http://brainium.ir/mem/{newMem.Id}/images"}
+                        new InlineKeyboardButton {Text = "Images", Url = $"http://brainium.ir/mem/{newMem.Id}/images"},
+                        new InlineKeyboardButton {Text = "Back", CallbackData = QueryData.NewQueryString("Back", null, null)}
+
                     }}));
             }
             catch (IndexOutOfRangeException)
