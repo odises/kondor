@@ -213,7 +213,7 @@ namespace Kondor.Service
                             new InlineKeyboardButton
                             {
                                 Text = "Refresh",
-                                CallbackData = QueryData.NewQueryString("Refresh", null, null)
+                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
                             }
                         }
                     }));

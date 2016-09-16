@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
@@ -94,7 +96,7 @@ namespace Kondor.Service.Leitner
             }
 
             var mem = mems.GetRandom();
-            
+
 
             var newCard = GenerateNewCard(Position.First, userId, mem.Id);
 
@@ -188,6 +190,29 @@ namespace Kondor.Service.Leitner
 
             _entityContext.Cards.Add(newCard);
             _entityContext.SaveChanges();
+        }
+
+        public string GetExample(int telegramUserId)
+        {
+            using (var entities = new EntityContext())
+            {
+                var user = entities.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
+                var examples = new List<Example>();
+
+                foreach (var card in user.Cards)
+                {
+                    examples.AddRange(card.Mem.Examples);
+                }
+
+                if (!examples.Any())
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                else
+                {
+                    return examples.FirstOrDefault().Sentence;
+                }
+            }
         }
 
         /// <summary>
@@ -327,6 +352,19 @@ namespace Kondor.Service.Leitner
             else
             {
                 return user.Id;
+            }
+        }
+
+        protected virtual ApplicationUser GetUserByTelegramId(int telegramUserId)
+        {
+            var user = _entityContext.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
+            if (user == null)
+            {
+                throw new ValidationException();
+            }
+            else
+            {
+                return user;
             }
         }
     }

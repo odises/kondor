@@ -15,6 +15,8 @@ namespace Kondor.Data
         public DbSet<Card> Cards { get; set; }
         public DbSet<Update> Updates { get; set; }
 
+        public DbSet<Example> Examples { get; set; }
+
         public static EntityContext Create()
         {
             return new EntityContext();

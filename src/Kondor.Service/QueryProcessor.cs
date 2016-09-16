@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Leitner;
@@ -48,6 +49,33 @@ namespace Kondor.Service
                 case "Back":
                     ProcessBackCommand(callbackQuery);
                     break;
+                case "ExampleBoardRefresh":
+                    ProcessExampleBoardRefreshCommand(queryData, callbackQuery);
+                    break;
+            }
+        }
+
+        protected virtual void ProcessExampleBoardRefreshCommand(QueryData queryData, CallbackQuery callbackQuery)
+        {
+            try
+            {
+                var example = _leitnerService.GetExample(callbackQuery.From.Id);
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId),
+                    $"*Example Board*\n\n{example}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
+                {
+                        new[]
+                        {
+                            new InlineKeyboardButton
+                            {
+                                Text = "Refresh",
+                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
+                            }
+                        }
+                }));
+            }
+            catch (IndexOutOfRangeException)
+            {
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is not example yet.", true);
             }
         }
 
