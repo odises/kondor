@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Web;
 using Kondor.Data.ApiModels;
@@ -11,29 +9,6 @@ using Newtonsoft.Json;
 
 namespace Kondor.Service
 {
-    public class MessageBuffer
-    {
-        private static MessageBuffer _instance;
-        public Dictionary<int, NameValueCollection> Data;
-
-        private MessageBuffer()
-        {
-            Data = new Dictionary<int, NameValueCollection>();
-        }
-
-        public static MessageBuffer Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new MessageBuffer();
-                }
-                return _instance;
-            }
-        }
-    }
-
     public class TelegramApiManager
     {
         private readonly string _apiKey;
@@ -149,7 +124,7 @@ namespace Kondor.Service
         }
 
         public void EditMessageText(int chatId, int messageId, string text, string parseMode, bool disableWebPagePreview,
-            string replyMarkup = null, bool buffer = true)
+            string replyMarkup = null)
         {
             var nameValueCollection = new NameValueCollection
             {
@@ -165,16 +140,6 @@ namespace Kondor.Service
                 nameValueCollection.Add("reply_markup", replyMarkup);
             }
 
-
-            if (MessageBuffer.Instance.Data.ContainsKey(chatId))
-            {
-                MessageBuffer.Instance.Data.Remove(chatId);
-            }
-
-            if (buffer)
-            {
-                MessageBuffer.Instance.Data.Add(chatId, new NameValueCollection { { "messageId", messageId.ToString() }, { "datetime", DateTime.Now.Ticks.ToString() } });
-            }
 
             EditMessageText(nameValueCollection);
         }

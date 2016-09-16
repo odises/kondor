@@ -74,7 +74,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}), false);
+                    }}));
         }
         protected virtual void ProcessIgnoreCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
@@ -82,7 +82,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}), false);
+                    }}));
         }
         protected virtual void ProcessEnterCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
@@ -94,7 +94,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}), false);
+                    }}));
             }
             else
             {
@@ -109,8 +109,8 @@ namespace Kondor.Service
                 var response = newMem.ToMarkdown();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
-                        new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
+                        new InlineKeyboardButton {Text = "Back", CallbackData = QueryData.NewQueryString("Back", null, null)},
+                        new InlineKeyboardButton {Text = "Images", Url = $"http://brainium.ir/mem/{newMem.Id}/images"}
                     }}));
             }
             catch (IndexOutOfRangeException)
@@ -172,7 +172,7 @@ namespace Kondor.Service
                     {
                         new InlineKeyboardButton {Text = "Learn", CallbackData = QueryData.NewQueryString("Learn", null, null)},
                         new InlineKeyboardButton {Text = "Exam", CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}), false);
+                    }}));
             }
             else
             {
