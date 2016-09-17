@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
@@ -97,15 +98,12 @@ namespace Kondor.Service
                 queryString["callback_query_id"] = callbackQueryId;
                 queryString["text"] = text;
                 queryString["show_alert"] = showAlert.ToString();
-                var nameValueCollection = new NameValueCollection
-            {
-                {"callback_query_id", callbackQueryId},
-                {"text", text},
-                {"show_alert", showAlert.ToString()}
-            };
+
                 var baseUri = $"https://api.telegram.org/{_apiKey}/answerCallbackQuery";
 
-                var uri = baseUri + "?" + queryString.ToString();
+                var query = Uri.EscapeUriString(HttpUtility.UrlDecode(queryString.ToString()));
+
+                var uri = $"{baseUri}?{query}";
 
                 var webClient = new WebClient();
                 var response = webClient.DownloadString(uri);
@@ -177,7 +175,9 @@ namespace Kondor.Service
 
                 var baseUri = $"https://api.telegram.org/{_apiKey}/editMessageText";
 
-                var uri = baseUri + "?" + queryString.ToString();
+                var query = Uri.EscapeUriString(HttpUtility.UrlDecode(queryString.ToString()));
+
+                var uri = $"{baseUri}?{query}";
 
                 var webClient = new WebClient();
                 var response = webClient.DownloadString(uri);
