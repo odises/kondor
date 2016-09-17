@@ -103,12 +103,15 @@ namespace Kondor.Service.Leitner
 
             foreach (var example in mem.Examples)
             {
-                _entityContext.ExampleViews.Add(new ExampleView
+                if (!_entityContext.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Mem.UserId))
                 {
-                    ExampleId = example.Id,
-                    UserId = example.Mem.UserId,
-                    Views = 0
-                });
+                    _entityContext.ExampleViews.Add(new ExampleView
+                    {
+                        ExampleId = example.Id,
+                        UserId = example.Mem.UserId,
+                        Views = 0
+                    });
+                }
             }
 
             _entityContext.Cards.Add(newCard);
