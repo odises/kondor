@@ -211,18 +211,20 @@ namespace Kondor.Service.Leitner
             var user = GetUserByTelegramId(telegramUserId);
             using (var entities = new EntityContext())
             {
-                var example =
+                var exampleView =
                     entities.ExampleViews.Where(p => p.UserId == user.Id).GroupBy(p => p.Views).OrderBy(p => p.Key).FirstOrDefault().GetRandom();
-                if (example == null)
+                if (exampleView == null)
                 {
                     throw new IndexOutOfRangeException();
                 }
                 else
                 {
-                    example.Views = example.Views + 1;
+                    exampleView.Views = exampleView.Views + 1;
                     entities.SaveChanges();
 
-                    return example.Example.Sentence;
+                    var originalSentence = exampleView.Example.Sentence;
+                    var result = originalSentence.ToBolder(exampleView.Example.Mem.MemBody);
+                    return result;
                 }
             }
         }
