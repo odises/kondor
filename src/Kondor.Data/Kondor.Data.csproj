@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryData.cs" />
     <Compile Include="TelegramTypes\CallbackQuery.cs" />
     <Compile Include="TelegramTypes\ChosenInlineResult.cs" />
     <Compile Include="TelegramTypes\InlineQuery.cs" />

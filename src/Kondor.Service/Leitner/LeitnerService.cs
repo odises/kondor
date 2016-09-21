@@ -10,7 +10,7 @@ using Kondor.Service.Extensions;
 
 namespace Kondor.Service.Leitner
 {
-    public class LeitnerService
+    public class LeitnerService : ILeitnerService
     {
         private readonly EntityContext _entityContext;
         protected int OverStoppingTolerance;

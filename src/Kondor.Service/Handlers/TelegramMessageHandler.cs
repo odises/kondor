@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using Kondor.Data;
@@ -9,30 +7,30 @@ using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Leitner;
+using Kondor.Service.Managers;
+using Kondor.Service.Processors;
 using Newtonsoft.Json;
 
-namespace Kondor.Service
+namespace Kondor.Service.Handlers
 {
-    public class TelegramMessageHandler
+    public class TelegramMessageHandler : ITelegramMessageHandler
     {
-        private readonly LeitnerService _leitnerService;
-        private readonly string _directory;
+        private readonly ILeitnerService _leitnerService;
         private readonly string _cipherKey;
         private readonly string _registrationBaseUri;
-        private readonly UserApi _userApi;
-        private readonly TelegramApiManager _telegramApiManager;
-        private readonly List<Tuple<int, Card>> _userActiveCard;
+        private readonly IUserApi _userApi;
+        private readonly ITelegramApiManager _telegramApiManager;
+        private readonly IList<Tuple<int, Card>> _userActiveCard;
 
 
-        public TelegramMessageHandler(string directory, string cipherKey, string registrationBaseUri, UserApi userApi, LeitnerService leitnerService, TelegramApiManager telegramApiManager)
+        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ILeitnerService leitnerService, ITelegramApiManager telegramApiManager, IList<Tuple<int, Card>> userActiveCard)
         {
-            _userActiveCard = new List<Tuple<int, Card>>();
-            _directory = directory;
             _cipherKey = cipherKey;
             _registrationBaseUri = registrationBaseUri;
             _userApi = userApi;
             _leitnerService = leitnerService;
             _telegramApiManager = telegramApiManager;
+            _userActiveCard = userActiveCard;
             _telegramApiManager.MessageSent += _telegramApiManager_MessageSent;
         }
 

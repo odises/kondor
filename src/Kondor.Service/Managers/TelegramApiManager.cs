@@ -8,7 +8,7 @@ using Kondor.Data.ApiModels;
 using Kondor.Data.TelegramTypes;
 using Newtonsoft.Json;
 
-namespace Kondor.Service
+namespace Kondor.Service.Managers
 {
     public class MessageSentEventArgs : EventArgs
     {
@@ -16,7 +16,7 @@ namespace Kondor.Service
         public int ChatId { get; set; }
     }
 
-    public class TelegramApiManager
+    public class TelegramApiManager : ITelegramApiManager
     {
         private readonly string _apiKey;
 

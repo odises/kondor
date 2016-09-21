@@ -2,9 +2,9 @@
 using Kondor.Data;
 using Kondor.Service.Extensions;
 
-namespace Kondor.Service
+namespace Kondor.Service.Managers
 {
-    public class UserApi
+    public class UserApi : IUserApi
     {
         public bool IsRegisteredUser(int telegramUserId)
         {

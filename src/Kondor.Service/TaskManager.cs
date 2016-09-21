@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Timers;
 
-namespace YourDictionary.Worker
+namespace Kondor.Service
 {
-    public class TaskManager
+    public class TaskManager : ITaskManager
     {
-        private readonly Timer _timer;
-        private readonly Action _action;
+        private Timer _timer;
+        private Action _action;
 
-        /// <summary>
-        /// Cleaner task
-        /// </summary>
-        /// <param name="interval">In miliseconds</param>
-        /// <param name="method">An action that this task runs</param>
-        public TaskManager(int interval, Action method)
+        public void Init(int interval, Action method)
         {
             _timer = new Timer(interval);
             _timer.Elapsed += Timer_Elapsed;

@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Leitner;
+using Kondor.Service.Managers;
 
-namespace Kondor.Service
+namespace Kondor.Service.Processors
 {
-    public class QueryProcessor
+    public class QueryProcessor : IQueryProcessor
     {
-        private readonly UserApi _userApi;
-        private readonly TelegramApiManager _telegramApiManager;
-        private readonly LeitnerService _leitnerService;
-        private readonly List<Tuple<int, Card>> _userActiveCard;
+        private readonly IUserApi _userApi;
+        private readonly ITelegramApiManager _telegramApiManager;
+        private readonly ILeitnerService _leitnerService;
+        private readonly IList<Tuple<int, Card>> _userActiveCard;
 
-        public QueryProcessor(UserApi userApi, TelegramApiManager telegramApiManager, LeitnerService leitnerService, List<Tuple<int, Card>> userActiveCard)
+        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService, IList<Tuple<int, Card>> userActiveCard)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;

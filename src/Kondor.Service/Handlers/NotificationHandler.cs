@@ -5,14 +5,15 @@ using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
+using Kondor.Service.Managers;
 
-namespace Kondor.Service
+namespace Kondor.Service.Handlers
 {
-    public class NotificationHandler
+    public class NotificationHandler : INotificationHandler
     {
-        private readonly TelegramApiManager _telegramApiManager;
+        private readonly ITelegramApiManager _telegramApiManager;
 
-        public NotificationHandler(TelegramApiManager telegramApiManager)
+        public NotificationHandler(ITelegramApiManager telegramApiManager)
         {
             _telegramApiManager = telegramApiManager;
         }
