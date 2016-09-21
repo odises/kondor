@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Kondor.Data.Enums;
 using Kondor.Service;
 using Kondor.Service.Leitner;
@@ -15,8 +16,17 @@ namespace YourDictionary.Worker
             var cleanerTask = new TaskManager(120000, CleanerJob);
             cleanerTask.Start();
 
+            var notificationTask = new TaskManager(5000, NotificationJob);
+            notificationTask.Start();
 
             Console.ReadLine();
+        }
+
+        private static void NotificationJob()
+        {
+            var telegramMessageHandler = new TelegramMessageHandler(@"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute), new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"));
+            telegramMessageHandler.SendNotification();
+            Console.WriteLine("Notification");
         }
 
         private static void TelegramJob()

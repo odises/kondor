@@ -16,6 +16,7 @@ namespace Kondor.Data
         public DbSet<Update> Updates { get; set; }
         public DbSet<Example> Examples { get; set; }
         public DbSet<ExampleView> ExampleViews { get; set; }
+        public DbSet<Response> Responses { get; set; }
 
         public static EntityContext Create()
         {

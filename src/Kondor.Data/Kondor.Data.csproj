@@ -97,11 +97,13 @@
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
+    <Compile Include="DataModel\Response.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="DataModel\Example.cs" />
     <Compile Include="DataModel\Medium.cs" />
     <Compile Include="DataModel\Update.cs" />
     <Compile Include="DataModel\Mem.cs" />
+    <Compile Include="Enums\ResponseStatus.cs" />
     <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />
@@ -120,6 +122,14 @@
     <Compile Include="Migrations\201609160857244_ExampleViewAdded.cs" />
     <Compile Include="Migrations\201609160857244_ExampleViewAdded.Designer.cs">
       <DependentUpon>201609160857244_ExampleViewAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609210809585_ResponseAdded.cs" />
+    <Compile Include="Migrations\201609210809585_ResponseAdded.Designer.cs">
+      <DependentUpon>201609210809585_ResponseAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609210837520_ResponseChanged.cs" />
+    <Compile Include="Migrations\201609210837520_ResponseChanged.Designer.cs">
+      <DependentUpon>201609210837520_ResponseChanged.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -160,6 +170,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609160857244_ExampleViewAdded.resx">
       <DependentUpon>201609160857244_ExampleViewAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609210809585_ResponseAdded.resx">
+      <DependentUpon>201609210809585_ResponseAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609210837520_ResponseChanged.resx">
+      <DependentUpon>201609210837520_ResponseChanged.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

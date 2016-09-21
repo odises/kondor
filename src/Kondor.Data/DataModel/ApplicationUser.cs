@@ -21,6 +21,6 @@ namespace Kondor.Data.DataModel
         public int WelcomeMessageId { get; set; }
 
         public virtual ICollection<Card> Cards { get; set; }
-        public virtual ICollection<ExampleView> ExampleViews { get; set; } 
+        public virtual ICollection<ExampleView> ExampleViews { get; set; }
     }
 }

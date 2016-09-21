@@ -10,9 +10,22 @@ using Newtonsoft.Json;
 
 namespace Kondor.Service
 {
+    public class MessageSentEventArgs : EventArgs
+    {
+        public string MessageId { get; set; }
+        public int ChatId { get; set; }
+    }
+
     public class TelegramApiManager
     {
         private readonly string _apiKey;
+
+        public event EventHandler<MessageSentEventArgs> MessageSent;
+
+        protected virtual void OnMessageSent(MessageSentEventArgs e)
+        {
+            MessageSent?.Invoke(this, e);
+        }
 
         public TelegramApiManager(string apiKey)
         {
@@ -68,7 +81,14 @@ namespace Kondor.Service
 
                 if (parsedResponse.Ok)
                 {
-                    return JsonConvert.DeserializeObject<Message>(parsedResponse.Result.ToString());
+                    var message = JsonConvert.DeserializeObject<Message>(parsedResponse.Result.ToString());
+                    OnMessageSent(new MessageSentEventArgs
+                    {
+                        MessageId = message.MessageId,
+                        ChatId = message.Chat.Id
+                    });
+
+                    return message;
                 }
                 else
                 {
@@ -194,5 +214,7 @@ namespace Kondor.Service
                 }
             }
         }
+
+        
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using Kondor.Data;
@@ -31,6 +33,22 @@ namespace Kondor.Service
             _userApi = userApi;
             _leitnerService = leitnerService;
             _telegramApiManager = telegramApiManager;
+            _telegramApiManager.MessageSent += _telegramApiManager_MessageSent;
+        }
+
+        private void _telegramApiManager_MessageSent(object sender, MessageSentEventArgs e)
+        {
+            using (var entites = new EntityContext())
+            {
+                entites.Responses.Add(new Response
+                {
+                    ChatId = e.ChatId,
+                    MessageId = e.MessageId,
+                    Status = ResponseStatus.New
+                });
+
+                entites.SaveChanges();
+            }
         }
 
         public void SaveUpdates()
@@ -230,6 +248,47 @@ namespace Kondor.Service
                             }
                         }
                     }));
+            }
+        }
+
+        public void SendNotification()
+        {
+            using (var entities = new EntityContext())
+            {
+                var responseGroups = entities.Responses.Where(p => p.Status == ResponseStatus.New).GroupBy(p => p.ChatId).ToList();
+
+                foreach (var group in responseGroups)
+                {
+                    var temp = group.FirstOrDefault();
+
+                    foreach (var response in group)
+                    {
+                        _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), "\u2705", "Markdown", true);
+
+                        response.Status = ResponseStatus.Removed;
+                        entities.Entry(response).State = EntityState.Modified;
+                    }
+
+                    entities.SaveChanges();
+
+                    _telegramApiManager.SendMessage(temp.ChatId, "What do you want to do?",
+                        TelegramHelper.GetInlineKeyboardMarkup(new[]
+                        {
+                            new[]
+                            {
+                                new InlineKeyboardButton
+                                {
+                                    Text = "Learn",
+                                    CallbackData = QueryData.NewQueryString("Learn", null, null)
+                                },
+                                new InlineKeyboardButton
+                                {
+                                    Text = "Exam",
+                                    CallbackData = QueryData.NewQueryString("Exam", null, null)
+                                }
+                            }
+                        }));
+                }
             }
         }
     }
