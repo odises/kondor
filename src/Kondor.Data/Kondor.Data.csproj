@@ -97,6 +97,7 @@
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
+    <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
     <Compile Include="EntityContext.cs" />
     <Compile Include="DataModel\Example.cs" />
@@ -130,6 +131,10 @@
     <Compile Include="Migrations\201609210837520_ResponseChanged.cs" />
     <Compile Include="Migrations\201609210837520_ResponseChanged.Designer.cs">
       <DependentUpon>201609210837520_ResponseChanged.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609211030329_NotificationAdded.cs" />
+    <Compile Include="Migrations\201609211030329_NotificationAdded.Designer.cs">
+      <DependentUpon>201609211030329_NotificationAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -176,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609210837520_ResponseChanged.resx">
       <DependentUpon>201609210837520_ResponseChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609211030329_NotificationAdded.resx">
+      <DependentUpon>201609211030329_NotificationAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

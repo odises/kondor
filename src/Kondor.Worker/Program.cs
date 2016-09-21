@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Kondor.Data.Enums;
 using Kondor.Service;
 using Kondor.Service.Leitner;
@@ -21,14 +20,12 @@ namespace YourDictionary.Worker
 
             Console.ReadLine();
         }
-
         private static void NotificationJob()
         {
-            var telegramMessageHandler = new TelegramMessageHandler(@"c:\test", "testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute), new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"));
-            telegramMessageHandler.SendNotification();
+            var notificationHandler = new NotificationHandler(new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"));
+            notificationHandler.SendNotification();
             Console.WriteLine("Notification");
         }
-
         private static void TelegramJob()
         {
             try
@@ -44,7 +41,6 @@ namespace YourDictionary.Worker
                 Console.WriteLine(exception.Message);
             }
         }
-
         private static void CleanerJob()
         {
             try
