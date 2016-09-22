@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Kondor.Data.TelegramTypes;
-using Kondor.Service;
 
 namespace Kondor.Test
 {
