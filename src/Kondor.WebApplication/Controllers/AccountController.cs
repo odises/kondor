@@ -18,15 +18,18 @@ namespace Kondor.WebApplication.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly IDbContext _context;
 
-        public AccountController()
+        public AccountController(IDbContext context)
         {
+            _context = context;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDbContext context)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _context = context;
         }
 
         public ApplicationSignInManager SignInManager
@@ -173,8 +176,8 @@ namespace Kondor.WebApplication.Controllers
                 try
                 {
                     var parsedTelegramUserId = int.Parse(telegramUserId);
-                    var entityContext = new EntityContext();
-                    if (entityContext.Users.Any(p => p.TelegramUserId == parsedTelegramUserId))
+                    
+                    if (_context.Set<ApplicationUser>().Any(p => p.TelegramUserId == parsedTelegramUserId))
                     {
                         ModelState.AddModelError("Username", validationErrorMessage);
                     }

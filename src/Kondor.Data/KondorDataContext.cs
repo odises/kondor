@@ -4,11 +4,11 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Kondor.Data
 {
-    public class EntityContext : IdentityDbContext<ApplicationUser>
+    public class KondorDataContext : IdentityDbContext<ApplicationUser>, IDbContext
     {
-        public EntityContext() : base("name=MainEntities", throwIfV1Schema: false)
+        public KondorDataContext() : base("name=MainEntities", throwIfV1Schema: false)
         {
-            Database.SetInitializer(new CreateDatabaseIfNotExists<EntityContext>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<KondorDataContext>());
         }
 
         public DbSet<Mem> Mems { get; set; }
@@ -18,10 +18,11 @@ namespace Kondor.Data
         public DbSet<ExampleView> ExampleViews { get; set; }
         public DbSet<Response> Responses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        
 
-        public static EntityContext Create()
+        public static KondorDataContext Create()
         {
-            return new EntityContext();
+            return new KondorDataContext();
         }
     }
 }

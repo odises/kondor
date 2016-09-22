@@ -13,6 +13,12 @@ namespace Kondor.WebApplication.Controllers
 {
     public class CardController : Controller
     {
+        private readonly IDbContext _context;
+        public CardController(IDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: Card
         public ActionResult Index()
         {
@@ -64,7 +70,7 @@ namespace Kondor.WebApplication.Controllers
                 }
 
 
-                var entityContext = new EntityContext();
+                
                 var mem = new Mem
                 {
                     MemBody = model.FrontSide,
@@ -92,8 +98,8 @@ namespace Kondor.WebApplication.Controllers
                     }
                 }
 
-                entityContext.Mems.Add(mem);
-                entityContext.SaveChanges();
+                _context.Mems.Add(mem);
+                _context.SaveChanges();
 
 
                 return RedirectToAction("Index");
@@ -110,8 +116,8 @@ namespace Kondor.WebApplication.Controllers
         {
             if (!string.IsNullOrEmpty(id))
             {
-                var entityContext = new EntityContext();
-                var result = entityContext
+                
+                var result = _context
                     .Mems
                     .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
                     .ToList();

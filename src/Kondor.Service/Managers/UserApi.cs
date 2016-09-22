@@ -1,15 +1,22 @@
 ﻿using System.Linq;
 using Kondor.Data;
+using Kondor.Data.DataModel;
 using Kondor.Service.Extensions;
 
 namespace Kondor.Service.Managers
 {
     public class UserApi : IUserApi
     {
+        private readonly IDbContext _context;
+
+        public UserApi(IDbContext context)
+        {
+            _context = context;
+        }
+
         public bool IsRegisteredUser(int telegramUserId)
         {
-            var entityContext = new EntityContext();
-            if (entityContext.Users.Any(p => p.TelegramUserId == telegramUserId))
+            if (_context.Set<ApplicationUser>().Any(p => p.TelegramUserId == telegramUserId))
             {
                 return true;
             }

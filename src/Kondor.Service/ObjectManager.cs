@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Autofac;
 using Autofac.Core;
+using Kondor.Data;
 using Kondor.Data.Enums;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
@@ -39,7 +40,7 @@ namespace Kondor.Service
 
             builder.RegisterType<UserApi>().As<IUserApi>();
 
-            builder.RegisterType<TelegramMessageHandler>().As<ITelegramMessageHandler>().WithParameters(new List<Parameter>()
+            builder.RegisterType<TelegramMessageHandler>().As<ITelegramMessageHandler>().WithParameters(new List<Parameter>
             {
                 new NamedParameter("cipherKey", "testkey"),
                 new NamedParameter("registrationBaseUri", "http://www.brainium.ir/account/newuser")
@@ -49,6 +50,7 @@ namespace Kondor.Service
 
             builder.RegisterType<Application>().As<IApplication>();
 
+            builder.RegisterType<KondorDataContext>().As<IDbContext>();
 
             return builder.Build();
         }

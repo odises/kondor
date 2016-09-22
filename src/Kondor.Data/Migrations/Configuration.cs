@@ -5,15 +5,15 @@ namespace Kondor.Data.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Kondor.Data.EntityContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Kondor.Data.KondorDataContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "Kondor.Data.EntityContext";
+            ContextKey = "Kondor.Data.KondorDataContext";
         }
 
-        protected override void Seed(Kondor.Data.EntityContext context)
+        protected override void Seed(Kondor.Data.KondorDataContext context)
         {
             //  This method will be called after migrating to the latest version.
 

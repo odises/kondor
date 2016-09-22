@@ -21,9 +21,10 @@ namespace Kondor.Service.Handlers
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly IList<Tuple<int, Card>> _userActiveCard;
+        private readonly IDbContext _context;
 
 
-        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ILeitnerService leitnerService, ITelegramApiManager telegramApiManager, IList<Tuple<int, Card>> userActiveCard)
+        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ILeitnerService leitnerService, ITelegramApiManager telegramApiManager, IList<Tuple<int, Card>> userActiveCard, IDbContext context)
         {
             _cipherKey = cipherKey;
             _registrationBaseUri = registrationBaseUri;
@@ -31,130 +32,126 @@ namespace Kondor.Service.Handlers
             _leitnerService = leitnerService;
             _telegramApiManager = telegramApiManager;
             _userActiveCard = userActiveCard;
+            this._context = context;
             _telegramApiManager.MessageSent += _telegramApiManager_MessageSent;
         }
 
         private void _telegramApiManager_MessageSent(object sender, MessageSentEventArgs e)
         {
-            using (var entites = new EntityContext())
-            {
-                entites.Responses.Add(new Response
-                {
-                    ChatId = e.ChatId,
-                    MessageId = e.MessageId,
-                    Status = ResponseStatus.New
-                });
 
-                entites.SaveChanges();
-            }
+            _context.Responses.Add(new Response
+            {
+                ChatId = e.ChatId,
+                MessageId = e.MessageId,
+                Status = ResponseStatus.New
+            });
+
+            _context.SaveChanges();
+
         }
 
         public void SaveUpdates()
         {
-            using (var entities = new EntityContext())
+
+            int? lastUpdateId = null;
+            var lastUpdate = _context.Updates.OrderByDescending(p => p.UpdateId).FirstOrDefault();
+            if (lastUpdate != null)
             {
-                int? lastUpdateId = null;
-                var lastUpdate = entities.Updates.OrderByDescending(p => p.UpdateId).FirstOrDefault();
-                if (lastUpdate != null)
-                {
-                    lastUpdateId = lastUpdate.UpdateId;
-                }
-
-                var updates = _telegramApiManager.GetUpdates(lastUpdateId);
-
-                foreach (var update in updates)
-                {
-                    UpdateType updateType;
-
-                    if (update.Message != null)
-                    {
-                        updateType = UpdateType.Message;
-                    }
-                    else if (update.EditedMessage != null)
-                    {
-                        updateType = UpdateType.EditedMessage;
-                    }
-                    else if (update.InlineQuery != null)
-                    {
-                        updateType = UpdateType.InlineQuery;
-                    }
-                    else if (update.ChosenInlineResult != null)
-                    {
-                        updateType = UpdateType.ChosenInlineResult;
-                    }
-                    else if (update.CallbackQuery != null)
-                    {
-                        updateType = UpdateType.CallbackQuery;
-                    }
-                    else
-                    {
-                        updateType = UpdateType.Unclear;
-                    }
-
-                    if (!entities.Updates.Any(p => p.UpdateId == update.UpdateId))
-                    {
-                        entities.Updates.Add(new Data.DataModel.Update
-                        {
-                            UpdateId = update.UpdateId,
-                            Status = UpdateStatus.Unprocessed,
-                            CreationDatetime = DateTime.Now,
-                            ModifiedDatetime = DateTime.Now,
-                            UpdateType = updateType,
-                            SerializedUpdate = update.ToJson()
-                        });
-                    }
-                }
-
-                entities.SaveChanges();
+                lastUpdateId = lastUpdate.UpdateId;
             }
+
+            var updates = _telegramApiManager.GetUpdates(lastUpdateId);
+
+            foreach (var update in updates)
+            {
+                UpdateType updateType;
+
+                if (update.Message != null)
+                {
+                    updateType = UpdateType.Message;
+                }
+                else if (update.EditedMessage != null)
+                {
+                    updateType = UpdateType.EditedMessage;
+                }
+                else if (update.InlineQuery != null)
+                {
+                    updateType = UpdateType.InlineQuery;
+                }
+                else if (update.ChosenInlineResult != null)
+                {
+                    updateType = UpdateType.ChosenInlineResult;
+                }
+                else if (update.CallbackQuery != null)
+                {
+                    updateType = UpdateType.CallbackQuery;
+                }
+                else
+                {
+                    updateType = UpdateType.Unclear;
+                }
+
+                if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
+                {
+                    _context.Updates.Add(new Data.DataModel.Update
+                    {
+                        UpdateId = update.UpdateId,
+                        Status = UpdateStatus.Unprocessed,
+                        CreationDatetime = DateTime.Now,
+                        ModifiedDatetime = DateTime.Now,
+                        UpdateType = updateType,
+                        SerializedUpdate = update.ToJson()
+                    });
+                }
+            }
+
+            _context.SaveChanges();
+
         }
 
         public int ProcessMessages()
         {
-            using (var entities = new EntityContext())
+
+            var unprocessed = _context.Updates.Where(p => p.Status == UpdateStatus.Unprocessed).ToList();
+
+            foreach (var update in unprocessed)
             {
-                var unprocessed = entities.Updates.Where(p => p.Status == UpdateStatus.Unprocessed).ToList();
-
-                foreach (var update in unprocessed)
+                var model = JsonConvert.DeserializeObject<Data.TelegramTypes.Update>(update.SerializedUpdate);
+                try
                 {
-                    var model = JsonConvert.DeserializeObject<Data.TelegramTypes.Update>(update.SerializedUpdate);
-                    try
+                    if (model.Message != null)
                     {
-                        if (model.Message != null)
-                        {
-                            MessageProcessor(model.Message);
-                        }
-                        else if (model.EditedMessage != null)
-                        {
-                            EditedMessageProcessor(model.Message);
-                        }
-                        else if (model.InlineQuery != null)
-                        {
-                            InlineQueryProcessor(model.InlineQuery);
-                        }
-                        else if (model.ChosenInlineResult != null)
-                        {
-                            ChosenInlineResultProcessor(model.ChosenInlineResult);
-                        }
-                        else if (model.CallbackQuery != null)
-                        {
-                            CallbackQueryProcessor(model.CallbackQuery);
-                        }
-                        else
-                        {
-                            throw new InvalidDataException();
-                        }
+                        MessageProcessor(model.Message);
                     }
-                    catch (Exception exception)
+                    else if (model.EditedMessage != null)
                     {
-                        // log error
-                        Console.WriteLine(exception.Message);
+                        EditedMessageProcessor(model.Message);
                     }
-                    update.Status = UpdateStatus.Processed;
+                    else if (model.InlineQuery != null)
+                    {
+                        InlineQueryProcessor(model.InlineQuery);
+                    }
+                    else if (model.ChosenInlineResult != null)
+                    {
+                        ChosenInlineResultProcessor(model.ChosenInlineResult);
+                    }
+                    else if (model.CallbackQuery != null)
+                    {
+                        CallbackQueryProcessor(model.CallbackQuery);
+                    }
+                    else
+                    {
+                        throw new InvalidDataException();
+                    }
                 }
-                entities.SaveChanges();
+                catch (Exception exception)
+                {
+                    // log error
+                    Console.WriteLine(exception.Message);
+                }
+                update.Status = UpdateStatus.Processed;
             }
-
+            _context.SaveChanges();
 
             return 0;
 
@@ -186,15 +183,14 @@ namespace Kondor.Service.Handlers
             if (message.Text == "/start")
             {
                 var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, "Welcome *message* from config");
-                using (var entities = new EntityContext())
-                {
-                    var user = entities.Users.FirstOrDefault(p => p.TelegramUserId == message.From.Id);
+                
+                    var user = _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == message.From.Id);
                     if (user != null)
                     {
                         user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
-                        entities.SaveChanges();
+                        _context.SaveChanges();
                     }
-                }
+                
             }
 
             if (!_userApi.IsRegisteredUser(message.From.Id))

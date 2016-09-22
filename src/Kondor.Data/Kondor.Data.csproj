@@ -99,7 +99,8 @@
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
-    <Compile Include="EntityContext.cs" />
+    <Compile Include="IDbContext.cs" />
+    <Compile Include="KondorDataContext.cs" />
     <Compile Include="DataModel\Example.cs" />
     <Compile Include="DataModel\Medium.cs" />
     <Compile Include="DataModel\Update.cs" />
