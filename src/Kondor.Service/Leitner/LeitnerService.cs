@@ -159,6 +159,13 @@ namespace Kondor.Service.Leitner
             _context.SaveChanges();
         }
 
+        public int GetNumberOfCardsReadyToTry(int telegramUserId)
+        {
+            var userId = GetUserIdByTelegramUserId(telegramUserId);
+            var cards = _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
+            return cards.Count();
+        }
+
         /// <summary>
         /// Moves the card one step next
         /// </summary>

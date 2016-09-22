@@ -13,5 +13,6 @@ namespace Kondor.Service.Leitner
         void MoveBack(Card card, bool overStoppingMode = false);
         void MoveNext(int cardId);
         void MoveNext(Card card);
+        int GetNumberOfCardsReadyToTry(int telegramUserId);
     }
 }
