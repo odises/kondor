@@ -14,6 +14,7 @@ namespace Kondor.Service.Managers
     {
         public string MessageId { get; set; }
         public int ChatId { get; set; }
+        public int TelegramUserId { get; set; }
     }
 
     public class TelegramApiManager : ITelegramApiManager
@@ -82,8 +83,10 @@ namespace Kondor.Service.Managers
                 if (parsedResponse.Ok)
                 {
                     var message = JsonConvert.DeserializeObject<Message>(parsedResponse.Result.ToString());
+
                     OnMessageSent(new MessageSentEventArgs
                     {
+                        TelegramUserId = message.Chat.Id,
                         MessageId = message.MessageId,
                         ChatId = message.Chat.Id
                     });

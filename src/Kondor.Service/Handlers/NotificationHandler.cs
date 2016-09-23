@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Kondor.Data;
@@ -37,9 +38,11 @@ namespace Kondor.Service.Handlers
                     _context.Entry(response).State = EntityState.Modified;
                 }
 
+                var telegramUserId = temp.TelegramUserId;
+
                 _context.Notifications.Add(new Notification
                 {
-                    ChatId = temp.ChatId,
+                    TelegramUserId = telegramUserId,
                     CreationDatetime = DateTime.Now
                 });
 
@@ -64,6 +67,16 @@ namespace Kondor.Service.Handlers
                     }));
 
             }
+        }
+
+        public bool UserShouldBeNotified(int telegramUserId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ApplicationUser> UsersThatShouldBeNotified()
+        {
+            throw new NotImplementedException();            
         }
     }
 }

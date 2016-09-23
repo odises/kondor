@@ -41,6 +41,7 @@ namespace Kondor.Service.Handlers
 
             _context.Responses.Add(new Response
             {
+                TelegramUserId = e.TelegramUserId,
                 ChatId = e.ChatId,
                 MessageId = e.MessageId,
                 Status = ResponseStatus.New

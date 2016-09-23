@@ -137,6 +137,14 @@
     <Compile Include="Migrations\201609211030329_NotificationAdded.Designer.cs">
       <DependentUpon>201609211030329_NotificationAdded.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609221504532_NotificationChanged.cs" />
+    <Compile Include="Migrations\201609221504532_NotificationChanged.Designer.cs">
+      <DependentUpon>201609221504532_NotificationChanged.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609231535210_NotificationResponseChanged.cs" />
+    <Compile Include="Migrations\201609231535210_NotificationResponseChanged.Designer.cs">
+      <DependentUpon>201609231535210_NotificationResponseChanged.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
@@ -186,6 +194,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609211030329_NotificationAdded.resx">
       <DependentUpon>201609211030329_NotificationAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609221504532_NotificationChanged.resx">
+      <DependentUpon>201609221504532_NotificationChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609231535210_NotificationResponseChanged.resx">
+      <DependentUpon>201609231535210_NotificationResponseChanged.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
