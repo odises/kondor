@@ -78,6 +78,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Handlers\ISettingHandler.cs" />
+    <Compile Include="Handlers\SettingHandler.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="ITaskManager.cs" />
     <Compile Include="ObjectManager.cs" />

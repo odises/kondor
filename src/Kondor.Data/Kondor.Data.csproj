@@ -99,6 +99,7 @@
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
+    <Compile Include="DataModel\Setting.cs" />
     <Compile Include="Enums\UserState.cs" />
     <Compile Include="IDbContext.cs" />
     <Compile Include="KondorDataContext.cs" />
@@ -150,9 +151,15 @@
     <Compile Include="Migrations\201609241233271_FromIdAddedToUpdateModel.Designer.cs">
       <DependentUpon>201609241233271_FromIdAddedToUpdateModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609241503214_SettingsAdded.cs" />
+    <Compile Include="Migrations\201609241503214_SettingsAdded.Designer.cs">
+      <DependentUpon>201609241503214_SettingsAdded.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
+    <Compile Include="SettingModels\GeneralSettings.cs" />
+    <Compile Include="SettingModels\ISettings.cs" />
     <Compile Include="TelegramTypes\CallbackQuery.cs" />
     <Compile Include="TelegramTypes\ChosenInlineResult.cs" />
     <Compile Include="TelegramTypes\InlineQuery.cs" />
@@ -208,6 +215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609241233271_FromIdAddedToUpdateModel.resx">
       <DependentUpon>201609241233271_FromIdAddedToUpdateModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609241503214_SettingsAdded.resx">
+      <DependentUpon>201609241503214_SettingsAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

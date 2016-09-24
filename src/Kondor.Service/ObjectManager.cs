@@ -55,6 +55,8 @@ namespace Kondor.Service
 
             builder.RegisterType<QueryProcessor>().As<IQueryProcessor>();
 
+            builder.RegisterType<SettingHandler>().As<ISettingHandler>();
+
             return builder.Build();
         }
 

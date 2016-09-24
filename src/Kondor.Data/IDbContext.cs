@@ -21,5 +21,6 @@ namespace Kondor.Data
         DbSet<Notification> Notifications { get; set; }
         DbSet<Response> Responses { get; set; }
         DbSet<Update> Updates { get; set; }
+        DbSet<Setting> Settings { get; set; }
     }
 }
