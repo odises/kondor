@@ -8,7 +8,9 @@ using Kondor.Data;
 using Kondor.Data.ApiModels;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
+using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Service.Handlers;
 using Newtonsoft.Json;
 using Update = Kondor.Data.TelegramTypes.Update;
 
@@ -25,6 +27,7 @@ namespace Kondor.Service.Managers
     {
         private readonly string _apiKey;
         private readonly IDbContext _context;
+        private readonly ISettingHandler _settingHandler;
 
         public event EventHandler<MessageSentEventArgs> MessageSent;
 
@@ -33,10 +36,13 @@ namespace Kondor.Service.Managers
             MessageSent?.Invoke(this, e);
         }
 
-        public TelegramApiManager(string apiKey, IDbContext context)
+        public TelegramApiManager(IDbContext context, ISettingHandler settingHandler)
         {
-            _apiKey = apiKey;
             _context = context;
+            _settingHandler = settingHandler;
+
+
+            _apiKey = _settingHandler.GetSettings<GeneralSettings>().TelegramApiKey;
 
             MessageSent += TelegramApiManager_MessageSent;
         }
@@ -238,9 +244,5 @@ namespace Kondor.Service.Managers
                 }
             }
         }
-
-        
-
-        
     }
 }

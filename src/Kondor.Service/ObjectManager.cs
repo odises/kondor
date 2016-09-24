@@ -35,7 +35,7 @@ namespace Kondor.Service
                 new NamedParameter("timeUnit", TimeUnit.Minute)
             });
 
-            builder.RegisterType<TelegramApiManager>().As<ITelegramApiManager>().WithParameter("apiKey", "bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E");
+            builder.RegisterType<TelegramApiManager>().As<ITelegramApiManager>();
 
             builder.RegisterType<NotificationHandler>().As<INotificationHandler>();
 
