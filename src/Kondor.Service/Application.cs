@@ -1,4 +1,5 @@
 ﻿using System;
+using Kondor.Data.SettingModels;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 
@@ -9,26 +10,28 @@ namespace Kondor.Service
         private readonly INotificationHandler _notificationHandler;
         private readonly ITelegramMessageHandler _telegramMessageHandler;
         private readonly ILeitnerService _leitnerService;
+        private readonly ISettingHandler _settingHandler;
 
-        public Application(INotificationHandler notificationHandler, ITelegramMessageHandler telegramMessageHandler, ILeitnerService leitnerService)
+        public Application(INotificationHandler notificationHandler, ITelegramMessageHandler telegramMessageHandler, ILeitnerService leitnerService, ISettingHandler settingHandler)
         {
             _notificationHandler = notificationHandler;
             _telegramMessageHandler = telegramMessageHandler;
             _leitnerService = leitnerService;
+            _settingHandler = settingHandler;
         }
 
         public void Run()
         {
             var telegramTask = ObjectManager.GetInstance<ITaskManager>();
-            telegramTask.Init(1000, TelegramJob);
+            telegramTask.Init(_settingHandler.GetSettings<GeneralSettings>().TelegramTaskInterval, TelegramJob);
             telegramTask.Start();
 
             var cleanerTask = ObjectManager.GetInstance<ITaskManager>();
-            cleanerTask.Init(120000, CleanerJob);
+            cleanerTask.Init(_settingHandler.GetSettings<GeneralSettings>().CleanUpTaskInterval, CleanerJob);
             cleanerTask.Start();
 
             var notificationTask = ObjectManager.GetInstance<ITaskManager>();
-            notificationTask.Init(5000, NotificationJob);
+            notificationTask.Init(_settingHandler.GetSettings<GeneralSettings>().NotificationTaskInterval, NotificationJob);
             notificationTask.Start();
         }
 

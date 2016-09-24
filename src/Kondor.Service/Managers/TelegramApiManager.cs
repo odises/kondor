@@ -63,18 +63,20 @@ namespace Kondor.Service.Managers
         public List<Update> GetUpdates(int? lastUpdateId = null)
         {
             var webClient = new WebClient();
+            var getUpdatesEndPoint = _settingHandler.GetSettings<GeneralSettings>().GetUpdatesEndPoint;
+            var baseUri = string.Format(getUpdatesEndPoint, _apiKey);
 
             string response;
 
             if (lastUpdateId != null)
             {
                 response = webClient.DownloadString(
-                    $"https://api.telegram.org/{_apiKey}/getupdates?offset={lastUpdateId}");
+                    $"{baseUri}?offset={lastUpdateId}");
             }
             else
             {
                 response = webClient.DownloadString(
-                    $"https://api.telegram.org/{_apiKey}/getupdates");
+                    $"{baseUri}");
             }
 
             var responseModel = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
@@ -92,17 +94,20 @@ namespace Kondor.Service.Managers
             try
             {
                 string response;
+                var sendMessageEndpoint = _settingHandler.GetSettings<GeneralSettings>().SendMessageEndPoint;
+                var baseUri = string.Format(sendMessageEndpoint, _apiKey);
+
                 if (string.IsNullOrEmpty(replyMarkup))
                 {
                     var webClient = new WebClient();
                     response = webClient.DownloadString(
-                        $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown");
+                        $"{baseUri}?chat_id={chatId}&text={text}&parse_mode=Markdown");
                 }
                 else
                 {
                     var webClient = new WebClient();
                     response = webClient.DownloadString(
-                        $"https://api.telegram.org/{_apiKey}/sendMessage?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
+                        $"{baseUri}?chat_id={chatId}&text={text}&parse_mode=Markdown&reply_markup={replyMarkup}");
                 }
 
                 var parsedResponse = JsonConvert.DeserializeObject<TelegramApiResponseModel>(response);
@@ -144,12 +149,15 @@ namespace Kondor.Service.Managers
         {
             try
             {
+                var answerCallbackQueryEndPoint =
+                    _settingHandler.GetSettings<GeneralSettings>().AnswerCallbackQueryEndPoint;
+
                 var queryString = HttpUtility.ParseQueryString(string.Empty);
                 queryString["callback_query_id"] = callbackQueryId;
                 queryString["text"] = text;
                 queryString["show_alert"] = showAlert.ToString();
 
-                var baseUri = $"https://api.telegram.org/{_apiKey}/answerCallbackQuery";
+                var baseUri = string.Format(answerCallbackQueryEndPoint, _apiKey);
 
                 var query = Uri.EscapeUriString(HttpUtility.UrlDecode(queryString.ToString()));
 
@@ -215,6 +223,8 @@ namespace Kondor.Service.Managers
         {
             try
             {
+                var editMessageTextEndPoint = _settingHandler.GetSettings<GeneralSettings>().EditMessageTextEndPoint;
+
                 var queryString = HttpUtility.ParseQueryString(string.Empty);
 
                 foreach (string key in nameValueCollection)
@@ -223,7 +233,7 @@ namespace Kondor.Service.Managers
                     queryString.Add(key, value);
                 }
 
-                var baseUri = $"https://api.telegram.org/{_apiKey}/editMessageText";
+                var baseUri = string.Format(editMessageTextEndPoint, _apiKey);
 
                 var query = Uri.EscapeUriString(HttpUtility.UrlDecode(queryString.ToString()));
 

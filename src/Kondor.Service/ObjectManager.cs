@@ -28,12 +28,7 @@ namespace Kondor.Service
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<LeitnerService>().As<ILeitnerService>().WithParameters(new List<Parameter>
-            {
-                new NamedParameter("overStoppingTolerance", 20),
-                new NamedParameter("maximumCardInFirstPosition", 15),
-                new NamedParameter("timeUnit", TimeUnit.Minute)
-            });
+            builder.RegisterType<LeitnerService>().As<ILeitnerService>();
 
             builder.RegisterType<TelegramApiManager>().As<ITelegramApiManager>();
 

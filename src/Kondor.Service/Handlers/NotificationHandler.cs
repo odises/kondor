@@ -5,6 +5,7 @@ using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
+using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Managers;
 
@@ -15,19 +16,26 @@ namespace Kondor.Service.Handlers
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly IDbContext _context;
         private readonly IUserApi _userApi;
+        private readonly ISettingHandler _settingHandler;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi, ISettingHandler settingHandler)
         {
             _telegramApiManager = telegramApiManager;
             _context = context;
             _userApi = userApi;
+            _settingHandler = settingHandler;
         }
 
         public void SendNotification()
         {
             try
             {
-                var users = UsersThatShouldBeNotified(3, 3);
+                var maximumNumberOfAlert = _settingHandler.GetSettings<GeneralSettings>().MaximumNumberOfAlert;
+                var alertsInterval = _settingHandler.GetSettings<GeneralSettings>().AlertsInterval;
+                var userStateTolerance = _settingHandler.GetSettings<GeneralSettings>().UserStateTolerance;
+                var removedMessagesText = _settingHandler.GetSettings<GeneralSettings>().RemovedMessagesText;
+
+                var users = UsersThatShouldBeNotified(maximumNumberOfAlert, alertsInterval);
 
                 var responseGroups = _context.Responses
                     .Where(p => p.Status == ResponseStatus.New)
@@ -40,11 +48,11 @@ namespace Kondor.Service.Handlers
                     {
                         if (users.Any(p => p.TelegramUserId == temp.TelegramUserId))
                         {
-                            if (_userApi.GetUserState(temp.TelegramUserId, 30) == UserState.Idle)
+                            if (_userApi.GetUserState(temp.TelegramUserId, userStateTolerance) == UserState.Idle)
                             {
                                 foreach (var response in responseGroup)
                                 {
-                                    _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), "\u2705", "Markdown", true);
+                                    _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), removedMessagesText, "Markdown", true);
 
                                     response.Status = ResponseStatus.Removed;
                                     _context.Entry(response).State = EntityState.Modified;
@@ -88,15 +96,15 @@ namespace Kondor.Service.Handlers
             }
         }
 
-        protected virtual List<ApplicationUser> UsersThatShouldBeNotified(int maximumAlert, int hours)
+        protected virtual List<ApplicationUser> UsersThatShouldBeNotified(int maximumAlert, int alertsInterval)
         {
-            var threeHoursAgo = DateTime.Now.AddHours(hours * -1);
+            var datetime = DateTime.Now.AddHours(alertsInterval * -1);
 
             var query = from user in _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now)
                 .GroupBy(p => p.UserId).Select(s => s.FirstOrDefault().User)
                         where
                             !_context.Notifications.Any(
-                                p => p.TelegramUserId == user.TelegramUserId && p.CreationDatetime > threeHoursAgo)
+                                p => p.TelegramUserId == user.TelegramUserId && p.CreationDatetime > datetime)
                         //&& _context.Notifications.Count(p => p.TelegramUserId == user.TelegramUserId) < maximumAlert
                         select user;
 

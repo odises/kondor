@@ -4,7 +4,9 @@ using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
+using Kondor.Data.SettingModels;
 using Kondor.Service.Extensions;
+using Kondor.Service.Handlers;
 
 namespace Kondor.Service.Leitner
 {
@@ -13,17 +15,20 @@ namespace Kondor.Service.Leitner
         private readonly IDbContext _context;
         protected int OverStoppingTolerance;
         private readonly TimeUnit _timeUnit;
-        protected int MaximumCardInFirstPosition;
+        protected int FirstBoxCapacity;
+        private readonly ISettingHandler _settingHandler;
 
         /// <summary>
         /// Initialization
         /// </summary>
-        public LeitnerService(int overStoppingTolerance, int maximumCardInFirstPosition, TimeUnit timeUnit, IDbContext context)
+        public LeitnerService(IDbContext context, ISettingHandler settingHandler)
         {
-            MaximumCardInFirstPosition = maximumCardInFirstPosition;
-            _timeUnit = timeUnit;
             _context = context;
-            OverStoppingTolerance = overStoppingTolerance;
+            _settingHandler = settingHandler;
+
+            FirstBoxCapacity = _settingHandler.GetSettings<GeneralSettings>().FirstBoxCapacity;
+            _timeUnit = _settingHandler.GetSettings<GeneralSettings>().LeitnerTimeUnit;
+            OverStoppingTolerance = _settingHandler.GetSettings<GeneralSettings>().LeitnerOverstoppingTolerance;
         }
 
         /// <summary>
@@ -36,7 +41,7 @@ namespace Kondor.Service.Leitner
             var count =
                 _context.Cards.Count(
                     p => p.UserId == userId && p.CardPosition == Position.First && p.Status == CardStatus.NewInPosition);
-            if (count > MaximumCardInFirstPosition)
+            if (count > FirstBoxCapacity)
             {
                 throw new OverflowException();
             }
