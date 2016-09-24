@@ -33,22 +33,6 @@ namespace Kondor.Service.Handlers
             _telegramApiManager = telegramApiManager;
             _userActiveCard = userActiveCard;
             this._context = context;
-            _telegramApiManager.MessageSent += _telegramApiManager_MessageSent;
-        }
-
-        private void _telegramApiManager_MessageSent(object sender, MessageSentEventArgs e)
-        {
-
-            _context.Responses.Add(new Response
-            {
-                TelegramUserId = e.TelegramUserId,
-                ChatId = e.ChatId,
-                MessageId = e.MessageId,
-                Status = ResponseStatus.New
-            });
-
-            _context.SaveChanges();
-
         }
 
         public void SaveUpdates()

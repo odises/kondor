@@ -6,7 +6,5 @@ namespace Kondor.Service.Handlers
     public interface INotificationHandler
     {
         void SendNotification();
-        bool UserShouldBeNotified(int telegramUserId);
-        List<ApplicationUser> UsersThatShouldBeNotified();
     }
 }

@@ -20,7 +20,7 @@ namespace Kondor.Service
         public void Run()
         {
             var telegramTask = ObjectManager.GetInstance<ITaskManager>();
-            telegramTask.Init(800, TelegramJob);
+            telegramTask.Init(1000, TelegramJob);
             telegramTask.Start();
 
             var cleanerTask = ObjectManager.GetInstance<ITaskManager>();
@@ -28,7 +28,7 @@ namespace Kondor.Service
             cleanerTask.Start();
 
             var notificationTask = ObjectManager.GetInstance<ITaskManager>();
-            notificationTask.Init(50000, NotificationJob);
+            notificationTask.Init(5000, NotificationJob);
             notificationTask.Start();
         }
 
@@ -41,7 +41,6 @@ namespace Kondor.Service
         {
             try
             {
-                //var telegramMessageHandler = new TelegramMessageHandler("testkey", "http://www.kondor.com/account/newuser", new UserApi(), new LeitnerService(20, 15, TimeUnit.Minute), new TelegramApiManager("bot264301717:AAHxLu9FcPWahQni6L8ahQvu74sHf-TlX_E"), new List<Tuple<int, Card>>());
                 _telegramMessageHandler.SaveUpdates();
                 _telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("Telegram job");
