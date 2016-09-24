@@ -172,7 +172,12 @@ namespace Kondor.Service.Processors
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is not card for exam yet.", true);
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is no card for exam yet.", true);
+                    return;
+                }
+                catch (ValidationException)
+                {
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "UserId is not valid.", true);
                     return;
                 }
             }
