@@ -6,6 +6,7 @@ using Kondor.Data.Enums;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
+using Kondor.Service.Processors;
 
 namespace Kondor.Service
 {
@@ -51,6 +52,8 @@ namespace Kondor.Service
             builder.RegisterType<Application>().As<IApplication>();
 
             builder.RegisterType<KondorDataContext>().As<IDbContext>();
+
+            builder.RegisterType<QueryProcessor>().As<IQueryProcessor>();
 
             return builder.Build();
         }

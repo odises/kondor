@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
 using Kondor.Data.TelegramTypes;
-using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
 using Kondor.Service.Processors;
 using Newtonsoft.Json;
@@ -15,23 +13,19 @@ namespace Kondor.Service.Handlers
 {
     public class TelegramMessageHandler : ITelegramMessageHandler
     {
-        private readonly ILeitnerService _leitnerService;
         private readonly string _cipherKey;
         private readonly string _registrationBaseUri;
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
-        private readonly IList<Tuple<int, Card>> _userActiveCard;
         private readonly IDbContext _context;
 
 
-        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ILeitnerService leitnerService, ITelegramApiManager telegramApiManager, IList<Tuple<int, Card>> userActiveCard, IDbContext context)
+        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context)
         {
             _cipherKey = cipherKey;
             _registrationBaseUri = registrationBaseUri;
             _userApi = userApi;
-            _leitnerService = leitnerService;
             _telegramApiManager = telegramApiManager;
-            _userActiveCard = userActiveCard;
             this._context = context;
         }
 
@@ -144,7 +138,7 @@ namespace Kondor.Service.Handlers
 
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
-            var queryProcessor = new QueryProcessor(_userApi, _telegramApiManager, _leitnerService, _userActiveCard);
+            var queryProcessor = ObjectManager.GetInstance<IQueryProcessor>();
             queryProcessor.Process(callbackQuery);
         }
 

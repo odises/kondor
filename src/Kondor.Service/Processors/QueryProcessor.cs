@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
-using Kondor.Data.DataModel;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
@@ -15,14 +12,12 @@ namespace Kondor.Service.Processors
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly ILeitnerService _leitnerService;
-        private readonly IList<Tuple<int, Card>> _userActiveCard;
 
-        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService, IList<Tuple<int, Card>> userActiveCard)
+        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _leitnerService = leitnerService;
-            _userActiveCard = userActiveCard;
         }
 
         public void Process(CallbackQuery callbackQuery)
@@ -157,32 +152,10 @@ namespace Kondor.Service.Processors
         }
         protected virtual void ProcessExamCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
-            Card card;
-            var userActiveCard = _userActiveCard.FirstOrDefault(p => p.Item1 == callbackQuery.From.Id);
-            if (userActiveCard != null)
+            try
             {
-                card = userActiveCard.Item2;
-            }
-            else
-            {
-                try
-                {
-                    card = _leitnerService.GetCardForExam(callbackQuery.From.Id);
-                    _userActiveCard.Add(new Tuple<int, Card>(callbackQuery.From.Id, card));
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is no card for exam yet.", true);
-                    return;
-                }
-                catch (ValidationException)
-                {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "UserId is not valid.", true);
-                    return;
-                }
-            }
-
-            _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"*{card.Mem.MemBody}*", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                var card = _leitnerService.GetCardForExam(callbackQuery.From.Id);
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"*{card.Mem.MemBody}*", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
             {
                 new InlineKeyboardButton
                 {
@@ -195,6 +168,19 @@ namespace Kondor.Service.Processors
                     CallbackData = QueryData.NewQueryString("Back", null, null)
                 }
             }}));
+
+            }
+            catch (IndexOutOfRangeException)
+            {
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "There is no card for exam yet.", true);
+                return;
+            }
+            catch (ValidationException)
+            {
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, "UserId is not valid.", true);
+                return;
+            }
+
         }
         protected virtual void ProcessDisplayCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
