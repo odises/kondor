@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
+using Kondor.Data.Enums;
 using Kondor.Service.Extensions;
 
 namespace Kondor.Service.Managers
@@ -23,6 +25,20 @@ namespace Kondor.Service.Managers
             else
             {
                 return false;
+            }
+        }
+
+        public UserState GetUserState(int telegramUserId, int minutes)
+        {
+            var datetime = DateTime.Now.AddMinutes(minutes * -1);
+
+            if (_context.Updates.Any(p => p.FromId == telegramUserId && p.CreationDatetime > datetime))
+            {
+                return UserState.Active;
+            }
+            else
+            {
+                return UserState.Idle;
             }
         }
 

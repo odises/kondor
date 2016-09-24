@@ -31,7 +31,6 @@ namespace Kondor.Service.Handlers
 
         public void SaveUpdates()
         {
-
             int? lastUpdateId = null;
             var lastUpdate = _context.Updates.OrderByDescending(p => p.UpdateId).FirstOrDefault();
             if (lastUpdate != null)
@@ -44,10 +43,12 @@ namespace Kondor.Service.Handlers
             foreach (var update in updates)
             {
                 UpdateType updateType;
+                var fromId = -1;
 
                 if (update.Message != null)
                 {
                     updateType = UpdateType.Message;
+                    fromId = update.Message.From.Id;
                 }
                 else if (update.EditedMessage != null)
                 {
@@ -64,6 +65,7 @@ namespace Kondor.Service.Handlers
                 else if (update.CallbackQuery != null)
                 {
                     updateType = UpdateType.CallbackQuery;
+                    fromId = update.CallbackQuery.From.Id;
                 }
                 else
                 {
@@ -75,6 +77,7 @@ namespace Kondor.Service.Handlers
                     _context.Updates.Add(new Data.DataModel.Update
                     {
                         UpdateId = update.UpdateId,
+                        FromId = fromId,
                         Status = UpdateStatus.Unprocessed,
                         CreationDatetime = DateTime.Now,
                         ModifiedDatetime = DateTime.Now,

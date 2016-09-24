@@ -14,11 +14,13 @@ namespace Kondor.Service.Handlers
     {
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly IDbContext _context;
+        private readonly IUserApi _userApi;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi)
         {
             _telegramApiManager = telegramApiManager;
             _context = context;
+            _userApi = userApi;
         }
 
         public void SendNotification()
@@ -38,27 +40,29 @@ namespace Kondor.Service.Handlers
                     {
                         if (users.Any(p => p.TelegramUserId == temp.TelegramUserId))
                         {
-                            foreach (var response in responseGroup)
+                            if (_userApi.GetUserState(temp.TelegramUserId, 30) == UserState.Idle)
                             {
-                                _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), "\u2705", "Markdown", true);
-
-                                response.Status = ResponseStatus.Removed;
-                                _context.Entry(response).State = EntityState.Modified;
-                            }
-
-                            var telegramUserId = temp.TelegramUserId;
-
-                            _context.Notifications.Add(new Notification
-                            {
-                                TelegramUserId = telegramUserId,
-                                CreationDatetime = DateTime.Now
-                            });
-
-                            _context.SaveChanges();
-
-                            _telegramApiManager.SendMessage(temp.ChatId, "What do you want to do?",
-                                TelegramHelper.GetInlineKeyboardMarkup(new[]
+                                foreach (var response in responseGroup)
                                 {
+                                    _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), "\u2705", "Markdown", true);
+
+                                    response.Status = ResponseStatus.Removed;
+                                    _context.Entry(response).State = EntityState.Modified;
+                                }
+
+                                var telegramUserId = temp.TelegramUserId;
+
+                                _context.Notifications.Add(new Notification
+                                {
+                                    TelegramUserId = telegramUserId,
+                                    CreationDatetime = DateTime.Now
+                                });
+
+                                _context.SaveChanges();
+
+                                _telegramApiManager.SendMessage(temp.ChatId, "What do you want to do?",
+                                    TelegramHelper.GetInlineKeyboardMarkup(new[]
+                                    {
                             new[]
                             {
                                 new InlineKeyboardButton
@@ -72,7 +76,8 @@ namespace Kondor.Service.Handlers
                                     CallbackData = QueryData.NewQueryString("Exam", null, null)
                                 }
                             }
-                                }));
+                                    }));
+                            } 
                         }
                     }
                 }

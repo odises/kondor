@@ -99,6 +99,7 @@
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
+    <Compile Include="Enums\UserState.cs" />
     <Compile Include="IDbContext.cs" />
     <Compile Include="KondorDataContext.cs" />
     <Compile Include="DataModel\Example.cs" />
@@ -144,6 +145,10 @@
     <Compile Include="Migrations\201609231535210_NotificationResponseChanged.cs" />
     <Compile Include="Migrations\201609231535210_NotificationResponseChanged.Designer.cs">
       <DependentUpon>201609231535210_NotificationResponseChanged.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609241233271_FromIdAddedToUpdateModel.cs" />
+    <Compile Include="Migrations\201609241233271_FromIdAddedToUpdateModel.Designer.cs">
+      <DependentUpon>201609241233271_FromIdAddedToUpdateModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -200,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609231535210_NotificationResponseChanged.resx">
       <DependentUpon>201609231535210_NotificationResponseChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609241233271_FromIdAddedToUpdateModel.resx">
+      <DependentUpon>201609241233271_FromIdAddedToUpdateModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
