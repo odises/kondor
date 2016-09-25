@@ -4,6 +4,7 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Kondor.Data;
+using Kondor.Service.Handlers;
 
 namespace Kondor.WebApplication
 {
@@ -21,7 +22,7 @@ namespace Kondor.WebApplication
             builder.RegisterControllers(typeof (MvcApplication).Assembly);
 
             builder.RegisterType<KondorDataContext>().As<IDbContext>();
-
+            builder.RegisterType<SettingHandler>().As<ISettingHandler>();
 
             var container = builder.Build();
 
