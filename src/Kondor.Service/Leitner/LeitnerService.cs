@@ -6,7 +6,6 @@ using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Service.Extensions;
-using Kondor.Service.Handlers;
 
 namespace Kondor.Service.Leitner
 {
@@ -16,19 +15,17 @@ namespace Kondor.Service.Leitner
         protected int OverStoppingTolerance;
         private readonly TimeUnit _timeUnit;
         protected int FirstBoxCapacity;
-        private readonly ISettingHandler _settingHandler;
 
         /// <summary>
         /// Initialization
         /// </summary>
-        public LeitnerService(IDbContext context, ISettingHandler settingHandler)
+        public LeitnerService(IDbContext context)
         {
             _context = context;
-            _settingHandler = settingHandler;
 
-            FirstBoxCapacity = _settingHandler.GetSettings<GeneralSettings>().FirstBoxCapacity;
-            _timeUnit = _settingHandler.GetSettings<GeneralSettings>().LeitnerTimeUnit;
-            OverStoppingTolerance = _settingHandler.GetSettings<GeneralSettings>().LeitnerOverstoppingTolerance;
+            FirstBoxCapacity = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>().FirstBoxCapacity;
+            _timeUnit = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>().LeitnerTimeUnit;
+            OverStoppingTolerance = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>().LeitnerOverstoppingTolerance;
         }
 
         /// <summary>

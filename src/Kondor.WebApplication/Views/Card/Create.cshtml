@@ -13,30 +13,30 @@
     <div class="form-group">
         @Html.LabelFor(m => m.FrontSide, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.FrontSide, new { @class = "form-control" })
+            @Html.TextAreaFor(m => m.FrontSide, new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.BackSide, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextAreaFor(m => m.BackSide, new { @class = "form-control" })
+            @Html.TextAreaFor(m => m.BackSide, new { @class = "form-control", rows = 5 })
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Examples, new {@class = "col-md-2 control-label"})
+        @Html.LabelFor(m => m.Examples, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextAreaFor(m => m.Examples, new {@class = "form-control"})
+            @Html.TextAreaFor(m => m.Examples, new { @class = "form-control", rows = 5 })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.MediumUrls, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextAreaFor(m => m.MediumUrls, new { @class = "form-control" })
+            @Html.TextAreaFor(m => m.MediumUrls, new { @class = "form-control", rows = 5 })
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+            <input type="submit" class="btn btn-default" value="Add" />
         </div>
     </div>
 }

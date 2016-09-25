@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
 
@@ -12,12 +14,14 @@ namespace Kondor.Service.Processors
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly ILeitnerService _leitnerService;
+        private readonly ISettingHandler _settingHandler;
 
-        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService)
+        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService, ISettingHandler settingHandler)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _leitnerService = leitnerService;
+            _settingHandler = settingHandler;
         }
 
         public void Process(CallbackQuery callbackQuery)
@@ -129,12 +133,11 @@ namespace Kondor.Service.Processors
             try
             {
                 var newMem = _leitnerService.GetNewMem(callbackQuery.From.Id);
-                var response = newMem.ToMarkdown();
+                var response = newMem.GenerateCardView();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = "Images", Url = $"http://brainium.ir/mem/{newMem.Id}/images"},
+                        new InlineKeyboardButton {Text = "Images", Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, newMem.Id)},
                         new InlineKeyboardButton {Text = "Back", CallbackData = QueryData.NewQueryString("Back", null, null)}
-
                     }}));
             }
             catch (IndexOutOfRangeException)
@@ -155,7 +158,7 @@ namespace Kondor.Service.Processors
             try
             {
                 var card = _leitnerService.GetCardForExam(callbackQuery.From.Id);
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"*{card.Mem.MemBody}*", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"{card.Mem.MemBody}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
             {
                 new InlineKeyboardButton
                 {
@@ -197,7 +200,7 @@ namespace Kondor.Service.Processors
             else
             {
                 var card = _leitnerService.GetCard(int.Parse(queryData.Data));
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), card.Mem.ToMarkdown(), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), card.Mem.GenerateCardView(), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
                 {
                       new []
                       {

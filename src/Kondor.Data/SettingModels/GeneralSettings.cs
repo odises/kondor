@@ -21,5 +21,6 @@ namespace Kondor.Data.SettingModels
         public int NotificationTaskInterval { get; set; }
         public string CipherKey { get; set; }
         public string RegistrationBaseUri { get; set; }
+        public string ImagesBaseUri { get; set; }
     }
 }

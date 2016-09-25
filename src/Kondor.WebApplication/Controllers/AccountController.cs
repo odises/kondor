@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
+using Kondor.Data.SettingModels;
+using Kondor.Service;
 using Kondor.Service.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -442,8 +444,15 @@ namespace Kondor.WebApplication.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            string cipherKey;
+
+            using (BrainiumFrameworkBase.Cache.Ignore())
+            {
+                cipherKey = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>().CipherKey;
+            }
+
             var base64Decoded = id.GetBase64Decode();
-            var decrypted = Service.StringCipher.Decrypt(base64Decoded, "testkey");
+            var decrypted = StringCipher.Decrypt(base64Decoded, cipherKey);
             var splitted = decrypted.Split(new[] { ':' }, StringSplitOptions.None);
 
             var telegramUserId = splitted[0];

@@ -18,9 +18,9 @@ namespace Kondor.Data.DataModel
         public virtual ICollection<Medium> Media { get; set; }
         public virtual ApplicationUser User { get; set; }
 
-        public string ToMarkdown()
+        public string GenerateCardView()
         {
-            var result = $"*{this.MemBody}*\n\n_{this.Definition}_";
+            var result = $"{this.MemBody}\n\n{this.Definition}";
             return result;
         }
     }
