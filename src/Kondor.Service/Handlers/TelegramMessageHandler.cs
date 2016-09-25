@@ -20,11 +20,12 @@ namespace Kondor.Service.Handlers
         private readonly ISettingHandler _settingHandler;
 
 
-        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context)
+        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context, ISettingHandler settingHandler)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             this._context = context;
+            _settingHandler = settingHandler;
         }
 
         public void SaveUpdates()
