@@ -4,6 +4,7 @@ using System.Linq;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
+using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Managers;
 using Kondor.Service.Processors;
@@ -13,17 +14,14 @@ namespace Kondor.Service.Handlers
 {
     public class TelegramMessageHandler : ITelegramMessageHandler
     {
-        private readonly string _cipherKey;
-        private readonly string _registrationBaseUri;
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly IDbContext _context;
+        private readonly ISettingHandler _settingHandler;
 
 
-        public TelegramMessageHandler(string cipherKey, string registrationBaseUri, IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context)
+        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context)
         {
-            _cipherKey = cipherKey;
-            _registrationBaseUri = registrationBaseUri;
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             this._context = context;
@@ -177,6 +175,9 @@ namespace Kondor.Service.Handlers
 
             if (!_userApi.IsRegisteredUser(message.From.Id))
             {
+                var registrationBaseUri = _settingHandler.GetSettings<GeneralSettings>().RegistrationBaseUri;
+                var cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
+
                 // send registration link
                 _telegramApiManager.SendMessage(message.Chat.Id, "Register",
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
@@ -191,7 +192,7 @@ namespace Kondor.Service.Handlers
                             new InlineKeyboardButton
                             {
                                 Text = "Register",
-                                Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, _registrationBaseUri, _cipherKey)
+                                Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, registrationBaseUri, cipherKey)
                             }
                         }
                     }));

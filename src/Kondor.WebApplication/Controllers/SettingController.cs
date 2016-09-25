@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Kondor.Data.SettingModels;
+using Kondor.Service;
 using Kondor.Service.Handlers;
 
 namespace Kondor.WebApplication.Controllers
@@ -27,8 +25,11 @@ namespace Kondor.WebApplication.Controllers
         {
             try
             {
-                var model = _settingHandler.GetSettings<GeneralSettings>();
-                return View(model);
+                using (ObjectManager.GetInstance<ICacheManager>().Ignore())
+                {
+                    var model = _settingHandler.GetSettings<GeneralSettings>();
+                    return View(model);
+                }
             }
             catch (ArgumentNullException)
             {

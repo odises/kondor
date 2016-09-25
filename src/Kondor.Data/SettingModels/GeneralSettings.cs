@@ -19,5 +19,7 @@ namespace Kondor.Data.SettingModels
         public int TelegramTaskInterval { get; set; }
         public int CleanUpTaskInterval { get; set; }
         public int NotificationTaskInterval { get; set; }
+        public string CipherKey { get; set; }
+        public string RegistrationBaseUri { get; set; }
     }
 }

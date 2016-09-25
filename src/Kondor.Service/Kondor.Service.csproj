@@ -68,6 +68,7 @@
     <Reference Include="System.Activities" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -78,9 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="CacheManager.cs" />
     <Compile Include="Handlers\ISettingHandler.cs" />
     <Compile Include="Handlers\SettingHandler.cs" />
     <Compile Include="IApplication.cs" />
+    <Compile Include="ICacheManager.cs" />
     <Compile Include="ITaskManager.cs" />
     <Compile Include="ObjectManager.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="TelegramHelper.cs" />
     <Compile Include="Handlers\TelegramMessageHandler.cs" />
     <Compile Include="Managers\UserApi.cs" />
+    <Compile Include="ThreadScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

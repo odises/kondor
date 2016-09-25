@@ -19,16 +19,24 @@ namespace Kondor.Service.Handlers
         public T GetSettings<T>() where T : class
         {
             var typeName = typeof (T).Name;
-            var setting = _context.Settings.FirstOrDefault(p => p.SettingType == typeName);
-            if (setting != null)
+            
+
+            var result = ObjectManager.GetInstance<ICacheManager>().FromCache<T>($"cacheKey:{typeName}", () =>
             {
-                var result = JsonConvert.DeserializeObject<T>(setting.SettingData);
-                return result;
-            }
-            else
-            {
-                throw new ArgumentNullException();
-            }
+                var setting = _context.Settings.FirstOrDefault(p => p.SettingType == typeName);
+                if (setting != null)
+                {
+                    var data = JsonConvert.DeserializeObject<T>(setting.SettingData);
+                    return data;
+                }
+                else
+                {
+                    return Activator.CreateInstance<T>();
+                }
+
+            });
+
+            return result;
         }
 
         public void SaveSettings(ISettings settings)

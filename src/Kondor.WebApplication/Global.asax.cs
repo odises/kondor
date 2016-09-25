@@ -1,10 +1,8 @@
 ﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Autofac;
 using Autofac.Integration.Mvc;
-using Kondor.Data;
-using Kondor.Service.Handlers;
+using Kondor.Service;
 
 namespace Kondor.WebApplication
 {
@@ -17,17 +15,17 @@ namespace Kondor.WebApplication
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var builder = new ContainerBuilder();
 
-            builder.RegisterControllers(typeof (MvcApplication).Assembly);
+            // IoC
+            ObjectManager.Initialize();
+            var builder = ObjectManager.GetContainerBuilder();
 
-            builder.RegisterType<KondorDataContext>().As<IDbContext>();
-            builder.RegisterType<SettingHandler>().As<ISettingHandler>();
+            builder.RegisterControllers(typeof(MvcApplication).Assembly);
 
             var container = builder.Build();
 
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
-            
+
         }
     }
 }

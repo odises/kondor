@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Autofac;
-using Autofac.Core;
+﻿using Autofac;
 using Kondor.Data;
-using Kondor.Data.Enums;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
@@ -26,6 +23,13 @@ namespace Kondor.Service
 
         private static IContainer BuildContainer()
         {
+            var builder = GetContainerBuilder();
+
+            return builder.Build();
+        }
+
+        public static ContainerBuilder GetContainerBuilder()
+        {
             var builder = new ContainerBuilder();
 
             builder.RegisterType<LeitnerService>().As<ILeitnerService>();
@@ -36,11 +40,7 @@ namespace Kondor.Service
 
             builder.RegisterType<UserApi>().As<IUserApi>();
 
-            builder.RegisterType<TelegramMessageHandler>().As<ITelegramMessageHandler>().WithParameters(new List<Parameter>
-            {
-                new NamedParameter("cipherKey", "testkey"),
-                new NamedParameter("registrationBaseUri", "http://www.brainium.ir/account/newuser")
-            });
+            builder.RegisterType<TelegramMessageHandler>().As<ITelegramMessageHandler>();
 
             builder.RegisterType<TaskManager>().As<ITaskManager>();
 
@@ -52,7 +52,9 @@ namespace Kondor.Service
 
             builder.RegisterType<SettingHandler>().As<ISettingHandler>();
 
-            return builder.Build();
+            builder.RegisterType<CacheManager>().As<ICacheManager>().SingleInstance();
+
+            return builder;
         }
 
     }
