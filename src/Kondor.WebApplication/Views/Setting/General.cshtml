@@ -1,0 +1,23 @@
+﻿@model Kondor.Data.SettingModels.GeneralSettings
+@{
+    ViewBag.Title = "General";
+}
+
+<h2>General</h2>
+
+@using (Html.BeginForm("General", "Setting", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Save/Update General settings</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    @Html.EditorForModel()
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Save" />
+        </div>
+    </div>
+}
