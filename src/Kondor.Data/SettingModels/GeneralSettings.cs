@@ -22,5 +22,7 @@ namespace Kondor.Data.SettingModels
         public string CipherKey { get; set; }
         public string RegistrationBaseUri { get; set; }
         public string ImagesBaseUri { get; set; }
+        public string SpeakBaseUri { get; set; }
+        public string TextReaderApiBaseUri { get; set; }
     }
 }

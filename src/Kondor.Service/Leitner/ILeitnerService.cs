@@ -7,7 +7,7 @@ namespace Kondor.Service.Leitner
         int BoxCleanUp();
         Card GetCard(int cardId);
         Card GetCardForExam(int telegramUserId);
-        string GetExample(int telegramUserId);
+        Example GetExample(int telegramUserId);
         Mem GetNewMem(int telegramUserId);
         void MoveBack(int cardId, bool overStoppingMode = false);
         void MoveBack(Card card, bool overStoppingMode = false);

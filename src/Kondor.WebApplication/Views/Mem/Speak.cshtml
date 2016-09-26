@@ -1,0 +1,7 @@
+﻿@model Kondor.WebApplication.Models.SpeakViewModel
+@{
+    ViewBag.Title = "Speak";
+}
+
+<p>@Model.Text</p>
+<audio controls="" src="@string.Format("data:{0};base64,{1}", Model.ContentType, Convert.ToBase64String(Model.VoiceData))"></audio>

@@ -20,6 +20,7 @@ namespace Kondor.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Medium> Media { get; set; }
+        public DbSet<Voice> Voices { get; set; }
 
         public static KondorDataContext Create()
         {

@@ -213,7 +213,7 @@ namespace Kondor.Service.Leitner
             _context.SaveChanges();
         }
 
-        public string GetExample(int telegramUserId)
+        public Example GetExample(int telegramUserId)
         {
             var user = GetUserByTelegramId(telegramUserId);
 
@@ -228,9 +228,7 @@ namespace Kondor.Service.Leitner
                 exampleView.Views = exampleView.Views + 1;
                 _context.SaveChanges();
 
-                var originalSentence = exampleView.Example.Sentence;
-                var result = originalSentence.ToBolder(exampleView.Example.Mem.MemBody);
-                return result;
+                return exampleView.Example;
             }
 
         }

@@ -7,6 +7,11 @@ namespace Kondor.Data.DataModel
         public string Sentence { get; set; }
         public int MemId { get; set; }
         public virtual Mem Mem { get; set; }
-        public virtual ICollection<ExampleView> ExampleViews { get; set; } 
+        public virtual ICollection<ExampleView> ExampleViews { get; set; }
+
+        public string ToBoldedString()
+        {
+            return this.Sentence;
+        }
     }
 }

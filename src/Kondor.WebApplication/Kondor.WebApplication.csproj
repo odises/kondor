@@ -216,6 +216,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CardViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SpeakViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -284,6 +285,7 @@
     <Content Include="Views\Card\Create.cshtml" />
     <Content Include="Views\Setting\General.cshtml" />
     <Content Include="Views\Mem\Images.cshtml" />
+    <Content Include="Views\Mem\Speak.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

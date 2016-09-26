@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Handlers;
@@ -60,7 +61,7 @@ namespace Kondor.Service.Processors
             {
                 var example = _leitnerService.GetExample(callbackQuery.From.Id);
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId),
-                    $"*Example Board*\n\n{example}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
+                    $"*Example Board*\n\n{example.ToBoldedString()}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
                 {
                         new[]
                         {
@@ -68,6 +69,11 @@ namespace Kondor.Service.Processors
                             {
                                 Text = "Refresh",
                                 CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
+                            },
+                            new InlineKeyboardButton
+                            {
+                                Text = "Speak",
+                                Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().SpeakBaseUri, example.Id, TextType.Example)
                             }
                         }
                 }));

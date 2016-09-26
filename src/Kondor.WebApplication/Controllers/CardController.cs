@@ -80,10 +80,13 @@ namespace Kondor.WebApplication.Controllers
 
                 foreach (var example in examples)
                 {
-                    mem.Examples.Add(new Example
+                    if (!string.IsNullOrEmpty(example))
                     {
-                        Sentence = example
-                    });
+                        mem.Examples.Add(new Example
+                        {
+                            Sentence = example
+                        });
+                    }
                 }
 
                 foreach (var file in files)
@@ -102,11 +105,11 @@ namespace Kondor.WebApplication.Controllers
                 _context.SaveChanges();
 
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Create");
             }
             else
             {
-                return View();
+                return View(model);
             }
         }
 
