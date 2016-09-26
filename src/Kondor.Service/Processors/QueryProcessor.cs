@@ -166,6 +166,7 @@ namespace Kondor.Service.Processors
                 var card = _leitnerService.GetCardForExam(callbackQuery.From.Id);
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"{card.Mem.MemBody}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
             {
+                new InlineKeyboardButton {Text = "Images", Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, card.Mem.Id)},
                 new InlineKeyboardButton
                 {
                     Text = "Display",
