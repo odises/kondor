@@ -1,0 +1,28 @@
+﻿@using Kondor.Data.DataModel
+@model IEnumerable<int>
+
+@if (!Model.Any())
+{
+    <p>This mem has no images.</p>
+}
+else
+{
+    <table style="text-align: center;">
+        @foreach (var mediumId in Model)
+        {
+            <tr>
+                <td>
+
+                    <img src="@Url.Action("RenderImage", "Mem", new {id = mediumId})" alt="@mediumId"/>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@helper GenerateImage(Medium medium)
+{
+var base64 = Convert.ToBase64String(medium.MediumContent);
+var imageSrc = string.Format("data:{0};base64,{1}", medium.ContentType, base64);
+    <img src="@imageSrc" alt="@medium.Id" />
+}

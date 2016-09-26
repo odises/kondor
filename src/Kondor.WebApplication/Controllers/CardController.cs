@@ -70,7 +70,7 @@ namespace Kondor.WebApplication.Controllers
                 }
 
 
-                
+
                 var mem = new Mem
                 {
                     MemBody = model.FrontSide,
@@ -116,7 +116,7 @@ namespace Kondor.WebApplication.Controllers
         {
             if (!string.IsNullOrEmpty(id))
             {
-                
+
                 var result = _context
                     .Mems
                     .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
@@ -141,22 +141,21 @@ namespace Kondor.WebApplication.Controllers
 
                 if (responseStream != null)
                 {
-                    using (var streamReader = new StreamReader(responseStream))
-                    {
-                        var stringResponse = streamReader.ReadToEnd();
-                        var data = GetBytes(stringResponse);
-                        return new Tuple<string, byte[]>(contentType, data);
-                    }
+                    var bytes = GetBytes(responseStream);
+                    return new Tuple<string, byte[]>(contentType, bytes);
                 }
             }
             throw new Exception();
         }
 
-        protected virtual byte[] GetBytes(string input)
+        protected virtual byte[] GetBytes(Stream inputStream)
         {
-            var bytes = new byte[input.Length * sizeof(char)];
-            Buffer.BlockCopy(input.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
+            using (var memory = new MemoryStream())
+            {
+                inputStream.CopyTo(memory);
+                var result = memory.ToArray();
+                return result;
+            }
         }
     }
 }

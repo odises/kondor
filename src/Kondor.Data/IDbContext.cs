@@ -22,5 +22,6 @@ namespace Kondor.Data
         DbSet<Response> Responses { get; set; }
         DbSet<Update> Updates { get; set; }
         DbSet<Setting> Settings { get; set; }
+        DbSet<Medium> Media { get; set; }
     }
 }

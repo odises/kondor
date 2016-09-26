@@ -19,6 +19,7 @@ namespace Kondor.Data
         public DbSet<Response> Responses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<Medium> Media { get; set; }
 
         public static KondorDataContext Create()
         {
