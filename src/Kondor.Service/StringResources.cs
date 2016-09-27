@@ -18,15 +18,15 @@
         public static string KeyboardBackTitle => "keyboard.back.title";
         public static string KeyboardRejectTitle => "keyboard.reject.title";
         public static string KeyboardAcceptTitle => "keyboard.accept.title";
-        public static string KeyboardDisplayTitle { get; set; }
-        public static string KeyboardImagesTitle { get; set; }
-        public static string ExpiredThreadMessage { get; set; }
-        public static string UserIsNotValidMessage { get; set; }
-        public static string NoCardForExamYet { get; set; }
-        public static string MaximumCardInFirstPositionExceeded { get; set; }
-        public static string NoNewMemMessage { get; set; }
-        public static string NotRegisteredYetMessage { get; set; }
-        public static string MovedBackMessage { get; set; }
-        public static string MovedNextMessage { get; set; }
+        public static string KeyboardDisplayTitle => "keyboard.display.title";
+        public static string KeyboardImagesTitle => "keyboard.images.title";
+        public static string ExpiredThreadMessage => "exception.thread.expired";
+        public static string UserIsNotValidMessage => "exception.userIsNotValid";
+        public static string NoCardForExamYet => "exception.NoCardForExamYet";
+        public static string MaximumCardInFirstPositionExceeded => "exception.maximumCardInFirstPositionExceeded";
+        public static string NoNewMemMessage => "exception.noNewMem";
+        public static string NotRegisteredYetMessage => "exception.notRegisteredYetMessage";
+        public static string MovedBackMessage => "movedBackMessage";
+        public static string MovedNextMessage => "movedNextMessage";
     }
 }
