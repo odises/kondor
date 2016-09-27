@@ -221,11 +221,8 @@ namespace Kondor.Service.Handlers
                         {
                         new[]
                         {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardEnterTitle),
-                                CallbackData = QueryData.NewQueryString("Enter", null, null)
-                            }
+                            new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardLearnTitle), CallbackData = QueryData.NewQueryString("Learn", null, null)},
+                            new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardExamTitle), CallbackData = QueryData.NewQueryString("Exam", null, null)}
                         }
                         }));
                 }
