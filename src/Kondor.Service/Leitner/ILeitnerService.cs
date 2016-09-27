@@ -1,4 +1,5 @@
-﻿using Kondor.Data.DataModel;
+﻿using System;
+using Kondor.Data.DataModel;
 
 namespace Kondor.Service.Leitner
 {
@@ -7,6 +8,7 @@ namespace Kondor.Service.Leitner
         int BoxCleanUp();
         Card GetCard(int cardId);
         Card GetCardForExam(int telegramUserId);
+        Tuple<int, DateTime> GetNextExamInformation(int telegramUserId);
         Example GetExample(int telegramUserId);
         Mem GetNewMem(int telegramUserId);
         void MoveBack(int cardId, bool overStoppingMode = false);

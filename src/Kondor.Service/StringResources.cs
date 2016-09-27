@@ -22,11 +22,16 @@
         public static string KeyboardImagesTitle => "keyboard.images.title";
         public static string ExpiredThreadMessage => "exception.thread.expired";
         public static string UserIsNotValidMessage => "exception.userIsNotValid";
-        public static string NoCardForExamYet => "exception.NoCardForExamYet";
+        public static string NoCardForExam => "exception.NoCardForExam";
         public static string MaximumCardInFirstPositionExceeded => "exception.maximumCardInFirstPositionExceeded";
         public static string NoNewMemMessage => "exception.noNewMem";
         public static string NotRegisteredYetMessage => "exception.notRegisteredYetMessage";
         public static string MovedBackMessage => "movedBackMessage";
         public static string MovedNextMessage => "movedNextMessage";
+        public static string NextExamInformation => "exception.nextExamInformation";
+        public static string HumanizerSecondsFromNow => "humanizer.seconds.from.now";
+        public static string HumanizerMinutesFromNow => "humanizer.minutes.from.now";
+        public static string HumanizerHoursFromNow => "humanizer.hours.from.now";
+        public static string HumanizerDaysFromNow => "humanizer.days.from.now";
     }
 }

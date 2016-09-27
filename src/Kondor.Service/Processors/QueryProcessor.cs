@@ -4,6 +4,7 @@ using System.IO;
 using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Service.Extensions;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
@@ -149,7 +150,7 @@ namespace Kondor.Service.Processors
                 var response = newMem.GenerateCardView();
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardBackTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, newMem.Id)},
+                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardImagesTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, newMem.Id)},
                         new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardBackTitle), CallbackData = QueryData.NewQueryString("Back", null, null)}
                     }}));
             }
@@ -189,13 +190,23 @@ namespace Kondor.Service.Processors
             }
             catch (IndexOutOfRangeException)
             {
-                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NoCardForExamYet), true);
-                return;
+                try
+                {
+                    var nextExamInformations = _leitnerService.GetNextExamInformation(callbackQuery.From.Id);
+                    var count = nextExamInformations.Item1;
+                    var timeInfoTuple = nextExamInformations.Item2.Humanize();
+                    var time = _textManager.GetText(timeInfoTuple.Item2).FormatWith(timeInfoTuple.Item1);
+
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NextExamInformation).FormatWith(count, time), true);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NoCardForExam), true);
+                }
             }
             catch (ValidationException)
             {
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.UserIsNotValidMessage), true);
-                return;
             }
 
         }

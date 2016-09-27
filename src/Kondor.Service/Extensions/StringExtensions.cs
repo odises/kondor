@@ -31,6 +31,14 @@ namespace Kondor.Service.Extensions
             return modifiedSentence;
         }
 
+        public static string FormatWith(this string format, params object[] args)
+        {
+            if (string.IsNullOrEmpty(format))
+                return string.Empty;
+
+            return string.Format(format, args);
+        }
+
         private static int CalcLevenshteinDistance(string a, string b)
         {
             if (String.IsNullOrEmpty(a) || String.IsNullOrEmpty(b)) return 0;

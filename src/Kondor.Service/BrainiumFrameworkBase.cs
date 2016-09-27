@@ -1,4 +1,5 @@
 ﻿using Kondor.Service.Handlers;
+using Kondor.Service.Managers;
 
 namespace Kondor.Service
 {
@@ -6,5 +7,6 @@ namespace Kondor.Service
     {
         public static ICacheManager Cache => ObjectManager.GetInstance<ICacheManager>();
         public static ISettingHandler Settings => ObjectManager.GetInstance<ISettingHandler>();
+        public static ITextManager TextManager => ObjectManager.GetInstance<ITextManager>();
     }
 }

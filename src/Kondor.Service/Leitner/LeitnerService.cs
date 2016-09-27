@@ -139,6 +139,24 @@ namespace Kondor.Service.Leitner
             return card;
         }
 
+        public Tuple<int, DateTime> GetNextExamInformation(int telegramUserId)
+        {
+            var userId = GetUserIdByTelegramUserId(telegramUserId);
+            var cards = _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId);
+            if (!cards.Any())
+            {
+                throw new IndexOutOfRangeException();
+            }
+            else
+            {
+                var groupedByExaminationDateTime = cards.GroupBy(p => p.ExaminationDateTime).OrderBy(p => p.Key);
+                var count = groupedByExaminationDateTime.FirstOrDefault().Count();
+                var date = groupedByExaminationDateTime.FirstOrDefault().Key;
+
+                return new Tuple<int, DateTime>(count, date);
+            }
+        }
+
         public Card GetCard(int cardId)
         {
             var card = _context.Cards.FirstOrDefault(p => p.Id == cardId);

@@ -173,18 +173,16 @@ namespace Kondor.Service.Handlers
                         user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
                         _context.SaveChanges();
                     }
-                
-            }
 
-            if (!_userApi.IsRegisteredUser(message.From.Id))
-            {
-                var registrationBaseUri = _settingHandler.GetSettings<GeneralSettings>().RegistrationBaseUri;
-                var cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
+                if (!_userApi.IsRegisteredUser(message.From.Id))
+                {
+                    var registrationBaseUri = _settingHandler.GetSettings<GeneralSettings>().RegistrationBaseUri;
+                    var cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
 
-                // send registration link
-                _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.RegistrationMessage),
-                    TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
+                    // send registration link
+                    _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.RegistrationMessage),
+                        TelegramHelper.GetInlineKeyboardMarkup(new[]
+                        {
                         new[]
                         {
                             new InlineKeyboardButton
@@ -198,14 +196,14 @@ namespace Kondor.Service.Handlers
                                 Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, registrationBaseUri, cipherKey)
                             }
                         }
-                    }));
-            }
-            else
-            {
-                _telegramApiManager.SendMessage(message.Chat.Id,
-                    _textManager.GetText(StringResources.ExampleBoardMessage),
-                    TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
+                        }));
+                }
+                else
+                {
+                    _telegramApiManager.SendMessage(message.Chat.Id,
+                        _textManager.GetText(StringResources.ExampleBoardMessage),
+                        TelegramHelper.GetInlineKeyboardMarkup(new[]
+                        {
                         new[]
                         {
                             new InlineKeyboardButton
@@ -214,11 +212,11 @@ namespace Kondor.Service.Handlers
                                 CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
                             }
                         }
-                    }));
+                        }));
 
-                _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.AlreadyRegistered),
-                    TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
+                    _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.AlreadyRegistered),
+                        TelegramHelper.GetInlineKeyboardMarkup(new[]
+                        {
                         new[]
                         {
                             new InlineKeyboardButton
@@ -227,7 +225,8 @@ namespace Kondor.Service.Handlers
                                 CallbackData = QueryData.NewQueryString("Enter", null, null)
                             }
                         }
-                    }));
+                        }));
+                }
             }
         }
     }
