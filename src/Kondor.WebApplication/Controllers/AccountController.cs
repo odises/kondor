@@ -8,6 +8,7 @@ using Kondor.Data.DataModel;
 using Kondor.Data.SettingModels;
 using Kondor.Service;
 using Kondor.Service.Extensions;
+using Kondor.Service.Handlers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -21,17 +22,20 @@ namespace Kondor.WebApplication.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private readonly IDbContext _context;
+        private readonly ISettingHandler _settingHandler;
 
-        public AccountController(IDbContext context)
+        public AccountController(IDbContext context, ISettingHandler settingHandler)
         {
             _context = context;
+            _settingHandler = settingHandler;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDbContext context)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDbContext context, ISettingHandler settingHandler)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             _context = context;
+            _settingHandler = settingHandler;
         }
 
         public ApplicationSignInManager SignInManager
@@ -457,7 +461,7 @@ namespace Kondor.WebApplication.Controllers
 
             using (BrainiumFrameworkBase.Cache.Ignore())
             {
-                cipherKey = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>().CipherKey;
+                cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
             }
 
             var base64Decoded = id.GetBase64Decode();

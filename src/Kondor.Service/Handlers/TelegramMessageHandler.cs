@@ -163,6 +163,8 @@ namespace Kondor.Service.Handlers
 
         public void MessageProcessor(Message message)
         {
+            Console.WriteLine(_textManager.GetText(StringResources.WelcomeMessage));
+            
             if (message.Text == "/start")
             {
                 var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.WelcomeMessage));

@@ -2,11 +2,19 @@
 using System.Web.Mvc;
 using Kondor.Data.SettingModels;
 using Kondor.Service;
+using Kondor.Service.Handlers;
 
 namespace Kondor.WebApplication.Controllers
 {
     public class SettingController : Controller
     {
+        private readonly ISettingHandler _settingHandler;
+
+        public SettingController(ISettingHandler settingHandler)
+        {
+            _settingHandler = settingHandler;
+        }
+
         // GET: Setting
         public ActionResult Index()
         {
@@ -19,7 +27,7 @@ namespace Kondor.WebApplication.Controllers
             {
                 using (BrainiumFrameworkBase.Cache.Ignore())
                 {
-                    var model = BrainiumFrameworkBase.Settings.GetSettings<GeneralSettings>();
+                    var model = _settingHandler.GetSettings<GeneralSettings>();
                     return View(model);
                 }
             }
@@ -32,7 +40,7 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public ActionResult General(GeneralSettings model)
         {
-            BrainiumFrameworkBase.Settings.SaveSettings(model);
+            _settingHandler.SaveSettings(model);
             return View();
         }
     }

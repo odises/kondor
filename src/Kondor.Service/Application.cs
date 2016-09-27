@@ -7,16 +7,10 @@ namespace Kondor.Service
 {
     public class Application : IApplication
     {
-        private readonly INotificationHandler _notificationHandler;
-        private readonly ITelegramMessageHandler _telegramMessageHandler;
-        private readonly ILeitnerService _leitnerService;
         private readonly ISettingHandler _settingHandler;
 
-        public Application(INotificationHandler notificationHandler, ITelegramMessageHandler telegramMessageHandler, ILeitnerService leitnerService, ISettingHandler settingHandler)
+        public Application(ISettingHandler settingHandler)
         {
-            _notificationHandler = notificationHandler;
-            _telegramMessageHandler = telegramMessageHandler;
-            _leitnerService = leitnerService;
             _settingHandler = settingHandler;
         }
 
@@ -37,16 +31,27 @@ namespace Kondor.Service
 
         private void NotificationJob()
         {
-            _notificationHandler.SendNotification();
-            Console.WriteLine("Notification");
+            try
+            {
+                var notificationHandler = ObjectManager.GetInstance<INotificationHandler>();
+                notificationHandler.SendNotification();
+                Console.WriteLine("Notification");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Notification:");
+                Console.WriteLine(exception.Message);
+            }
         }
         private  void TelegramJob()
         {
             try
             {
-                _telegramMessageHandler.SaveUpdates();
-                _telegramMessageHandler.ProcessMessages();
-                Console.WriteLine("Telegram job");
+                var telegramMessageHandler = ObjectManager.GetInstance<ITelegramMessageHandler>();
+                telegramMessageHandler.SaveUpdates();
+                telegramMessageHandler.ProcessMessages();
+
+                Console.WriteLine("T Job");
             }
             catch (Exception exception)
             {
@@ -58,8 +63,10 @@ namespace Kondor.Service
         {
             try
             {
-                var cleanerResult = _leitnerService.BoxCleanUp();
-                Console.WriteLine(cleanerResult);
+                var leitnerService = ObjectManager.GetInstance<ILeitnerService>();
+                var cleanerResult = leitnerService.BoxCleanUp();
+
+                Console.WriteLine("Cleaner: " + cleanerResult);
             }
             catch (Exception exception)
             {
