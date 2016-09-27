@@ -192,7 +192,16 @@ namespace Kondor.WebApplication.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, TelegramUserId = int.Parse(telegramUserId), TelegramUsername = telegramUsername};
+                var language = _context.Languages.FirstOrDefault(p => p.Name == "English");
+
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                    TelegramUserId = int.Parse(telegramUserId),
+                    TelegramUsername = telegramUsername,
+                    LanguageId = language.Id
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

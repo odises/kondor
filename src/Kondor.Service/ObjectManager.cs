@@ -52,7 +52,10 @@ namespace Kondor.Service
 
             builder.RegisterType<SettingHandler>().As<ISettingHandler>();
 
+            builder.RegisterType<TextManager>().As<ITextManager>();
+
             builder.RegisterType<CacheManager>().As<ICacheManager>().SingleInstance();
+            
 
             return builder;
         }

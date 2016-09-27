@@ -97,6 +97,8 @@
     <Compile Include="DataModel\Card.cs" />
     <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
+    <Compile Include="DataModel\Language.cs" />
+    <Compile Include="DataModel\StringResource.cs" />
     <Compile Include="DataModel\Voice.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
@@ -160,6 +162,14 @@
     <Compile Include="Migrations\201609261545287_VoiceAdded.cs" />
     <Compile Include="Migrations\201609261545287_VoiceAdded.Designer.cs">
       <DependentUpon>201609261545287_VoiceAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609270457437_StringResourcesAdded01.cs" />
+    <Compile Include="Migrations\201609270457437_StringResourcesAdded01.Designer.cs">
+      <DependentUpon>201609270457437_StringResourcesAdded01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609270513114_StringResourcesAdded02.cs" />
+    <Compile Include="Migrations\201609270513114_StringResourcesAdded02.Designer.cs">
+      <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -227,6 +237,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609261545287_VoiceAdded.resx">
       <DependentUpon>201609261545287_VoiceAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609270457437_StringResourcesAdded01.resx">
+      <DependentUpon>201609270457437_StringResourcesAdded01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609270513114_StringResourcesAdded02.resx">
+      <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

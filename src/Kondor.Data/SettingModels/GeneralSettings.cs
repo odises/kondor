@@ -1,4 +1,5 @@
-﻿using Kondor.Data.Enums;
+﻿using System;
+using Kondor.Data.Enums;
 
 namespace Kondor.Data.SettingModels
 {
@@ -24,5 +25,6 @@ namespace Kondor.Data.SettingModels
         public string ImagesBaseUri { get; set; }
         public string SpeakBaseUri { get; set; }
         public string TextReaderApiBaseUri { get; set; }
+        public Guid DefaultLanguageId { get; set; }
     }
 }

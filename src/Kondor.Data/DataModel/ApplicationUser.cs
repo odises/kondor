@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -19,8 +20,9 @@ namespace Kondor.Data.DataModel
         public string TelegramUsername { get; set; }
         public int TelegramUserId { get; set; }
         public int WelcomeMessageId { get; set; }
-
-        public virtual ICollection<Card> Cards { get; set; }
-        public virtual ICollection<ExampleView> ExampleViews { get; set; }
+        public Guid LanguageId { get; set; }
+        public virtual Language Language { get; set; }
+        public virtual ICollection<Card> UserCards { get; set; }
+        public virtual ICollection<ExampleView> UserExampleViews { get; set; }
     }
 }

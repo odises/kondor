@@ -1,5 +1,6 @@
 ﻿using System;
 using Kondor.Service;
+using Kondor.Service.Managers;
 
 namespace YourDictionary.Worker
 {

@@ -86,6 +86,8 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="ICacheManager.cs" />
     <Compile Include="ITaskManager.cs" />
+    <Compile Include="Managers\ITextManager.cs" />
+    <Compile Include="Managers\TextManager.cs" />
     <Compile Include="ObjectManager.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
@@ -103,6 +105,7 @@
     <Compile Include="Processors\QueryProcessor.cs" />
     <Compile Include="StringCipher.cs" />
     <Compile Include="Managers\TelegramApiManager.cs" />
+    <Compile Include="StringResources.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TelegramHelper.cs" />
     <Compile Include="Handlers\TelegramMessageHandler.cs" />

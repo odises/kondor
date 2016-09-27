@@ -1,3 +1,5 @@
+using Kondor.Data.DataModel;
+
 namespace Kondor.Data.Migrations
 {
     using System.Data.Entity.Migrations;

@@ -18,14 +18,16 @@ namespace Kondor.Service.Handlers
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
+        private readonly ITextManager _textManager;
 
 
-        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context, ISettingHandler settingHandler)
+        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context, ISettingHandler settingHandler, ITextManager textManager)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             this._context = context;
             _settingHandler = settingHandler;
+            _textManager = textManager;
         }
 
         public void SaveUpdates()
@@ -163,7 +165,7 @@ namespace Kondor.Service.Handlers
         {
             if (message.Text == "/start")
             {
-                var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, "Welcome *message* from config");
+                var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.WelcomeMessage));
                 
                     var user = _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == message.From.Id);
                     if (user != null)
@@ -180,19 +182,19 @@ namespace Kondor.Service.Handlers
                 var cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
 
                 // send registration link
-                _telegramApiManager.SendMessage(message.Chat.Id, "Register",
+                _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.RegistrationMessage),
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                     {
                         new[]
                         {
                             new InlineKeyboardButton
                             {
-                                Text = "Enter",
+                                Text = _textManager.GetText(StringResources.KeyboardEnterTitle),
                                 CallbackData = QueryData.NewQueryString("Enter", null, null)
                             },
                             new InlineKeyboardButton
                             {
-                                Text = "Register",
+                                Text = _textManager.GetText(StringResources.KeyboardRegistrationTitle),
                                 Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, registrationBaseUri, cipherKey)
                             }
                         }
@@ -201,27 +203,27 @@ namespace Kondor.Service.Handlers
             else
             {
                 _telegramApiManager.SendMessage(message.Chat.Id,
-                    "*Example Board*\n\nIn this board you can see a lot of example by tapping on Refresh key.",
+                    _textManager.GetText(StringResources.ExampleBoardMessage),
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                     {
                         new[]
                         {
                             new InlineKeyboardButton
                             {
-                                Text = "Refresh",
+                                Text = _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
                                 CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
                             }
                         }
                     }));
 
-                _telegramApiManager.SendMessage(message.Chat.Id, "You are already registered in our system. Please Enter.",
+                _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.AlreadyRegistered),
                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                     {
                         new[]
                         {
-                            new InlineKeyboardButton()
+                            new InlineKeyboardButton
                             {
-                                Text = "Enter",
+                                Text = _textManager.GetText(StringResources.KeyboardEnterTitle),
                                 CallbackData = QueryData.NewQueryString("Enter", null, null)
                             }
                         }
