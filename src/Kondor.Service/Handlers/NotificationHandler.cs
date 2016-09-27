@@ -17,13 +17,15 @@ namespace Kondor.Service.Handlers
         private readonly IDbContext _context;
         private readonly IUserApi _userApi;
         private readonly ISettingHandler _settingHandler;
+        private readonly ITextManager _textManager;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi, ISettingHandler settingHandler)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager)
         {
             _telegramApiManager = telegramApiManager;
             _context = context;
             _userApi = userApi;
             _settingHandler = settingHandler;
+            _textManager = textManager;
         }
 
         public void SendNotification()
@@ -68,24 +70,39 @@ namespace Kondor.Service.Handlers
 
                                 _context.SaveChanges();
 
-                                _telegramApiManager.SendMessage(temp.ChatId, "What do you want to do?",
+
+                                _telegramApiManager.SendMessage(temp.ChatId,
+                                _textManager.GetText(StringResources.ExampleBoardMessage),
+                                TelegramHelper.GetInlineKeyboardMarkup(new[]
+                                    {
+                                        new[]
+                                        {
+                                            new InlineKeyboardButton
+                                            {
+                                                Text = _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
+                                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
+                                            }
+                                        }
+                                    }));
+
+                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
                                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                                     {
                             new[]
                             {
                                 new InlineKeyboardButton
                                 {
-                                    Text = "Learn",
+                                    Text = _textManager.GetText(StringResources.KeyboardLearnTitle),
                                     CallbackData = QueryData.NewQueryString("Learn", null, null)
                                 },
                                 new InlineKeyboardButton
                                 {
-                                    Text = "Exam",
+                                    Text = _textManager.GetText(StringResources.KeyboardExamTitle),
                                     CallbackData = QueryData.NewQueryString("Exam", null, null)
                                 }
                             }
                                     }));
-                            } 
+                            }
                         }
                     }
                 }
