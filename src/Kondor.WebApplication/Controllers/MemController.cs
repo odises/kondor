@@ -64,7 +64,7 @@ namespace Kondor.WebApplication.Controllers
                     var v = _context.Voices.FirstOrDefault(p => p.Text == example.Sentence);
                     if (v != null)
                     {
-                        model.VoiceData = v.VoiceData;
+                        //model.VoiceData = v.VoiceData;
                         model.ContentType = v.ContentType;
                     }
                     else
@@ -82,7 +82,7 @@ namespace Kondor.WebApplication.Controllers
                         });
                         _context.SaveChanges();
 
-                        model.VoiceData = voiceData.Item2;
+                        //model.VoiceData = voiceData.Item2;
                         model.ContentType = voiceData.Item1;
                     }
                     return View(model);

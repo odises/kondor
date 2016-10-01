@@ -3,5 +3,38 @@
     ViewBag.Title = "Speak";
 }
 
-<p>@Model.Text</p>
-<audio controls="" src="@string.Format("data:{0};base64,{1}", Model.ContentType, Convert.ToBase64String(Model.VoiceData))"></audio>
+<p id="text">@Model.Text</p>
+
+
+<input onclick='onSpeakerClick(1);' type='button' value='🔊 US English Female'/>
+<input onclick='onSpeakerClick(2);' type='button' value='🔊 US English Male'/>
+<input onclick='onSpeakerClick(3);' type='button' value='🔊 UK English Female'/>
+<input onclick='onSpeakerClick(4);' type='button' value='🔊 UK English Male' />
+
+
+@section scripts{
+    <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+    <script type="text/javascript">
+
+        var text = $('#text').text();
+
+        function onSpeakerClick(input) {
+
+            if (input === 1) {
+                responsiveVoice.setDefaultVoice("US English Female");
+            }
+            else if (input === 2) {
+                responsiveVoice.setDefaultVoice("US English Male");
+            }
+            else if (input === 3) {
+                responsiveVoice.setDefaultVoice("UK English Female");
+            } else {
+                responsiveVoice.setDefaultVoice("UK English Male");
+            }
+
+
+            responsiveVoice.speak(text);
+        }
+
+    </script>
+}
