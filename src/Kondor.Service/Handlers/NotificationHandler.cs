@@ -85,7 +85,7 @@ namespace Kondor.Service.Handlers
                                         }
                                     }));
 
-                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
+                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.BackMessage),
                                     TelegramHelper.GetInlineKeyboardMarkup(new[]
                                     {
                             new[]
