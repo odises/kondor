@@ -1,8 +1,7 @@
 ﻿using System;
 using Kondor.Service;
-using Kondor.Service.Managers;
 
-namespace YourDictionary.Worker
+namespace Kondor.Worker
 {
     class Program
     {

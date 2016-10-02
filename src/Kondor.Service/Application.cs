@@ -48,7 +48,6 @@ namespace Kondor.Service
             try
             {
                 var telegramMessageHandler = ObjectManager.GetInstance<ITelegramMessageHandler>();
-                telegramMessageHandler.SaveUpdates();
                 telegramMessageHandler.ProcessMessages();
 
                 Console.WriteLine("T Job");

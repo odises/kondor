@@ -30,6 +30,55 @@ namespace Kondor.Service.Handlers
             _textManager = textManager;
         }
 
+        public void SaveUpdate(Data.TelegramTypes.Update update)
+        {
+            UpdateType updateType;
+            var fromId = -1;
+
+            if (update.Message != null)
+            {
+                updateType = UpdateType.Message;
+                fromId = update.Message.From.Id;
+            }
+            else if (update.EditedMessage != null)
+            {
+                updateType = UpdateType.EditedMessage;
+            }
+            else if (update.InlineQuery != null)
+            {
+                updateType = UpdateType.InlineQuery;
+            }
+            else if (update.ChosenInlineResult != null)
+            {
+                updateType = UpdateType.ChosenInlineResult;
+            }
+            else if (update.CallbackQuery != null)
+            {
+                updateType = UpdateType.CallbackQuery;
+                fromId = update.CallbackQuery.From.Id;
+            }
+            else
+            {
+                updateType = UpdateType.Unclear;
+            }
+
+            //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
+            //{
+            _context.Updates.Add(new Data.DataModel.Update
+            {
+                UpdateId = update.UpdateId,
+                FromId = fromId,
+                Status = UpdateStatus.Unprocessed,
+                CreationDatetime = DateTime.Now,
+                ModifiedDatetime = DateTime.Now,
+                UpdateType = updateType,
+                SerializedUpdate = update.ToJson()
+            });
+            //}
+
+            _context.SaveChanges();
+        }
+
         public void SaveUpdates()
         {
             int? lastUpdateId = null;
@@ -164,17 +213,17 @@ namespace Kondor.Service.Handlers
         public void MessageProcessor(Message message)
         {
             Console.WriteLine(_textManager.GetText(StringResources.WelcomeMessage));
-            
+
             if (message.Text == "/start")
             {
                 var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.WelcomeMessage));
-                
-                    var user = _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == message.From.Id);
-                    if (user != null)
-                    {
-                        user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
-                        _context.SaveChanges();
-                    }
+
+                var user = _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == message.From.Id);
+                if (user != null)
+                {
+                    user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
+                    _context.SaveChanges();
+                }
 
                 if (!_userApi.IsRegisteredUser(message.From.Id))
                 {

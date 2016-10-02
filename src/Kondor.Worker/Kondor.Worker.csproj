@@ -7,8 +7,8 @@
     <ProjectGuid>{0E1623FF-7265-4E24-B0BD-77C806F2B29F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YourDictionary.Worker</RootNamespace>
-    <AssemblyName>YourDictionary.Worker</AssemblyName>
+    <RootNamespace>Kondor.Worker</RootNamespace>
+    <AssemblyName>Kondor.Worker</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
