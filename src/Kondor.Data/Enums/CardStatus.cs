@@ -2,9 +2,8 @@
 {
     public enum CardStatus
     {
-        NewInPosition,
-        Passed,
-        Failed,
-        CleanedUp
+        Draft,
+        Published,
+        Removed
     }
 }

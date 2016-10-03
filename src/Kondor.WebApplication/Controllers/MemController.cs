@@ -28,15 +28,19 @@ namespace Kondor.WebApplication.Controllers
         [Route("learning/mem/{id}/images")]
         public ActionResult Images(int id)
         {
-            var mem = _context.Mems.FirstOrDefault(p => p.Id == id);
-            if (mem == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //var mem = _context.Mems.FirstOrDefault(p => p.Id == id);
+            //if (mem == null)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
-            var images = mem.Media.Where(p => p.ContentType.Contains("image")).Select(p => p.Id);
+            //var images = mem.Media.Where(p => p.ContentType.Contains("image")).Select(p => p.Id);
 
-            return View(images);
+            //return View(images);
+
+            // todo not now
+
+            throw new NotImplementedException();
         }
 
         public async Task<ActionResult> RenderImage(int id)

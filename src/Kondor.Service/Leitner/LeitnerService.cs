@@ -39,8 +39,8 @@ namespace Kondor.Service.Leitner
         protected virtual void ValidateMaximumCardInFirstPosition(string userId)
         {
             var count =
-                _context.Cards.Count(
-                    p => p.UserId == userId && p.CardPosition == Position.First && p.Status == CardStatus.NewInPosition);
+                _context.CardStates.Count(
+                    p => p.UserId == userId && p.CardPosition == Position.First && p.Status == InboxCardsStatus.NewInPosition);
             if (count > FirstBoxCapacity)
             {
                 throw new OverflowException();
@@ -55,8 +55,8 @@ namespace Kondor.Service.Leitner
         {
             var count = 0;
             var cards =
-                _context.Cards.Where(
-                    p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.First && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now).ToList();
+                _context.CardStates.Where(
+                    p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.First && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now).ToList();
             foreach (var card in cards)
             {
                 var diff = DateTime.Now.GetRounded() - card.ExaminationDateTime;
@@ -78,20 +78,20 @@ namespace Kondor.Service.Leitner
         }
 
         /// <summary>
-        /// Gets new Mem
+        /// Adds a new card to user's leitner box
         /// </summary>
         /// <param name="telegramUserId"></param>
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException">There is no new Mem</exception>
         /// <exception cref="ValidationException">UserId is not valid</exception>
         /// <exception cref="OverflowException">Maximum card in first position exceeded.</exception>
-        public Mem GetNewMem(int telegramUserId)
+        public Card AddOneNewCardToBox(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var mems = _context.Mems.Where(m => !_context.Cards.Any(p => p.MemId == m.Id) && m.UserId == userId).ToList();
+            var mems = _context.Cards.Where(m => !_context.CardStates.Any(p => p.CardId == m.Id) && m.UserId == userId).ToList();
 
             if (mems.Count == 0)
             {
@@ -104,20 +104,22 @@ namespace Kondor.Service.Leitner
             var newCard = GenerateNewCard(Position.First, userId, mem.Id);
 
 
-            foreach (var example in mem.Examples)
-            {
-                if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Mem.UserId))
-                {
-                    _context.ExampleViews.Add(new ExampleView
-                    {
-                        ExampleId = example.Id,
-                        UserId = example.Mem.UserId,
-                        Views = 0
-                    });
-                }
-            }
+            // todo Not now
 
-            _context.Cards.Add(newCard);
+            //foreach (var example in mem.Examples)
+            //{
+            //    if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Mem.UserId))
+            //    {
+            //        _context.ExampleViews.Add(new ExampleView
+            //        {
+            //            ExampleId = example.Id,
+            //            UserId = example.Mem.UserId,
+            //            Views = 0
+            //        });
+            //    }
+            //}
+
+            _context.CardStates.Add(newCard);
             _context.SaveChanges();
 
             return mem;
@@ -130,11 +132,11 @@ namespace Kondor.Service.Leitner
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException">There is not card for examination</exception>
         /// <exception cref="ValidationException">UserId is not valid</exception>
-        public Card GetCardForExam(int telegramUserId)
+        public CardState GetCardForExam(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
 
-            var card = _context.Cards.FirstOrDefault(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
+            var card = _context.CardStates.FirstOrDefault(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
             if (card == null)
             {
                 throw new IndexOutOfRangeException();
@@ -145,7 +147,7 @@ namespace Kondor.Service.Leitner
         public Tuple<int, DateTime> GetNextExamInformation(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
-            var cards = _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId);
+            var cards = _context.CardStates.Where(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId);
             if (!cards.Any())
             {
                 throw new IndexOutOfRangeException();
@@ -160,9 +162,9 @@ namespace Kondor.Service.Leitner
             }
         }
 
-        public Card GetCard(int cardId)
+        public CardState GetCard(int cardId)
         {
-            var card = _context.Cards.FirstOrDefault(p => p.Id == cardId);
+            var card = _context.CardStates.FirstOrDefault(p => p.Id == cardId);
             return card;
         }
 
@@ -170,22 +172,22 @@ namespace Kondor.Service.Leitner
         /// Moves the card one step next
         /// </summary>
         /// <param name="card"></param>
-        public void MoveNext(Card card)
+        public void MoveNext(CardState card)
         {
-            card.Status = CardStatus.Passed;
+            card.Status = InboxCardsStatus.Passed;
             card.ModifiedDateTime = DateTime.Now;
 
             var nextPosition = GetNextPosition(card.CardPosition);
-            var newCard = GenerateNewCard(nextPosition, card.UserId, card.MemId);
+            var newCard = GenerateNewCard(nextPosition, card.UserId, card.CardId);
 
-            _context.Cards.Add(newCard);
+            _context.CardStates.Add(newCard);
             _context.SaveChanges();
         }
 
         public int GetNumberOfCardsReadyToTry(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
-            var cards = _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
+            var cards = _context.CardStates.Where(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
             return cards.Count();
         }
 
@@ -215,22 +217,22 @@ namespace Kondor.Service.Leitner
         /// </summary>
         /// <param name="card"></param>
         /// <param name="overStoppingMode"></param>
-        public void MoveBack(Card card, bool overStoppingMode = false)
+        public void MoveBack(CardState card, bool overStoppingMode = false)
         {
             if (overStoppingMode)
             {
-                card.Status = CardStatus.CleanedUp;
+                card.Status = InboxCardsStatus.CleanedUp;
             }
             else
             {
-                card.Status = CardStatus.Failed;
+                card.Status = InboxCardsStatus.Failed;
             }
             card.ModifiedDateTime = DateTime.Now;
 
             var prevPosition = GetPreviousPosition(card.CardPosition);
-            var newCard = GenerateNewCard(prevPosition, card.UserId, card.MemId);
+            var newCard = GenerateNewCard(prevPosition, card.UserId, card.CardId);
 
-            _context.Cards.Add(newCard);
+            _context.CardStates.Add(newCard);
             _context.SaveChanges();
         }
 
@@ -358,18 +360,18 @@ namespace Kondor.Service.Leitner
         /// <param name="userId"></param>
         /// <param name="memId"></param>
         /// <returns></returns>
-        protected virtual Card GenerateNewCard(Position position, string userId, int memId)
+        protected virtual CardState GenerateNewCard(Position position, string userId, int memId)
         {
             var stopTime = GetStopTimeForPositionInMinute(position, _timeUnit);
 
-            var newCard = new Card
+            var newCard = new CardState
             {
                 CardPosition = position,
                 CreationDateTime = DateTime.Now,
                 ExaminationDateTime = DateTime.Now.AddMinutes(stopTime).GetRounded(),
-                Status = CardStatus.NewInPosition,
+                Status = InboxCardsStatus.NewInPosition,
                 UserId = userId,
-                MemId = memId
+                CardId = memId
             };
 
             return newCard;

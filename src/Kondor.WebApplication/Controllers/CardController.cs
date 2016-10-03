@@ -71,37 +71,42 @@ namespace Kondor.WebApplication.Controllers
 
 
 
-                var mem = new Mem
+                var card = new Card
                 {
-                    MemBody = model.FrontSide,
-                    Definition = model.BackSide,
+                    // todo not now
+                    //MemBody = model.FrontSide,
+                    //Definition = model.BackSide,
                     UserId = HttpContext.User.Identity.GetUserId()
                 };
 
-                foreach (var example in examples)
-                {
-                    if (!string.IsNullOrEmpty(example))
-                    {
-                        mem.Examples.Add(new Example
-                        {
-                            Sentence = example
-                        });
-                    }
-                }
 
-                foreach (var file in files)
-                {
-                    if (mimeTypeWhitelist.Contains(file.Item1))
-                    {
-                        mem.Media.Add(new Medium
-                        {
-                            ContentType = file.Item1,
-                            MediumContent = file.Item2
-                        });
-                    }
-                }
+                // todo not now
+                //foreach (var example in examples)
+                //{
+                //    if (!string.IsNullOrEmpty(example))
+                //    {
+                //        mem.Examples.Add(new Example
+                //        {
+                //            Sentence = example
+                //        });
+                //    }
+                //}
 
-                _context.Mems.Add(mem);
+
+                // todo not now
+                //foreach (var file in files)
+                //{
+                //    if (mimeTypeWhitelist.Contains(file.Item1))
+                //    {
+                //        mem.Media.Add(new Medium
+                //        {
+                //            ContentType = file.Item1,
+                //            MediumContent = file.Item2
+                //        });
+                //    }
+                //}
+
+                _context.Cards.Add(card);
                 _context.SaveChanges();
 
 
@@ -117,19 +122,21 @@ namespace Kondor.WebApplication.Controllers
         [ChildActionOnly]
         public ActionResult SearchOnCards(string id)
         {
-            if (!string.IsNullOrEmpty(id))
-            {
+            // todo not now
+            throw new NotImplementedException();
+            //if (!string.IsNullOrEmpty(id))
+            //{
 
-                var result = _context
-                    .Mems
-                    .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
-                    .ToList();
-                return Json(result.Select(p => new { memId = p.Id, content = p.MemBody }), JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new { }, JsonRequestBehavior.AllowGet);
-            }
+            //    var result = _context
+            //        .Mems
+            //        .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
+            //        .ToList();
+            //    return Json(result.Select(p => new { memId = p.Id, content = p.MemBody }), JsonRequestBehavior.AllowGet);
+            //}
+            //else
+            //{
+            //    return Json(new { }, JsonRequestBehavior.AllowGet);
+            //}
         }
 
         protected virtual Tuple<string, byte[]> DownloadFile(string url)

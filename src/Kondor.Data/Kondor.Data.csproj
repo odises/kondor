@@ -94,7 +94,7 @@
   <ItemGroup>
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
     <Compile Include="DataModel\ApplicationUser.cs" />
-    <Compile Include="DataModel\Card.cs" />
+    <Compile Include="DataModel\CardState.cs" />
     <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Language.cs" />
@@ -103,6 +103,8 @@
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
     <Compile Include="DataModel\Setting.cs" />
+    <Compile Include="Enums\CardType.cs" />
+    <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\TextType.cs" />
     <Compile Include="Enums\UserState.cs" />
     <Compile Include="IDbContext.cs" />
@@ -110,15 +112,23 @@
     <Compile Include="DataModel\Example.cs" />
     <Compile Include="DataModel\Medium.cs" />
     <Compile Include="DataModel\Update.cs" />
-    <Compile Include="DataModel\Mem.cs" />
+    <Compile Include="DataModel\Card.cs" />
     <Compile Include="Enums\ResponseStatus.cs" />
-    <Compile Include="Enums\CardStatus.cs" />
+    <Compile Include="Enums\InboxCardsStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="IJsonSerializable.cs" />
     <Compile Include="JsonSerializable.cs" />
+    <Compile Include="LeitnerDataModels\Definition.cs" />
+    <Compile Include="LeitnerDataModels\ISide.cs" />
+    <Compile Include="LeitnerDataModels\ISimpleCard.cs" />
+    <Compile Include="LeitnerDataModels\Part.cs" />
+    <Compile Include="LeitnerDataModels\RichCard.cs" />
+    <Compile Include="LeitnerDataModels\RichSide.cs" />
+    <Compile Include="LeitnerDataModels\SimpleCard.cs" />
+    <Compile Include="LeitnerDataModels\SimpleSide.cs" />
     <Compile Include="Migrations\201609090321083_InitialCreate.cs" />
     <Compile Include="Migrations\201609090321083_InitialCreate.Designer.cs">
       <DependentUpon>201609090321083_InitialCreate.cs</DependentUpon>
