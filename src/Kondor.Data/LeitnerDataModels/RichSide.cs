@@ -7,10 +7,10 @@ namespace Kondor.Data.LeitnerDataModels
     {
         public RichSide()
         {
-            Parts = new List<Part>();
+            PartsOfSpeech = new List<PartOfSpeech>();
         }
 
-        public List<Part> Parts { get; set; }
+        public List<PartOfSpeech> PartsOfSpeech { get; set; }
 
         public string Display()
         {

@@ -7,8 +7,12 @@ using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
+using Kondor.Data.LeitnerDataModels;
+using Kondor.Service;
+using Kondor.Service.Parsers;
 using Kondor.WebApplication.Models;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace Kondor.WebApplication.Controllers
 {
@@ -37,7 +41,34 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public ActionResult CreateRichCard(RichCardViewModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var parser = ObjectManager.GetInstance<IParser>();
+
+                var richCard = new RichCard
+                {
+                    Front = parser.ParseSimpleSide(model.FrontSide),
+                    Back = parser.ParseRichSide(model.BackSide)
+                };
+
+                var serializedCard = JsonConvert.SerializeObject(richCard);
+
+                _context.Cards.Add(new Card
+                {
+                    CardStatus = CardStatus.Draft,
+                    CardType = CardType.RichCard,
+                    UserId = HttpContext.User.Identity.GetUserId(),
+                    CardData = serializedCard
+                });
+
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(model);
+            }
         }
 
 
@@ -45,13 +76,6 @@ namespace Kondor.WebApplication.Controllers
         [Authorize]
         public ActionResult CreateSimpleCard()
         {
-            var card = new Card();
-            card.CardStatus = CardStatus.Draft;
-            card.CardType = CardType.RichCard;
-            card.UserId = HttpContext.User.Identity.GetUserId();
-            card.CardData = "";
-
-
             return View();
         }
 
@@ -59,82 +83,17 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public ActionResult CreateSimpleCard(SimpleCardViewModel model)
         {
-            var mimeTypeWhitelist = new List<string>
-            {
-                "image/jpeg",
-                "audio/mpeg3",
-                "image/gif",
-                "image/png"
-            };
-
             if (ModelState.IsValid)
             {
-                var examples = new List<string>();
-                var files = new List<Tuple<string, byte[]>>();
-
-                if (!string.IsNullOrEmpty(model.Examples))
-                {
-                    examples = model.Examples.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                }
-                if (!string.IsNullOrEmpty(model.MediumUrls))
-                {
-                    var urls = model.MediumUrls.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var url in urls)
-                    {
-                        try
-                        {
-                            var result = DownloadFile(url);
-                            files.Add(result);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-
-
-
                 var card = new Card
                 {
-                    // todo not now
-                    //MemBody = model.FrontSide,
-                    //Definition = model.BackSide,
-                    UserId = HttpContext.User.Identity.GetUserId()
+                    CardStatus = CardStatus.Draft,
+                    CardType = CardType.SimpleCard,
+                    UserId = HttpContext.User.Identity.GetUserId(),
+                    CardData = ""
                 };
 
-
-                // todo not now
-                //foreach (var example in examples)
-                //{
-                //    if (!string.IsNullOrEmpty(example))
-                //    {
-                //        mem.Examples.Add(new Example
-                //        {
-                //            Sentence = example
-                //        });
-                //    }
-                //}
-
-
-                // todo not now
-                //foreach (var file in files)
-                //{
-                //    if (mimeTypeWhitelist.Contains(file.Item1))
-                //    {
-                //        mem.Media.Add(new Medium
-                //        {
-                //            ContentType = file.Item1,
-                //            MediumContent = file.Item2
-                //        });
-                //    }
-                //}
-
-                _context.Cards.Add(card);
-                _context.SaveChanges();
-
-
-                return RedirectToAction("Create");
+                return View();
             }
             else
             {

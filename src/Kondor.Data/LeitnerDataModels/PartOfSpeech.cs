@@ -2,14 +2,14 @@
 
 namespace Kondor.Data.LeitnerDataModels
 {
-    public class Part
+    public class PartOfSpeech
     {
-        public Part()
+        public PartOfSpeech()
         {
             Definitions = new List<Definition>();
         }
 
-        public string Value { get; set; }
+        public string Title { get; set; }
         public List<Definition> Definitions { get; set; }
     }
 }

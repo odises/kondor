@@ -99,6 +99,8 @@
     <Compile Include="Handlers\NotificationHandler.cs" />
     <Compile Include="Managers\ITelegramApiManager.cs" />
     <Compile Include="Managers\IUserApi.cs" />
+    <Compile Include="Parsers\IParser.cs" />
+    <Compile Include="Parsers\RichSideParser.cs" />
     <Compile Include="Processors\IQueryProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
