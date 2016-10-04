@@ -5,6 +5,5 @@
         public int MemId { get; set; }
         public byte[] MediumContent { get; set; }
         public string ContentType { get; set; }
-        public virtual Card Mem { get; set; }
     }
 }

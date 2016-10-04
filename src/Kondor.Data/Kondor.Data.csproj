@@ -181,6 +181,14 @@
     <Compile Include="Migrations\201609270513114_StringResourcesAdded02.Designer.cs">
       <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610031858550_CardModelsChanged-01.cs" />
+    <Compile Include="Migrations\201610031858550_CardModelsChanged-01.Designer.cs">
+      <DependentUpon>201610031858550_CardModelsChanged-01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610031901540_CardModelsChanged-02.cs" />
+    <Compile Include="Migrations\201610031901540_CardModelsChanged-02.Designer.cs">
+      <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
@@ -253,6 +261,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609270513114_StringResourcesAdded02.resx">
       <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610031858550_CardModelsChanged-01.resx">
+      <DependentUpon>201610031858550_CardModelsChanged-01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610031901540_CardModelsChanged-02.resx">
+      <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

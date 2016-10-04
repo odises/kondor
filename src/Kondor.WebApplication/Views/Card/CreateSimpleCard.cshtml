@@ -1,12 +1,12 @@
-﻿@model Kondor.WebApplication.Models.CardViewModel
+﻿@model Kondor.WebApplication.Models.SimpleCardViewModel
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Simple Card";
 }
 
-@using (Html.BeginForm("Create", "Card", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("CreateSimpleCard", "Card", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4>Create a new card.</h4>
+    <h4>Create a new simple card.</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
 
@@ -36,7 +36,7 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Add" />
+            <input type="submit" class="btn btn-default" value="Create" />
         </div>
     </div>
 }

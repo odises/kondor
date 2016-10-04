@@ -101,7 +101,7 @@ namespace Kondor.Service.Leitner
             var mem = mems.GetRandom();
 
 
-            var newCard = GenerateNewCard(Position.First, userId, mem.Id);
+            var newCard = AddCardInFirstState(Position.First, userId, mem.Id);
 
 
             // todo Not now
@@ -178,7 +178,7 @@ namespace Kondor.Service.Leitner
             card.ModifiedDateTime = DateTime.Now;
 
             var nextPosition = GetNextPosition(card.CardPosition);
-            var newCard = GenerateNewCard(nextPosition, card.UserId, card.CardId);
+            var newCard = AddCardInFirstState(nextPosition, card.UserId, card.CardId);
 
             _context.CardStates.Add(newCard);
             _context.SaveChanges();
@@ -230,7 +230,7 @@ namespace Kondor.Service.Leitner
             card.ModifiedDateTime = DateTime.Now;
 
             var prevPosition = GetPreviousPosition(card.CardPosition);
-            var newCard = GenerateNewCard(prevPosition, card.UserId, card.CardId);
+            var newCard = AddCardInFirstState(prevPosition, card.UserId, card.CardId);
 
             _context.CardStates.Add(newCard);
             _context.SaveChanges();
@@ -354,17 +354,17 @@ namespace Kondor.Service.Leitner
         }
 
         /// <summary>
-        /// Generates new card
+        /// Add a card to first state
         /// </summary>
         /// <param name="position"></param>
         /// <param name="userId"></param>
         /// <param name="memId"></param>
         /// <returns></returns>
-        protected virtual CardState GenerateNewCard(Position position, string userId, int memId)
+        protected virtual CardState AddCardInFirstState(Position position, string userId, int memId)
         {
             var stopTime = GetStopTimeForPositionInMinute(position, _timeUnit);
 
-            var newCard = new CardState
+            var cardState = new CardState
             {
                 CardPosition = position,
                 CreationDateTime = DateTime.Now,
@@ -374,7 +374,7 @@ namespace Kondor.Service.Leitner
                 CardId = memId
             };
 
-            return newCard;
+            return cardState;
         }
 
         /// <summary>

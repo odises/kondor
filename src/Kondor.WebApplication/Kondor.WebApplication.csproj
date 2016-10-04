@@ -215,7 +215,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CardViewModels.cs" />
+    <Compile Include="Models\RichCardViewModels.cs" />
+    <Compile Include="Models\SimpleCardViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\SpeakViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -283,10 +284,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Card\Create.cshtml" />
+    <Content Include="Views\Card\CreateSimpleCard.cshtml" />
     <Content Include="Views\Setting\General.cshtml" />
     <Content Include="Views\Mem\Images.cshtml" />
     <Content Include="Views\Mem\Speak.cshtml" />
+    <Content Include="Views\Card\Index.cshtml" />
+    <Content Include="Views\Card\CreateRichCard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

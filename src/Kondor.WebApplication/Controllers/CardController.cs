@@ -6,6 +6,7 @@ using System.Net;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
+using Kondor.Data.Enums;
 using Kondor.WebApplication.Models;
 using Microsoft.AspNet.Identity;
 
@@ -26,14 +27,37 @@ namespace Kondor.WebApplication.Controllers
         }
 
         [Authorize]
-        public ActionResult Create()
+        public ActionResult CreateRichCard()
         {
+            return View();
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult CreateRichCard(RichCardViewModel model)
+        {
+            return View();
+        }
+
+
+
+        [Authorize]
+        public ActionResult CreateSimpleCard()
+        {
+            var card = new Card();
+            card.CardStatus = CardStatus.Draft;
+            card.CardType = CardType.RichCard;
+            card.UserId = HttpContext.User.Identity.GetUserId();
+            card.CardData = "";
+
+
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public ActionResult Create(CardViewModel model)
+        public ActionResult CreateSimpleCard(SimpleCardViewModel model)
         {
             var mimeTypeWhitelist = new List<string>
             {
