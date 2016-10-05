@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
+    <Compile Include="Constants\RegexPatterns.cs" />
     <Compile Include="DataModel\ApplicationUser.cs" />
     <Compile Include="DataModel\CardState.cs" />
     <Compile Include="DataModel\ExampleView.cs" />

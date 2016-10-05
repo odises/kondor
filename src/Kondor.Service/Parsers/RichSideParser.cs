@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Kondor.Data.LeitnerDataModels;
+using Microsoft.AspNet.Identity;
 
 namespace Kondor.Service.Parsers
 {
@@ -17,7 +18,7 @@ namespace Kondor.Service.Parsers
         {
             var richSide = new RichSide();
 
-            var regex = new Regex(@"(\#[\w\s]+)((\-[\w\s,';.?!\(\)]+)(\$[\w\s,';.?!\(\)]+)*)*");
+            var regex = new Regex(Data.Constants.RegexPatterns.RichSideFirstRegex);
             var text = input;
             var temp = regex.Matches(text);
 
@@ -37,7 +38,7 @@ namespace Kondor.Service.Parsers
                 {
                     var definition = new Definition();
 
-                    var reg = new Regex(@"(\-[\w\s,';.?!\(\)]+)(\$[\w\s,';.?!\(\)]+)+");
+                    var reg = new Regex(Data.Constants.RegexPatterns.RichSideSecondRegex);
                     var t = reg.Matches(item.Value);
                     var m = t.Cast<Match>();
 
