@@ -8,10 +8,16 @@ namespace Kondor.Service
     public class Application : IApplication
     {
         private readonly ISettingHandler _settingHandler;
+        private readonly ILeitnerService _leitnerService;
+        private readonly ITelegramMessageHandler _telegramMessageHandler;
+        private readonly INotificationHandler _notificationHandler;
 
-        public Application(ISettingHandler settingHandler)
+        public Application(ISettingHandler settingHandler, ILeitnerService leitnerService, ITelegramMessageHandler telegramMessageHandler, INotificationHandler notificationHandler)
         {
             _settingHandler = settingHandler;
+            _leitnerService = leitnerService;
+            _telegramMessageHandler = telegramMessageHandler;
+            _notificationHandler = notificationHandler;
         }
 
         public void Run()
@@ -33,8 +39,7 @@ namespace Kondor.Service
         {
             try
             {
-                var notificationHandler = ObjectManager.GetInstance<INotificationHandler>();
-                notificationHandler.SendNotification();
+                _notificationHandler.SendNotification();
                 Console.WriteLine("Notification");
             }
             catch (Exception exception)
@@ -47,9 +52,7 @@ namespace Kondor.Service
         {
             try
             {
-                var telegramMessageHandler = ObjectManager.GetInstance<ITelegramMessageHandler>();
-                telegramMessageHandler.ProcessMessages();
-
+                _telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("T Job");
             }
             catch (Exception exception)
@@ -62,9 +65,7 @@ namespace Kondor.Service
         {
             try
             {
-                var leitnerService = ObjectManager.GetInstance<ILeitnerService>();
-                var cleanerResult = leitnerService.BoxCleanUp();
-
+                var cleanerResult = _leitnerService.BoxCleanUp();
                 Console.WriteLine("Cleaner: " + cleanerResult);
             }
             catch (Exception exception)
