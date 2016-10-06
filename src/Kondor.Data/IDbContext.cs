@@ -23,7 +23,6 @@ namespace Kondor.Data
         DbSet<Update> Updates { get; set; }
         DbSet<Setting> Settings { get; set; }
         DbSet<Medium> Media { get; set; }
-        DbSet<Voice> Voices { get; set; }
         DbSet<Language> Languages { get; set; }
         DbSet<StringResource> StringResources { get; set; }
     }

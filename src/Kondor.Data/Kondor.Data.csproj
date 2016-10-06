@@ -99,7 +99,6 @@
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Language.cs" />
     <Compile Include="DataModel\StringResource.cs" />
-    <Compile Include="DataModel\Voice.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
     <Compile Include="DataModel\Setting.cs" />
@@ -189,6 +188,10 @@
     <Compile Include="Migrations\201610031901540_CardModelsChanged-02.Designer.cs">
       <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610060519403_VoiceRemoved.cs" />
+    <Compile Include="Migrations\201610060519403_VoiceRemoved.Designer.cs">
+      <DependentUpon>201610060519403_VoiceRemoved.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
@@ -267,6 +270,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610031901540_CardModelsChanged-02.resx">
       <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610060519403_VoiceRemoved.resx">
+      <DependentUpon>201610060519403_VoiceRemoved.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
