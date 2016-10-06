@@ -7,6 +7,22 @@
             Front = new SimpleSide();
             Back = new RichSide();
         }
+
+        public string GetLearnView()
+        {
+            return $"*{Front.Display()}*\n\n{Back.Display()}";
+        }
+
+        public string GetFrontExamView()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetBackExamView()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public ISide Front { get; set; }
         public ISide Back { get; set; }
     }

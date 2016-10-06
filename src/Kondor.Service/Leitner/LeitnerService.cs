@@ -91,38 +91,35 @@ namespace Kondor.Service.Leitner
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var mems = _context.Cards.Where(m => !_context.CardStates.Any(p => p.CardId == m.Id) && m.UserId == userId).ToList();
+            var cards = _context.Cards.Where(m => !_context.CardStates.Any(p => p.CardId == m.Id) && m.UserId == userId).ToList();
 
-            if (mems.Count == 0)
+            if (cards.Count == 0)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var mem = mems.GetRandom();
+            var card = cards.GetRandom();
 
 
-            var newCard = AddCardInFirstState(Position.First, userId, mem.Id);
+            var cardState = AddCardInFirstState(Position.First, userId, card.Id);
 
+            foreach (var example in card.Examples)
+            {
+                if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
+                {
+                    _context.ExampleViews.Add(new ExampleView
+                    {
+                        ExampleId = example.Id,
+                        UserId = example.Card.UserId,
+                        Views = 0
+                    });
+                }
+            }
 
-            // todo Not now
-
-            //foreach (var example in mem.Examples)
-            //{
-            //    if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Mem.UserId))
-            //    {
-            //        _context.ExampleViews.Add(new ExampleView
-            //        {
-            //            ExampleId = example.Id,
-            //            UserId = example.Mem.UserId,
-            //            Views = 0
-            //        });
-            //    }
-            //}
-
-            _context.CardStates.Add(newCard);
+            _context.CardStates.Add(cardState);
             _context.SaveChanges();
 
-            return mem;
+            return card;
         }
 
         /// <summary>

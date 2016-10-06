@@ -62,19 +62,21 @@ namespace Kondor.Service.Handlers
                 updateType = UpdateType.Unclear;
             }
 
-            //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
-            //{
-            _context.Updates.Add(new Data.DataModel.Update
+
+            // todo
+            if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
             {
-                UpdateId = update.UpdateId,
-                FromId = fromId,
-                Status = UpdateStatus.Unprocessed,
-                CreationDatetime = DateTime.Now,
-                ModifiedDatetime = DateTime.Now,
-                UpdateType = updateType,
-                SerializedUpdate = update.ToJson()
-            });
-            //}
+                _context.Updates.Add(new Data.DataModel.Update
+                {
+                    UpdateId = update.UpdateId,
+                    FromId = fromId,
+                    Status = UpdateStatus.Unprocessed,
+                    CreationDatetime = DateTime.Now,
+                    ModifiedDatetime = DateTime.Now,
+                    UpdateType = updateType,
+                    SerializedUpdate = update.ToJson()
+                });
+            }
 
             _context.SaveChanges();
         }

@@ -146,11 +146,13 @@ namespace Kondor.Service.Processors
         {
             try
             {
-                var newMem = _leitnerService.AddOneNewCardToBox(callbackQuery.From.Id);
-                var response = "";//newMem.GenerateCardView(); // todo
+                var card = _leitnerService.AddOneNewCardToBox(callbackQuery.From.Id);
+
+                var response = card.DeserializeCardData().GetLearnView();
+
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
                     {
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardImagesTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, newMem.Id)},
+                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardImagesTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, card.Id)},
                         new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardBackTitle), CallbackData = QueryData.NewQueryString("Back", null, null)}
                     }}));
             }
@@ -172,10 +174,10 @@ namespace Kondor.Service.Processors
             try
             {
                 var cardState = _leitnerService.GetCardForExam(callbackQuery.From.Id);
-                // todo ProcessExamCommand
-                var cardInfo = cardState.Card.DeserializeCardData();
 
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), $"{cardInfo.Front.Display()}", "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
+                var response = cardState.Card.DeserializeCardData().GetFrontExamView();
+
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
             {
                 new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardImagesTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, cardState.Card.Id)},
                 new InlineKeyboardButton
@@ -228,11 +230,9 @@ namespace Kondor.Service.Processors
             else
             {
                 var cardState = _leitnerService.GetCard(int.Parse(queryData.Data));
-                var cardInfo = cardState.Card.DeserializeCardData();
+                var response = cardState.Card.DeserializeCardData().GetBackExamView();
 
-                // todo ProcessDisplayCommand
-
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), cardInfo.Back.Display(), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
                 {
                       new []
                       {

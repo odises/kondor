@@ -198,6 +198,10 @@
     <Compile Include="Migrations\201610060535379_ExampleChangedEntityChanged.Designer.cs">
       <DependentUpon>201610060535379_ExampleChangedEntityChanged.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610060716519_CardIdAddedToExample.cs" />
+    <Compile Include="Migrations\201610060716519_CardIdAddedToExample.Designer.cs">
+      <DependentUpon>201610060716519_CardIdAddedToExample.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
@@ -282,6 +286,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610060535379_ExampleChangedEntityChanged.resx">
       <DependentUpon>201610060535379_ExampleChangedEntityChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610060716519_CardIdAddedToExample.resx">
+      <DependentUpon>201610060716519_CardIdAddedToExample.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

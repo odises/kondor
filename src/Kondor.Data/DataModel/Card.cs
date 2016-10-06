@@ -17,6 +17,7 @@ namespace Kondor.Data.DataModel
         public CardStatus CardStatus { get; set; }
         public string CardData { get; set; }
         public virtual ICollection<CardState> CardStates { get; set; }
+        public virtual ICollection<Example> Examples { get; set; }
         public virtual ApplicationUser User { get; set; }
 
         public ICard DeserializeCardData()

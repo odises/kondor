@@ -52,6 +52,7 @@ namespace Kondor.Service
         {
             try
             {
+                _telegramMessageHandler.SaveUpdates();
                 _telegramMessageHandler.ProcessMessages();
                 Console.WriteLine("T Job");
             }

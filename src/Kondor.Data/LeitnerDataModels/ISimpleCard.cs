@@ -2,6 +2,9 @@
 {
     public interface ICard
     {
+        string GetLearnView();
+        string GetFrontExamView();
+        string GetBackExamView();
         ISide Front { get; set; }
         ISide Back { get; set; }
     }
