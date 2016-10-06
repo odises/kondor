@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Kondor.Data.LeitnerDataModels;
-using Microsoft.AspNet.Identity;
 
 namespace Kondor.Service.Parsers
 {
@@ -10,7 +9,7 @@ namespace Kondor.Service.Parsers
     {
         public ISide ParseSimpleSide(string input)
         {
-            var simpleSide = new SimpleSide {Value = input};
+            var simpleSide = new SimpleSide { Value = input };
             return simpleSide;
         }
 
@@ -54,7 +53,7 @@ namespace Kondor.Service.Parsers
                         definition.Examples = firstMatch.Groups[2]
                             .Captures
                             .Cast<Capture>()
-                            .Select(p => p.Value.Replace(Environment.NewLine, "").Replace("$ ", ""))
+                            .Select(p => new Example { Value = p.Value.Replace(Environment.NewLine, "").Replace("$ ", "") })
                             .ToList();
                     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Kondor.Data.LeitnerDataModels
 {
@@ -6,12 +7,23 @@ namespace Kondor.Data.LeitnerDataModels
     {
         public Definition()
         {
-            Examples = new List<string>();
+            Examples = new List<Example>();
             Synonyms = new List<string>();
         }
 
         public string Value;
-        public List<string> Examples { get; set; }
+        public List<Example> Examples { get; set; }
         public List<string> Synonyms { get; set; }
+    }
+
+    public class Example
+    {
+        public Example()
+        {
+            Id = Guid.NewGuid();
+        }
+
+        public Guid Id { get; set; }
+        public string Value { get; set; }
     }
 }

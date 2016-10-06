@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Kondor.Data;
@@ -58,6 +59,20 @@ namespace Kondor.WebApplication.Controllers
                     UserId = HttpContext.User.Identity.GetUserId(),
                     CardData = serializedCard
                 });
+
+                var backSide = richCard.Back as RichSide;
+                if (backSide != null)
+                {
+                    var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
+                    foreach (var example in examples)
+                    {
+                        _context.Examples.Add(new Data.DataModel.Example
+                        {
+                            Sentence = example.Value,
+                            ExampleUniqueId = example.Id
+                        });
+                    }
+                }
 
                 _context.SaveChanges();
 
