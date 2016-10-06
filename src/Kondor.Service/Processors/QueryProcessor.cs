@@ -65,7 +65,7 @@ namespace Kondor.Service.Processors
                 var example = _leitnerService.GetExample(callbackQuery.From.Id);
 
                 var messageFormatter = _textManager.GetText(StringResources.ExampleBoardMessageFormatter);
-                var messageBody = string.Format(messageFormatter, example.ToBoldedString());
+                var messageBody = string.Format(messageFormatter, example.Sentence);
 
 
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId),
