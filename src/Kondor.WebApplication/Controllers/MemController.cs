@@ -6,12 +6,9 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Service;
 using Kondor.Service.Handlers;
-using Kondor.WebApplication.Models;
 
 namespace Kondor.WebApplication.Controllers
 {

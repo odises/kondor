@@ -10,17 +10,17 @@
 
         public string GetLearnView()
         {
-            throw new System.NotImplementedException();
+            return $"*{Front.Display()}*\n\n{Back.Display()}";
         }
 
         public string GetFrontExamView()
         {
-            throw new System.NotImplementedException();
+            return $"*{Front.Display()}*";
         }
 
         public string GetBackExamView()
         {
-            throw new System.NotImplementedException();
+            return GetLearnView();
         }
 
         public ISide Front { get; set; }

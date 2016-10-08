@@ -15,12 +15,12 @@
 
         public string GetFrontExamView()
         {
-            throw new System.NotImplementedException();
+            return $"*{Front.Display()}*";
         }
 
         public string GetBackExamView()
         {
-            throw new System.NotImplementedException();
+            return GetLearnView();
         }
 
         public ISide Front { get; set; }
