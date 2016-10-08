@@ -1,9 +1,8 @@
 ﻿namespace Kondor.Data.Enums
 {
-    public enum CardStatus
+    public enum RowStatus
     {
-        Draft,
-        Published,
+        NotRemoved,
         Removed
     }
 }

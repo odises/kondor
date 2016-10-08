@@ -11,8 +11,8 @@ namespace Kondor.Data
             Database.SetInitializer(new CreateDatabaseIfNotExists<KondorDataContext>());
         }
 
-        public DbSet<Mem> Mems { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<CardState> CardStates { get; set; }
         public DbSet<Update> Updates { get; set; }
         public DbSet<Example> Examples { get; set; }
         public DbSet<ExampleView> ExampleViews { get; set; }
@@ -20,7 +20,6 @@ namespace Kondor.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Medium> Media { get; set; }
-        public DbSet<Voice> Voices { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<StringResource> StringResources { get; set; }
 

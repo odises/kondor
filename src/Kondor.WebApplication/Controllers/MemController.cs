@@ -28,15 +28,19 @@ namespace Kondor.WebApplication.Controllers
         [Route("learning/mem/{id}/images")]
         public ActionResult Images(int id)
         {
-            var mem = _context.Mems.FirstOrDefault(p => p.Id == id);
-            if (mem == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //var mem = _context.Mems.FirstOrDefault(p => p.Id == id);
+            //if (mem == null)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
-            var images = mem.Media.Where(p => p.ContentType.Contains("image")).Select(p => p.Id);
+            //var images = mem.Media.Where(p => p.ContentType.Contains("image")).Select(p => p.Id);
 
-            return View(images);
+            //return View(images);
+
+            // todo not now
+
+            throw new NotImplementedException();
         }
 
         public async Task<ActionResult> RenderImage(int id)
@@ -53,48 +57,24 @@ namespace Kondor.WebApplication.Controllers
         [Route("learning/mem/speak/tid/{tid}/ttype/{ttype}")]
         public ActionResult Speak(int tid, TextType ttype)
         {
-            if (ttype == TextType.Example)
+            switch (ttype)
             {
-                var model = new SpeakViewModel();
-                var example = _context.Examples.FirstOrDefault(p => p.Id == tid);
-                if (example != null)
-                {
-                    model.Text = example.Sentence;
-
-                    var v = _context.Voices.FirstOrDefault(p => p.Text == example.Sentence);
-                    if (v != null)
+                case TextType.Example:
                     {
-                        //model.VoiceData = v.VoiceData;
-                        model.ContentType = v.ContentType;
-                    }
-                    else
-                    {
-                        var voiceData =
-                            DownloadFile(
-                                string.Format(_settingHandler.GetSettings<GeneralSettings>().TextReaderApiBaseUri,
-                                    example.Sentence));
-
-                        _context.Voices.Add(new Voice
+                        var model = new SpeakViewModel();
+                        var example = _context.Examples.FirstOrDefault(p => p.Id == tid);
+                        if (example != null)
                         {
-                            ContentType = voiceData.Item1,
-                            Text = example.Sentence,
-                            VoiceData = voiceData.Item2
-                        });
-                        _context.SaveChanges();
+                            model.Text = example.Sentence;
+                            return View(model);
+                        }
 
-                        //model.VoiceData = voiceData.Item2;
-                        model.ContentType = voiceData.Item1;
+                        throw new ArgumentNullException();
                     }
-                    return View(model);
-                }
-                else
-                {
-                    throw new ArgumentNullException();
-                }
-            }
-            else
-            {
-                throw new Exception();
+                case TextType.CardFrontSideText:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(ttype), ttype, null);
             }
         }
 

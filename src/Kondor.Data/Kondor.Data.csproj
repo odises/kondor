@@ -93,16 +93,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
+    <Compile Include="Constants\RegexPatterns.cs" />
     <Compile Include="DataModel\ApplicationUser.cs" />
-    <Compile Include="DataModel\Card.cs" />
+    <Compile Include="DataModel\CardState.cs" />
     <Compile Include="DataModel\ExampleView.cs" />
     <Compile Include="DataModel\Entity.cs" />
     <Compile Include="DataModel\Language.cs" />
     <Compile Include="DataModel\StringResource.cs" />
-    <Compile Include="DataModel\Voice.cs" />
     <Compile Include="DataModel\Notification.cs" />
     <Compile Include="DataModel\Response.cs" />
     <Compile Include="DataModel\Setting.cs" />
+    <Compile Include="Enums\RowStatus.cs" />
+    <Compile Include="Enums\CardType.cs" />
+    <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\TextType.cs" />
     <Compile Include="Enums\UserState.cs" />
     <Compile Include="IDbContext.cs" />
@@ -110,15 +113,23 @@
     <Compile Include="DataModel\Example.cs" />
     <Compile Include="DataModel\Medium.cs" />
     <Compile Include="DataModel\Update.cs" />
-    <Compile Include="DataModel\Mem.cs" />
+    <Compile Include="DataModel\Card.cs" />
     <Compile Include="Enums\ResponseStatus.cs" />
-    <Compile Include="Enums\CardStatus.cs" />
+    <Compile Include="Enums\InboxCardsStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\TimeUnit.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\UpdateType.cs" />
     <Compile Include="IJsonSerializable.cs" />
     <Compile Include="JsonSerializable.cs" />
+    <Compile Include="LeitnerDataModels\Definition.cs" />
+    <Compile Include="LeitnerDataModels\ISide.cs" />
+    <Compile Include="LeitnerDataModels\ISimpleCard.cs" />
+    <Compile Include="LeitnerDataModels\PartOfSpeech.cs" />
+    <Compile Include="LeitnerDataModels\RichCard.cs" />
+    <Compile Include="LeitnerDataModels\RichSide.cs" />
+    <Compile Include="LeitnerDataModels\SimpleCard.cs" />
+    <Compile Include="LeitnerDataModels\SimpleSide.cs" />
     <Compile Include="Migrations\201609090321083_InitialCreate.cs" />
     <Compile Include="Migrations\201609090321083_InitialCreate.Designer.cs">
       <DependentUpon>201609090321083_InitialCreate.cs</DependentUpon>
@@ -170,6 +181,26 @@
     <Compile Include="Migrations\201609270513114_StringResourcesAdded02.cs" />
     <Compile Include="Migrations\201609270513114_StringResourcesAdded02.Designer.cs">
       <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610031858550_CardModelsChanged-01.cs" />
+    <Compile Include="Migrations\201610031858550_CardModelsChanged-01.Designer.cs">
+      <DependentUpon>201610031858550_CardModelsChanged-01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610031901540_CardModelsChanged-02.cs" />
+    <Compile Include="Migrations\201610031901540_CardModelsChanged-02.Designer.cs">
+      <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610060519403_VoiceRemoved.cs" />
+    <Compile Include="Migrations\201610060519403_VoiceRemoved.Designer.cs">
+      <DependentUpon>201610060519403_VoiceRemoved.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610060535379_ExampleChangedEntityChanged.cs" />
+    <Compile Include="Migrations\201610060535379_ExampleChangedEntityChanged.Designer.cs">
+      <DependentUpon>201610060535379_ExampleChangedEntityChanged.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610060716519_CardIdAddedToExample.cs" />
+    <Compile Include="Migrations\201610060716519_CardIdAddedToExample.Designer.cs">
+      <DependentUpon>201610060716519_CardIdAddedToExample.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -246,6 +277,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609270513114_StringResourcesAdded02.resx">
       <DependentUpon>201609270513114_StringResourcesAdded02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610031858550_CardModelsChanged-01.resx">
+      <DependentUpon>201610031858550_CardModelsChanged-01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610031901540_CardModelsChanged-02.resx">
+      <DependentUpon>201610031901540_CardModelsChanged-02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610060519403_VoiceRemoved.resx">
+      <DependentUpon>201610060519403_VoiceRemoved.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610060535379_ExampleChangedEntityChanged.resx">
+      <DependentUpon>201610060535379_ExampleChangedEntityChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610060716519_CardIdAddedToExample.resx">
+      <DependentUpon>201610060716519_CardIdAddedToExample.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

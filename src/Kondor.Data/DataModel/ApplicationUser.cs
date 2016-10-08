@@ -22,7 +22,7 @@ namespace Kondor.Data.DataModel
         public int WelcomeMessageId { get; set; }
         public Guid LanguageId { get; set; }
         public virtual Language Language { get; set; }
-        public virtual ICollection<Card> UserCards { get; set; }
+        public virtual ICollection<CardState> UserCards { get; set; }
         public virtual ICollection<ExampleView> UserExampleViews { get; set; }
     }
 }

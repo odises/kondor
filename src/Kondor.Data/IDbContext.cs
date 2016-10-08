@@ -14,16 +14,15 @@ namespace Kondor.Data
 
         int SaveChanges();
 
-        DbSet<Card> Cards { get; set; }
+        DbSet<CardState> CardStates { get; set; }
         DbSet<Example> Examples { get; set; }
         DbSet<ExampleView> ExampleViews { get; set; }
-        DbSet<Mem> Mems { get; set; }
+        DbSet<Card> Cards { get; set; }
         DbSet<Notification> Notifications { get; set; }
         DbSet<Response> Responses { get; set; }
         DbSet<Update> Updates { get; set; }
         DbSet<Setting> Settings { get; set; }
         DbSet<Medium> Media { get; set; }
-        DbSet<Voice> Voices { get; set; }
         DbSet<Language> Languages { get; set; }
         DbSet<StringResource> StringResources { get; set; }
     }

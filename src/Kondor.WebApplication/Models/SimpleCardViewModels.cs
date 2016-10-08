@@ -2,7 +2,7 @@
 
 namespace Kondor.WebApplication.Models
 {
-    public class CardViewModel
+    public class SimpleCardViewModel
     {
         [Display(Name = "Front Side")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Required field")]

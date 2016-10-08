@@ -117,7 +117,7 @@ namespace Kondor.Service.Handlers
         {
             var datetime = DateTime.Now.AddHours(alertsInterval * -1);
 
-            var query = from user in _context.Cards.Where(p => p.Status == CardStatus.NewInPosition && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now)
+            var query = from user in _context.CardStates.Where(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now)
                 .GroupBy(p => p.UserId).Select(s => s.FirstOrDefault().User)
                         where
                             !_context.Notifications.Any(

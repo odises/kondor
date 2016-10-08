@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.DataModel;
+using Kondor.Data.Enums;
+using Kondor.Data.LeitnerDataModels;
+using Kondor.Service;
+using Kondor.Service.Parsers;
 using Kondor.WebApplication.Models;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace Kondor.WebApplication.Controllers
 {
@@ -26,86 +30,83 @@ namespace Kondor.WebApplication.Controllers
         }
 
         [Authorize]
-        public ActionResult Create()
+        public ActionResult CreateRichCard()
+        {
+            return View();
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult CreateRichCard(RichCardViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var parser = ObjectManager.GetInstance<IParser>();
+
+                var richCard = new RichCard
+                {
+                    Front = parser.ParseSimpleSide(model.FrontSide),
+                    Back = parser.ParseRichSide(model.BackSide)
+                };
+
+                var serializedCard = JsonConvert.SerializeObject(richCard);
+
+                _context.Cards.Add(new Card
+                {
+                    CardStatus = CardStatus.Draft,
+                    CardType = CardType.RichCard,
+                    UserId = HttpContext.User.Identity.GetUserId(),
+                    CardData = serializedCard
+                });
+
+                var backSide = richCard.Back as RichSide;
+                if (backSide != null)
+                {
+                    var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
+                    foreach (var example in examples)
+                    {
+                        _context.Examples.Add(new Data.DataModel.Example
+                        {
+                            Sentence = example.Value,
+                            ExampleUniqueId = example.Id
+                        });
+                    }
+                }
+
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(model);
+            }
+        }
+
+
+
+        [Authorize]
+        public ActionResult CreateSimpleCard()
         {
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public ActionResult Create(CardViewModel model)
+        public ActionResult CreateSimpleCard(SimpleCardViewModel model)
         {
-            var mimeTypeWhitelist = new List<string>
-            {
-                "image/jpeg",
-                "audio/mpeg3",
-                "image/gif",
-                "image/png"
-            };
-
             if (ModelState.IsValid)
             {
-                var examples = new List<string>();
-                var files = new List<Tuple<string, byte[]>>();
-
-                if (!string.IsNullOrEmpty(model.Examples))
+                var card = new Card
                 {
-                    examples = model.Examples.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                }
-                if (!string.IsNullOrEmpty(model.MediumUrls))
-                {
-                    var urls = model.MediumUrls.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var url in urls)
-                    {
-                        try
-                        {
-                            var result = DownloadFile(url);
-                            files.Add(result);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-
-
-
-                var mem = new Mem
-                {
-                    MemBody = model.FrontSide,
-                    Definition = model.BackSide,
-                    UserId = HttpContext.User.Identity.GetUserId()
+                    CardStatus = CardStatus.Draft,
+                    CardType = CardType.SimpleCard,
+                    UserId = HttpContext.User.Identity.GetUserId(),
+                    CardData = ""
                 };
 
-                foreach (var example in examples)
-                {
-                    if (!string.IsNullOrEmpty(example))
-                    {
-                        mem.Examples.Add(new Example
-                        {
-                            Sentence = example
-                        });
-                    }
-                }
-
-                foreach (var file in files)
-                {
-                    if (mimeTypeWhitelist.Contains(file.Item1))
-                    {
-                        mem.Media.Add(new Medium
-                        {
-                            ContentType = file.Item1,
-                            MediumContent = file.Item2
-                        });
-                    }
-                }
-
-                _context.Mems.Add(mem);
-                _context.SaveChanges();
-
-
-                return RedirectToAction("Create");
+                return View();
             }
             else
             {
@@ -117,19 +118,21 @@ namespace Kondor.WebApplication.Controllers
         [ChildActionOnly]
         public ActionResult SearchOnCards(string id)
         {
-            if (!string.IsNullOrEmpty(id))
-            {
+            // todo not now
+            throw new NotImplementedException();
+            //if (!string.IsNullOrEmpty(id))
+            //{
 
-                var result = _context
-                    .Mems
-                    .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
-                    .ToList();
-                return Json(result.Select(p => new { memId = p.Id, content = p.MemBody }), JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new { }, JsonRequestBehavior.AllowGet);
-            }
+            //    var result = _context
+            //        .Mems
+            //        .Where(p => p.MemBody.ToLower().Contains(id.ToLower().Trim()) && p.UserId == HttpContext.User.Identity.GetUserId())
+            //        .ToList();
+            //    return Json(result.Select(p => new { memId = p.Id, content = p.MemBody }), JsonRequestBehavior.AllowGet);
+            //}
+            //else
+            //{
+            //    return Json(new { }, JsonRequestBehavior.AllowGet);
+            //}
         }
 
         protected virtual Tuple<string, byte[]> DownloadFile(string url)

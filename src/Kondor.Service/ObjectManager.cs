@@ -3,6 +3,7 @@ using Kondor.Data;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
+using Kondor.Service.Parsers;
 using Kondor.Service.Processors;
 
 namespace Kondor.Service
@@ -53,6 +54,8 @@ namespace Kondor.Service
             builder.RegisterType<SettingHandler>().As<ISettingHandler>();
 
             builder.RegisterType<TextManager>().As<ITextManager>();
+
+            builder.RegisterType<RichSideParser>().As<IParser>();
 
             builder.RegisterType<CacheManager>().As<ICacheManager>().SingleInstance();
             
