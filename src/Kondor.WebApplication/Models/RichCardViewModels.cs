@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNet.Identity;
 
 namespace Kondor.WebApplication.Models
 {

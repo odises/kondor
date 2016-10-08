@@ -27,7 +27,7 @@ namespace Kondor.Service.Parsers
             {
                 var partOfSpeech = new PartOfSpeech();
 
-                var partOfSpeechTitle = part.Groups[1].Value.Replace(Environment.NewLine, "").Replace("#", "");
+                var partOfSpeechTitle = part.Groups[1].Value.Replace(Environment.NewLine, "").Replace("##", "").Trim();
 
                 partOfSpeech.Title = partOfSpeechTitle;
 
@@ -44,16 +44,16 @@ namespace Kondor.Service.Parsers
                     var firstMatch = m.FirstOrDefault();
                     if (firstMatch == null) // in this case we don't have any example for this definition
                     {
-                        definition.Value = item.Value.Replace(Environment.NewLine, "").Replace("- ", "");
+                        definition.Value = item.Value.Replace(Environment.NewLine, "").Replace("--", "").Trim();
                     }
                     else
                     {
-                        definition.Value = firstMatch.Groups[1].Value.Replace(Environment.NewLine, "").Replace("- ", "");
+                        definition.Value = firstMatch.Groups[1].Value.Replace(Environment.NewLine, "").Replace("--", "").Trim();
 
                         definition.Examples = firstMatch.Groups[2]
                             .Captures
                             .Cast<Capture>()
-                            .Select(p => new Example { Value = p.Value.Replace(Environment.NewLine, "").Replace("$ ", "") })
+                            .Select(p => new Example { Value = p.Value.Replace(Environment.NewLine, "").Replace("%%", "").Trim() })
                             .ToList();
                     }
 
