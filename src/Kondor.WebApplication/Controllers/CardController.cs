@@ -35,7 +35,6 @@ namespace Kondor.WebApplication.Controllers
             return View();
         }
 
-
         [Authorize]
         [HttpPost]
         public ActionResult CreateRichCard(RichCardViewModel model)
@@ -50,20 +49,26 @@ namespace Kondor.WebApplication.Controllers
                     Back = parser.ParseRichSide(model.BackSide)
                 };
 
-                var serializedCard = JsonConvert.SerializeObject(richCard);
-
-                _context.Cards.Add(new Card
-                {
-                    CardStatus = CardStatus.Draft,
-                    CardType = CardType.RichCard,
-                    UserId = HttpContext.User.Identity.GetUserId(),
-                    CardData = serializedCard
-                });
-
                 var backSide = richCard.Back as RichSide;
-                if (backSide != null)
+                if (backSide == null || backSide.PartsOfSpeech.Count == 0)
                 {
+                    ModelState.AddModelError("BackSide", "Input text is not valid.");
+                    return View(model);
+                }
+                else
+                {
+                    var serializedCard = JsonConvert.SerializeObject(richCard);
+
+                    _context.Cards.Add(new Card
+                    {
+                        CardStatus = CardStatus.Draft,
+                        CardType = CardType.RichCard,
+                        UserId = User.Identity.GetUserId(),
+                        CardData = serializedCard
+                    });
+
                     var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
+
                     foreach (var example in examples)
                     {
                         _context.Examples.Add(new Data.DataModel.Example
@@ -72,19 +77,17 @@ namespace Kondor.WebApplication.Controllers
                             ExampleUniqueId = example.Id
                         });
                     }
+
+                    _context.SaveChanges();
+
+                    return RedirectToAction("Index", "Home");
                 }
-
-                _context.SaveChanges();
-
-                return RedirectToAction("Index");
             }
             else
             {
                 return View(model);
             }
         }
-
-
 
         [Authorize]
         public ActionResult CreateSimpleCard()
@@ -98,15 +101,27 @@ namespace Kondor.WebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var card = new Card
+                var parser = ObjectManager.GetInstance<IParser>();
+
+                var simpleCard = new SimpleCard
+                {
+                    Front = parser.ParseSimpleSide(model.FrontSide),
+                    Back = parser.ParseSimpleSide(model.BackSide)
+                };
+
+                var serializedCard = JsonConvert.SerializeObject(simpleCard);
+
+                _context.Cards.Add(new Card
                 {
                     CardStatus = CardStatus.Draft,
                     CardType = CardType.SimpleCard,
-                    UserId = HttpContext.User.Identity.GetUserId(),
-                    CardData = ""
-                };
+                    UserId = User.Identity.GetUserId(),
+                    CardData = serializedCard
+                });
 
-                return View();
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Home");
             }
             else
             {
