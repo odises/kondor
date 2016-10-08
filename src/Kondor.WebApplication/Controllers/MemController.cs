@@ -9,6 +9,7 @@ using Kondor.Data;
 using Kondor.Data.DataModel;
 using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
+using Kondor.Service;
 using Kondor.Service.Handlers;
 using Kondor.WebApplication.Models;
 
@@ -54,27 +55,14 @@ namespace Kondor.WebApplication.Controllers
             return File(medium.MediumContent, medium.ContentType);
         }
 
-        [Route("learning/mem/speak/tid/{tid}/ttype/{ttype}")]
-        public ActionResult Speak(int tid, TextType ttype)
+        public ActionResult Speak(int id)
         {
-            switch (ttype)
-            {
-                case TextType.Example:
-                    {
-                        var model = new SpeakViewModel();
-                        var example = _context.Examples.FirstOrDefault(p => p.Id == tid);
-                        if (example != null)
-                        {
-                            model.Text = example.Sentence;
-                            return View(model);
-                        }
+            var example = _context.Examples.FirstOrDefault(p => p.Id == id);
 
-                        throw new ArgumentNullException();
-                    }
-                case TextType.CardFrontSideText:
-                    throw new NotImplementedException();
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(ttype), ttype, null);
+            using (BrainiumFrameworkBase.Cache.Ignore())
+            {
+                var url = $"{_settingHandler.GetSettings<GeneralSettings>().GoogleTranslateUrl}{example.Sentence}";
+                return Redirect(url);
             }
         }
 

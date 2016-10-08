@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Extensions;
@@ -81,7 +80,7 @@ namespace Kondor.Service.Processors
                             new InlineKeyboardButton
                             {
                                 Text = _textManager.GetText(StringResources.ExampleBoardSpeakKeyboardTitle),
-                                Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().SpeakBaseUri, example.Id, TextType.Example)
+                                Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().SpeakBaseUri, example.Id)
                             }
                         }
                 }));

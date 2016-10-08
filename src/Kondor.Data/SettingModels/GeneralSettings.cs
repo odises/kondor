@@ -26,5 +26,6 @@ namespace Kondor.Data.SettingModels
         public string SpeakBaseUri { get; set; }
         public string TextReaderApiBaseUri { get; set; }
         public Guid DefaultLanguageId { get; set; }
+        public string GoogleTranslateUrl { get; set; }
     }
 }
