@@ -176,8 +176,11 @@
     <Compile Include="QueryData.cs" />
     <Compile Include="SettingModels\GeneralSettings.cs" />
     <Compile Include="SettingModels\ISettings.cs" />
+    <Compile Include="TelegramTypes\Animation.cs" />
+    <Compile Include="TelegramTypes\CallbackGame.cs" />
     <Compile Include="TelegramTypes\CallbackQuery.cs" />
     <Compile Include="TelegramTypes\ChosenInlineResult.cs" />
+    <Compile Include="TelegramTypes\Game.cs" />
     <Compile Include="TelegramTypes\InlineQuery.cs" />
     <Compile Include="TelegramTypes\Update.cs" />
     <Compile Include="TelegramTypes\Voice.cs" />

@@ -16,7 +16,13 @@ namespace Kondor.Data.TelegramTypes
         [JsonProperty("inline_message_id")]
         public string InlineMessageId { get; set; }
 
+        [JsonProperty("chat_instance")]
+        public string ChatInstance { get; set; }
+
         [JsonProperty("data")]
         public string Data { get; set; }
+
+        [JsonProperty("game_short_name")]
+        public string GameShortName { get; set; }
     }
 }

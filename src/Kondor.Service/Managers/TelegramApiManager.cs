@@ -145,7 +145,7 @@ namespace Kondor.Service.Managers
             }
         }
 
-        public void AnswerCallbackQuery(string callbackQueryId, string text, bool showAlert)
+        public void AnswerCallbackQuery(string callbackQueryId, string text, bool showAlert, string url = null)
         {
             try
             {
@@ -156,6 +156,7 @@ namespace Kondor.Service.Managers
                 queryString["callback_query_id"] = callbackQueryId;
                 queryString["text"] = text;
                 queryString["show_alert"] = showAlert.ToString();
+                queryString["url"] = url;
 
                 var baseUri = string.Format(answerCallbackQueryEndPoint, _apiKey);
 

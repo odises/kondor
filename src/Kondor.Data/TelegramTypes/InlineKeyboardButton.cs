@@ -15,5 +15,11 @@ namespace Kondor.Data.TelegramTypes
 
         [JsonProperty("switch_inline_query")]
         public string SwitchInlineQuery { get; set; }
+
+        [JsonProperty("switch_inline_query_current_chat")]
+        public string SwitchInlineQueryCurrentChat { get; set; }
+
+        [JsonProperty("callback_game")]
+        public CallbackGame CallbackGame { get; set; }
     }
 }

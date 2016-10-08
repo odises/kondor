@@ -43,6 +43,9 @@ namespace Kondor.Data.TelegramTypes
         [JsonProperty("document")]
         public Document Document { get; set; }
 
+        [JsonProperty("game")]
+        public Game Game { get; set; }
+
         [JsonProperty("photo")]
         public PhotoSize[] Photo { get; set; }
 
