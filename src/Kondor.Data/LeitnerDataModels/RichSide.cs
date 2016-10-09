@@ -31,6 +31,8 @@ namespace Kondor.Data.LeitnerDataModels
 
                     defCount++;
                 }
+
+                result = result + Environment.NewLine + Environment.NewLine;
             }
 
             return result;

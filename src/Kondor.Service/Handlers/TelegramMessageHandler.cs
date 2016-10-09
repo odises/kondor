@@ -63,9 +63,9 @@ namespace Kondor.Service.Handlers
             }
 
 
-            // todo
-            if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
-            {
+            // todo save updates
+            //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
+            //{
                 _context.Updates.Add(new Data.DataModel.Update
                 {
                     UpdateId = update.UpdateId,
@@ -76,7 +76,7 @@ namespace Kondor.Service.Handlers
                     UpdateType = updateType,
                     SerializedUpdate = update.ToJson()
                 });
-            }
+            //}
 
             _context.SaveChanges();
         }
