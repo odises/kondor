@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,7 +27,47 @@ namespace Kondor.WebApplication.Controllers
         // GET: Card
         public ActionResult Index()
         {
-            return View();
+            var model = new List<CardViewModel>();
+            var userId = User.Identity.GetUserId();
+            var cards = _context.Cards.Where(p => p.UserId == userId);
+
+            foreach (var card in cards)
+            {
+                var item = new CardViewModel
+                {
+                    Id = card.Id,
+                    CardType = card.CardType
+                };
+
+                switch (card.CardType)
+                {
+                    case CardType.SimpleCard:
+                        {
+                            var cardData = JsonConvert.DeserializeObject<SimpleCard>(card.CardData);
+
+                            item.Back = cardData.Back;
+                            item.Front = cardData.Front;
+
+                            break;
+                        }
+                    case CardType.RichCard:
+                        {
+                            var cardData = JsonConvert.DeserializeObject<RichCard>(card.CardData);
+
+                            item.Back = cardData.Back;
+                            item.Front = cardData.Front;
+
+                            break;
+                        }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                model.Add(item);
+            }
+
+
+            return View(model);
         }
 
         [Authorize]

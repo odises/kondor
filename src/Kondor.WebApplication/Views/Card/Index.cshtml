@@ -1,7 +1,28 @@
-﻿
+﻿@model List<Kondor.WebApplication.Models.CardViewModel>
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Card Type</th>
+            <th>Front</th>
+            <th>Back</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.CardType</td>
+                <td>@item.Front.Display()</td>
+                <td>@item.Back.Display()</td>
+            </tr>
+        }
+    </tbody>
+</table>
