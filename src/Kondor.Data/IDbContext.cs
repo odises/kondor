@@ -13,6 +13,7 @@ namespace Kondor.Data
         DbSet Set(Type entityType);
 
         int SaveChanges();
+        void Dispose();
 
         DbSet<CardState> CardStates { get; set; }
         DbSet<Example> Examples { get; set; }

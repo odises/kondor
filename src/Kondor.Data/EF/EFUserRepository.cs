@@ -8,22 +8,22 @@ namespace Kondor.Data.EF
 {
     public class EFUserRepository : IUserRepository
     {
-        private readonly KondorDataContext _context;
+        private readonly IDbContext _context;
         private bool _disposed; // by default value is 'false'
 
-        public EFUserRepository(KondorDataContext context)
+        public EFUserRepository(IDbContext context)
         {
             this._context = context;
         }
 
         public ApplicationUser GetUserByTelegramId(int telegramUserId)
         {
-            return _context.Users.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
+            return _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == telegramUserId);
         }
 
         protected IQueryable<Update> GetAllUserUpdates(string id)
         {
-            var user = _context.Users.Find(id);
+            var user = _context.Set<ApplicationUser>().Find(id);
             var updates = _context.Updates.Where(p => p.FromId == user.TelegramUserId);
             return updates;
         }

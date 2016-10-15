@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Kondor.Data;
+using Kondor.Data.EF;
+using Kondor.Domain;
 using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
@@ -58,7 +60,8 @@ namespace Kondor.Service
             builder.RegisterType<RichSideParser>().As<IParser>();
 
             builder.RegisterType<CacheManager>().As<ICacheManager>().SingleInstance();
-            
+
+            builder.RegisterType<EFUserRepository>().As<IUserRepository>();
 
             return builder;
         }
