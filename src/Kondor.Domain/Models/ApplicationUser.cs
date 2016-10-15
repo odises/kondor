@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace Kondor.Data.DataModel
+namespace Kondor.Domain.Models
 {
     public class ApplicationUser : IdentityUser
     {

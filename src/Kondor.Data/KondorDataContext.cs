@@ -1,5 +1,5 @@
 ﻿using System.Data.Entity;
-using Kondor.Data.DataModel;
+using Kondor.Domain.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Kondor.Data

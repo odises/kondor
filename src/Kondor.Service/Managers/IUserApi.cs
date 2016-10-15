@@ -1,4 +1,4 @@
-﻿using Kondor.Data.Enums;
+﻿using Kondor.Domain.Enums;
 
 namespace Kondor.Service.Managers
 {

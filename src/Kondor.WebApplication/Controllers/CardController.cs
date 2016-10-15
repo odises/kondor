@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
 using Kondor.Data.LeitnerDataModels;
+using Kondor.Domain.Enums;
+using Kondor.Domain.Models;
 using Kondor.Service;
 using Kondor.Service.Parsers;
 using Kondor.WebApplication.Models;
@@ -113,7 +113,7 @@ namespace Kondor.WebApplication.Controllers
 
                     foreach (var example in examples)
                     {
-                        card.Examples.Add(new Data.DataModel.Example
+                        card.Examples.Add(new Domain.Models.Example
                         {
                             Sentence = example.Value,
                             ExampleUniqueId = example.Id
@@ -270,7 +270,7 @@ namespace Kondor.WebApplication.Controllers
 
                             foreach (var example in examples)
                             {
-                                card.Examples.Add(new Data.DataModel.Example
+                                card.Examples.Add(new Domain.Models.Example
                                 {
                                     Sentence = example.Value,
                                     ExampleUniqueId = example.Id

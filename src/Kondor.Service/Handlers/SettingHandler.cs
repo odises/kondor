@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Kondor.Data;
-using Kondor.Data.DataModel;
 using Kondor.Data.SettingModels;
+using Kondor.Domain.Models;
 using Newtonsoft.Json;
 
 namespace Kondor.Service.Handlers

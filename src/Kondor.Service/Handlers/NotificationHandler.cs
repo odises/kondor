@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Domain.Enums;
+using Kondor.Domain.Models;
 using Kondor.Service.Managers;
 
 namespace Kondor.Service.Handlers

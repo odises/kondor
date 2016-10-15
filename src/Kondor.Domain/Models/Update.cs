@@ -1,7 +1,7 @@
 ﻿using System;
-using Kondor.Data.Enums;
+using Kondor.Domain.Enums;
 
-namespace Kondor.Data.DataModel
+namespace Kondor.Domain.Models
 {
     public class Update : Entity
     {

@@ -1,4 +1,4 @@
-﻿namespace Kondor.Data.DataModel
+﻿namespace Kondor.Domain.Models
 {
     public class ExampleView : Entity
     {

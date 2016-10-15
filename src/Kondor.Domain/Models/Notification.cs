@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kondor.Data.DataModel
+namespace Kondor.Domain.Models
 {
     public class Notification : Entity
     {

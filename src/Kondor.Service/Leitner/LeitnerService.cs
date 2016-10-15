@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
+using Kondor.Domain.Enums;
+using Kondor.Domain.Models;
 using Kondor.Service.Extensions;
 using Kondor.Service.Handlers;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Kondor.Data.DataModel
+namespace Kondor.Domain.Models
 {
     public class Example : Entity
     {

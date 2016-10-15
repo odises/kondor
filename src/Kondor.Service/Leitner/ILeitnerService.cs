@@ -1,5 +1,5 @@
 ﻿using System;
-using Kondor.Data.DataModel;
+using Kondor.Domain.Models;
 
 namespace Kondor.Service.Leitner
 {

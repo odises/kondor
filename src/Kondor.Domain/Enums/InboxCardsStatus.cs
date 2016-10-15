@@ -1,4 +1,4 @@
-﻿namespace Kondor.Data.Enums
+﻿namespace Kondor.Domain.Enums
 {
     public enum InboxCardsStatus
     {

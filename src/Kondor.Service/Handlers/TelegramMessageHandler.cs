@@ -2,13 +2,14 @@
 using System.IO;
 using System.Linq;
 using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Domain.Enums;
+using Kondor.Domain.Models;
 using Kondor.Service.Managers;
 using Kondor.Service.Processors;
 using Newtonsoft.Json;
+using Update = Kondor.Domain.Models.Update;
 
 namespace Kondor.Service.Handlers
 {
@@ -66,7 +67,7 @@ namespace Kondor.Service.Handlers
             // todo save updates
             //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
             //{
-                _context.Updates.Add(new Data.DataModel.Update
+                _context.Updates.Add(new Update
                 {
                     UpdateId = update.UpdateId,
                     FromId = fromId,
@@ -126,7 +127,7 @@ namespace Kondor.Service.Handlers
 
                 if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
                 {
-                    _context.Updates.Add(new Data.DataModel.Update
+                    _context.Updates.Add(new Update
                     {
                         UpdateId = update.UpdateId,
                         FromId = fromId,

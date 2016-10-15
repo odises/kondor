@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Linq;
-using Kondor.Data;
-using Kondor.Data.DataModel;
-using Kondor.Data.Enums;
+using Kondor.Domain;
+using Kondor.Domain.Enums;
 using Kondor.Service.Extensions;
 
 namespace Kondor.Service.Managers
 {
     public class UserApi : IUserApi
     {
-        private readonly IDbContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UserApi(IDbContext context)
+        public UserApi(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         public bool IsRegisteredUser(int telegramUserId)
         {
-            if (_context.Set<ApplicationUser>().Any(p => p.TelegramUserId == telegramUserId))
+            var user = _userRepository.GetUserByTelegramId(telegramUserId);
+            if (user != null)
             {
                 return true;
             }
@@ -30,9 +30,9 @@ namespace Kondor.Service.Managers
 
         public UserState GetUserState(int telegramUserId, int minutes)
         {
-            var datetime = DateTime.Now.AddMinutes(minutes * -1);
-
-            if (_context.Updates.Any(p => p.FromId == telegramUserId && p.CreationDatetime > datetime))
+            var user = _userRepository.GetUserByTelegramId(telegramUserId);
+            var updates = _userRepository.GetUserUpdates(user.Id, new TimeSpan(0, minutes, 0));
+            if (updates.Any())
             {
                 return UserState.Active;
             }

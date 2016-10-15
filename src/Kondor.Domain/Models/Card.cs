@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Kondor.Data.Enums;
 using Kondor.Data.LeitnerDataModels;
+using Kondor.Domain.Enums;
 using Newtonsoft.Json;
 
-namespace Kondor.Data.DataModel
+namespace Kondor.Domain.Models
 {
     public class Card : Entity
     {

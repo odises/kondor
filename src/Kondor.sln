@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Data", "Kondor.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Test", "Kondor.Test\Kondor.Test.csproj", "{FF2747E3-0EB3-4208-A843-C53EE544FA31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kondor.Domain", "Kondor.Domain\Kondor.Domain.csproj", "{8A7283D3-670C-471F-9B41-5C9D603F2C99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF2747E3-0EB3-4208-A843-C53EE544FA31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7283D3-670C-471F-9B41-5C9D603F2C99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7283D3-670C-471F-9B41-5C9D603F2C99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7283D3-670C-471F-9B41-5C9D603F2C99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7283D3-670C-471F-9B41-5C9D603F2C99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
