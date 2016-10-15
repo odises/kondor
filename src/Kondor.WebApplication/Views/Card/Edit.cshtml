@@ -1,12 +1,12 @@
 ﻿@model Kondor.WebApplication.Models.RawCardViewModel
 @{
-    ViewBag.Title = "Create Rich Card";
+    ViewBag.Title = "Edit Card";
 }
 
-@using (Html.BeginForm("CreateRichCard", "Card", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("Edit", "Card", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4>Create a new rich card.</h4>
+    <h4>Edit card</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
 
@@ -22,11 +22,11 @@
             @Html.TextAreaFor(m => m.BackSide, new { @class = "form-control", rows = 5 })
         </div>
     </div>
-    
+
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-success" value="Create"/>
-            <input type="button" class="btn btn-info" onclick="location.href='@Url.Action("Index", "Home")';" value="Back" />
+            <input type="button" class="btn btn-info" onclick="location.href = '@Url.Action("Index", "Card")';" value="Back"/>
+            <input type="submit" class="btn btn-success" value="Edit" />
         </div>
     </div>
 }

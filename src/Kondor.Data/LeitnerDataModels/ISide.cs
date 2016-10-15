@@ -2,6 +2,7 @@
 {
     public interface ISide
     {
+        string Raw();
         string Display();
     }
 

@@ -12,6 +12,25 @@ namespace Kondor.Data.LeitnerDataModels
 
         public List<PartOfSpeech> PartsOfSpeech { get; set; }
 
+        public string Raw()
+        {
+            var result = "";
+            foreach (var partOfSpeech in PartsOfSpeech)
+            {
+                result = result + $"##{partOfSpeech.Title}{Environment.NewLine}";
+                foreach (var definition in partOfSpeech.Definitions)
+                {
+                    result = result + $"--{definition.Value}{Environment.NewLine}";
+
+                    foreach (var example in definition.Examples)
+                    {
+                        result = result + $"%%{example.Value}{Environment.NewLine}";
+                    }
+                }
+            }
+            return result.TrimEnd(Environment.NewLine.ToCharArray());
+        }
+
         public string Display()
         {
             var result = "";

@@ -291,6 +291,7 @@
     <Content Include="Views\Mem\Speak.cshtml" />
     <Content Include="Views\Card\Index.cshtml" />
     <Content Include="Views\Card\CreateRichCard.cshtml" />
+    <Content Include="Views\Card\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

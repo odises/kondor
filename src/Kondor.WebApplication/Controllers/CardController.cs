@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 
 namespace Kondor.WebApplication.Controllers
 {
+    [Authorize]
     public class CardController : Controller
     {
         private readonly IDbContext _context;
@@ -70,15 +71,13 @@ namespace Kondor.WebApplication.Controllers
             return View(model);
         }
 
-        [Authorize]
         public ActionResult CreateRichCard()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
-        public ActionResult CreateRichCard(RichCardViewModel model)
+        public ActionResult CreateRichCard(RawCardViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -100,19 +99,21 @@ namespace Kondor.WebApplication.Controllers
                 {
                     var serializedCard = JsonConvert.SerializeObject(richCard);
 
-                    _context.Cards.Add(new Card
+                    var card = new Card
                     {
                         CardStatus = CardStatus.Draft,
                         CardType = CardType.RichCard,
                         UserId = User.Identity.GetUserId(),
                         CardData = serializedCard
-                    });
+                    };
+
+                    _context.Cards.Add(card);
 
                     var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
 
                     foreach (var example in examples)
                     {
-                        _context.Examples.Add(new Data.DataModel.Example
+                        card.Examples.Add(new Data.DataModel.Example
                         {
                             Sentence = example.Value,
                             ExampleUniqueId = example.Id
@@ -130,15 +131,13 @@ namespace Kondor.WebApplication.Controllers
             }
         }
 
-        [Authorize]
         public ActionResult CreateSimpleCard()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
-        public ActionResult CreateSimpleCard(SimpleCardViewModel model)
+        public ActionResult CreateSimpleCard(RawCardViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -170,7 +169,150 @@ namespace Kondor.WebApplication.Controllers
             }
         }
 
-        [Authorize]
+        public ActionResult Edit(int id)
+        {
+            var card = _context.Cards.FirstOrDefault(p => p.Id == id);
+            if (card == null)
+            {
+                throw new NullReferenceException();
+            }
+            else
+            {
+                var model = new RawCardViewModel();
+
+                if (card.CardType == CardType.SimpleCard)
+                {
+                    var cardData = JsonConvert.DeserializeObject<SimpleCard>(card.CardData);
+
+                    model.FrontSide = cardData.Front.Raw();
+                    model.BackSide = cardData.Back.Raw();
+
+                    return View(model);
+                }
+                else if (card.CardType == CardType.RichCard)
+                {
+                    var cardData = JsonConvert.DeserializeObject<RichCard>(card.CardData);
+
+                    model.FrontSide = cardData.Front.Raw();
+                    model.BackSide = cardData.Back.Raw();
+
+                    return View(model);
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(int id, RawCardViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var parser = ObjectManager.GetInstance<IParser>();
+
+                var card = _context.Cards.FirstOrDefault(p => p.Id == id);
+                if (card == null)
+                {
+                    throw new NullReferenceException();
+                }
+                else
+                {
+                    if (card.CardType == CardType.SimpleCard)
+                    {
+                        var simpleCard = new SimpleCard
+                        {
+                            Front = parser.ParseSimpleSide(model.FrontSide),
+                            Back = parser.ParseSimpleSide(model.BackSide)
+                        };
+                        var serialized = JsonConvert.SerializeObject(simpleCard);
+                        card.CardData = serialized;
+
+                        _context.SaveChanges();
+
+                        return RedirectToAction("Index");
+                    }
+                    else if (card.CardType == CardType.RichCard)
+                    {
+                        var richCard = new RichCard
+                        {
+                            Front = parser.ParseSimpleSide(model.FrontSide),
+                            Back = parser.ParseRichSide(model.BackSide)
+                        };
+
+                        var backSide = richCard.Back as RichSide;
+                        if (backSide == null || backSide.PartsOfSpeech.Count == 0)
+                        {
+                            ModelState.AddModelError("BackSide", "Input text is not valid.");
+                            return View(model);
+                        }
+                        else
+                        {
+                            var serialized = JsonConvert.SerializeObject(richCard);
+
+                            card.CardData = serialized;
+
+                            var beforeEditExamples = _context.Examples.Where(p => p.CardId == card.Id);
+                            var exampleViews =
+                                _context.ExampleViews.Where(p => beforeEditExamples.Any(c => c.Id == p.ExampleId));
+
+                            foreach (var beforeEditExample in beforeEditExamples)
+                            {
+                                beforeEditExample.RowStatus = RowStatus.Removed;
+                            }
+                            foreach (var exampleView in exampleViews)
+                            {
+                                exampleView.RowStatus = RowStatus.Removed;
+                            }
+
+                            var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
+
+                            foreach (var example in examples)
+                            {
+                                card.Examples.Add(new Data.DataModel.Example
+                                {
+                                    Sentence = example.Value,
+                                    ExampleUniqueId = example.Id
+                                });
+                            }
+
+                            _context.SaveChanges();
+
+                            if (card.CardStates.Any())
+                            {
+                                foreach (var example in card.Examples)
+                                {
+                                    if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
+                                    {
+                                        _context.ExampleViews.Add(new ExampleView
+                                        {
+                                            ExampleId = example.Id,
+                                            UserId = example.Card.UserId,
+                                            Views = 0
+                                        });
+                                    }
+                                }
+                            }
+
+                            _context.SaveChanges();
+
+
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+            else
+            {
+                return View(model);
+            }
+        }
+
         [ChildActionOnly]
         public ActionResult SearchOnCards(string id)
         {

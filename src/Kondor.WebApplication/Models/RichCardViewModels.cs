@@ -3,7 +3,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Kondor.WebApplication.Models
 {
-    public class RichCardViewModel
+    public class RawCardViewModel
     {
         [Display(Name = "Front Side")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Required field")]

@@ -2,8 +2,16 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
+<div class="row">
+    <div class="col-md-4">
+        <h3>Rich Card</h3>
+        <p><a class="btn btn-success" href="@Url.Action("CreateRichCard", "Card")">Create</a></p>
+    </div>
+    <div class="col-md-4">
+        <h3>Simple Card</h3>
+        <p><a class="btn btn-success" href="@Url.Action("CreateSimpleCard", "Card")">Create</a></p>
+    </div>
+</div>
 
 <table class="table">
     <thead>
@@ -12,6 +20,7 @@
             <th>Card Type</th>
             <th>Front</th>
             <th>Back</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -22,6 +31,9 @@
                 <td>@item.CardType</td>
                 <td>@item.Front.Display()</td>
                 <td>@item.Back.Display()</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {id = item.Id}, new {@class="btn btn-warning"})
+                </td>
             </tr>
         }
     </tbody>
