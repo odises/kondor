@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using Kondor.Data;
 using Kondor.Data.SettingModels;
+using Kondor.Domain;
 using Kondor.Domain.Models;
 using Newtonsoft.Json;
 
@@ -9,11 +8,10 @@ namespace Kondor.Service.Handlers
 {
     public class SettingHandler : ISettingHandler
     {
-        private readonly IDbContext _context;
-
-        public SettingHandler(IDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public SettingHandler(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public T GetSettings<T>() where T : class
@@ -23,7 +21,7 @@ namespace Kondor.Service.Handlers
 
             var result = ObjectManager.GetInstance<ICacheManager>().FromCache<T>($"cacheKey:{typeName}", () =>
             {
-                var setting = _context.Settings.FirstOrDefault(p => p.SettingType == typeName);
+                var setting = _unitOfWork.SettingRepository.GetSettingByType(typeName);
                 if (setting != null)
                 {
                     var data = JsonConvert.DeserializeObject<T>(setting.SettingData);
@@ -43,22 +41,25 @@ namespace Kondor.Service.Handlers
         {
             var typeName = settings.GetType().Name;
 
-            var setting = _context.Settings.FirstOrDefault(p => p.SettingType == typeName);
+            var setting = _unitOfWork.SettingRepository.GetSettingByType(typeName);
+
             if (setting != null)
             {
                 setting.SettingData = JsonConvert.SerializeObject(settings);
             }
             else
             {
-                _context.Settings.Add(new Setting
+                var newSetting = new Setting
                 {
                     CreationDate = DateTime.Now,
                     SettingType = settings.GetType().Name,
                     SettingData = JsonConvert.SerializeObject(settings)
-                });
+                };
+
+                _unitOfWork.SettingRepository.Insert(newSetting);
             }
 
-            _context.SaveChanges();
+            _unitOfWork.Save();
         }
     }
 }

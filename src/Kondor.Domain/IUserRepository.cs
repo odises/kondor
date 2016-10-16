@@ -4,11 +4,11 @@ using Kondor.Domain.Models;
 
 namespace Kondor.Domain
 {
-    public interface IUserRepository : IDisposable
+    public interface IUserRepository : IRepository<ApplicationUser>
     {
-        ApplicationUser GetUserByTelegramId(int telegramUserid);
+        ApplicationUser GetUserByTelegramId(int telegramUserId);
         IEnumerable<Update> GetUserUpdates(string id);
         IEnumerable<Update> GetUserUpdates(string id, TimeSpan timeSpan);
-        void Save();
+        IEnumerable<ApplicationUser> GetUsersThatShouldBeNotified(int maximumAlertsNumber, TimeSpan interval);
     }
 }

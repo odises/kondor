@@ -2,30 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Kondor.Domain;
+using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
 
 namespace Kondor.Data.EF
 {
-    public class EFUserRepository : IUserRepository
+    public class EFUserRepository : EFRepository<ApplicationUser>, IUserRepository
     {
-        private readonly IDbContext _context;
-        private bool _disposed; // by default value is 'false'
-
-        public EFUserRepository(IDbContext context)
+        public EFUserRepository(IDbContext context) : base(context)
         {
-            this._context = context;
         }
 
         public ApplicationUser GetUserByTelegramId(int telegramUserId)
         {
-            return _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == telegramUserId);
-        }
-
-        protected IQueryable<Update> GetAllUserUpdates(string id)
-        {
-            var user = _context.Set<ApplicationUser>().Find(id);
-            var updates = _context.Updates.Where(p => p.FromId == user.TelegramUserId);
-            return updates;
+            return DbSet.FirstOrDefault(p => p.TelegramUserId == telegramUserId);
         }
 
         public IEnumerable<Update> GetUserUpdates(string id)
@@ -45,27 +35,31 @@ namespace Kondor.Data.EF
             return result;
         }
 
-        public void Save()
+        public IEnumerable<ApplicationUser> GetUsersThatShouldBeNotified(int maximumAlertsNumber, TimeSpan interval)
         {
-            _context.SaveChanges();
+            var originDateTime = DateTime.Now - interval;
+
+            var result =
+                from user in
+                    DbContext.CardStates.Where(
+                        p =>
+                            p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished &&
+                            p.ExaminationDateTime <= DateTime.Now)
+                        .GroupBy(p => p.UserId).Select(s => s.FirstOrDefault().User)
+                where
+                    !DbContext.Notifications.Any(
+                        p => p.TelegramUserId == user.TelegramUserId && p.CreationDatetime > originDateTime)
+                && DbContext.Notifications.Count(p => p.TelegramUserId == user.TelegramUserId) < maximumAlertsNumber
+                select user;
+
+            return result;
         }
 
-        public void Dispose()
+        protected IQueryable<Update> GetAllUserUpdates(string id)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this._disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this._disposed = true;
+            var user = this.GetById(id);
+            var updates = DbContext.Updates.Where(p => p.FromId == user.TelegramUserId);
+            return updates;
         }
     }
 }

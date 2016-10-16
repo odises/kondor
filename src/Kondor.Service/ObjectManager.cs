@@ -61,7 +61,7 @@ namespace Kondor.Service
 
             builder.RegisterType<CacheManager>().As<ICacheManager>().SingleInstance();
 
-            builder.RegisterType<EFUserRepository>().As<IUserRepository>();
+            builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>();
 
             return builder;
         }

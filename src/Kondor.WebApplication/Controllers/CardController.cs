@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using Kondor.Data;
 using Kondor.Data.LeitnerDataModels;
+using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
 using Kondor.Service;
@@ -19,10 +19,10 @@ namespace Kondor.WebApplication.Controllers
     [Authorize]
     public class CardController : Controller
     {
-        private readonly IDbContext _context;
-        public CardController(IDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public CardController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Card
@@ -30,7 +30,7 @@ namespace Kondor.WebApplication.Controllers
         {
             var model = new List<CardViewModel>();
             var userId = User.Identity.GetUserId();
-            var cards = _context.Cards.Where(p => p.UserId == userId);
+            var cards = _unitOfWork.CardRepository.GetCardsByUserId(userId);
 
             foreach (var card in cards)
             {
@@ -107,7 +107,7 @@ namespace Kondor.WebApplication.Controllers
                         CardData = serializedCard
                     };
 
-                    _context.Cards.Add(card);
+                    _unitOfWork.CardRepository.Insert(card);
 
                     var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
 
@@ -120,7 +120,9 @@ namespace Kondor.WebApplication.Controllers
                         });
                     }
 
-                    _context.SaveChanges();
+                    _unitOfWork.CardRepository.Update(card);
+
+                    _unitOfWork.Save();
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -151,15 +153,16 @@ namespace Kondor.WebApplication.Controllers
 
                 var serializedCard = JsonConvert.SerializeObject(simpleCard);
 
-                _context.Cards.Add(new Card
+                var newCard = new Card
                 {
                     CardStatus = CardStatus.Draft,
                     CardType = CardType.SimpleCard,
                     UserId = User.Identity.GetUserId(),
                     CardData = serializedCard
-                });
+                };
 
-                _context.SaveChanges();
+                _unitOfWork.CardRepository.Insert(newCard);
+                _unitOfWork.Save();
 
                 return RedirectToAction("Index", "Home");
             }
@@ -171,7 +174,7 @@ namespace Kondor.WebApplication.Controllers
 
         public ActionResult Edit(int id)
         {
-            var card = _context.Cards.FirstOrDefault(p => p.Id == id);
+            var card = _unitOfWork.CardRepository.GetById(id);
             if (card == null)
             {
                 throw new NullReferenceException();
@@ -212,7 +215,7 @@ namespace Kondor.WebApplication.Controllers
             {
                 var parser = ObjectManager.GetInstance<IParser>();
 
-                var card = _context.Cards.FirstOrDefault(p => p.Id == id);
+                var card = _unitOfWork.CardRepository.GetById(id);
                 if (card == null)
                 {
                     throw new NullReferenceException();
@@ -229,7 +232,8 @@ namespace Kondor.WebApplication.Controllers
                         var serialized = JsonConvert.SerializeObject(simpleCard);
                         card.CardData = serialized;
 
-                        _context.SaveChanges();
+                        _unitOfWork.CardRepository.Update(card);
+                        _unitOfWork.Save();
 
                         return RedirectToAction("Index");
                     }
@@ -253,17 +257,21 @@ namespace Kondor.WebApplication.Controllers
 
                             card.CardData = serialized;
 
-                            var beforeEditExamples = _context.Examples.Where(p => p.CardId == card.Id);
+                            var beforeEditExamples = _unitOfWork.ExampleRepository.GetExamplesByCardId(card.Id).ToList();
+
                             var exampleViews =
-                                _context.ExampleViews.Where(p => beforeEditExamples.Any(c => c.Id == p.ExampleId));
+                                _unitOfWork.ExampleViewRepository.GetAllRelatedExampleViews(beforeEditExamples.Select(p => p.Id));
 
                             foreach (var beforeEditExample in beforeEditExamples)
                             {
                                 beforeEditExample.RowStatus = RowStatus.Removed;
+                                _unitOfWork.ExampleRepository.Update(beforeEditExample);
                             }
+
                             foreach (var exampleView in exampleViews)
                             {
                                 exampleView.RowStatus = RowStatus.Removed;
+                                _unitOfWork.ExampleViewRepository.Update(exampleView);
                             }
 
                             var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
@@ -277,26 +285,29 @@ namespace Kondor.WebApplication.Controllers
                                 });
                             }
 
-                            _context.SaveChanges();
+                            _unitOfWork.CardRepository.Update(card);
+
+                            _unitOfWork.Save();
 
                             if (card.CardStates.Any())
                             {
                                 foreach (var example in card.Examples)
                                 {
-                                    if (!_context.ExampleViews.Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
+                                    
+                                    if (_unitOfWork.ExampleViewRepository.GetExampleViewByExampleAndUserId(example.Id, example.Card.UserId) == null)
                                     {
-                                        _context.ExampleViews.Add(new ExampleView
+                                        var newExampleView = new ExampleView
                                         {
                                             ExampleId = example.Id,
                                             UserId = example.Card.UserId,
                                             Views = 0
-                                        });
+                                        };
+                                        _unitOfWork.ExampleViewRepository.Insert(newExampleView);
                                     }
                                 }
                             }
 
-                            _context.SaveChanges();
-
+                            _unitOfWork.Save();
 
                             return RedirectToAction("Index");
                         }

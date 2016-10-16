@@ -6,7 +6,7 @@ namespace Kondor.Service.Handlers
     {
         void MessageProcessor(Message message);
         int ProcessMessages();
-        void SaveUpdate(Update update);
+        void SaveUpdate(TelegramUpdate update);
         void SaveUpdates();
     }
 }

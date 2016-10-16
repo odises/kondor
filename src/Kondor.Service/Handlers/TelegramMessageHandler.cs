@@ -1,37 +1,34 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using Kondor.Data;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Domain;
 using Kondor.Domain.Enums;
-using Kondor.Domain.Models;
 using Kondor.Service.Managers;
 using Kondor.Service.Processors;
 using Newtonsoft.Json;
-using Update = Kondor.Domain.Models.Update;
 
 namespace Kondor.Service.Handlers
 {
     public class TelegramMessageHandler : ITelegramMessageHandler
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
-        private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
 
 
-        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, IDbContext context, ISettingHandler settingHandler, ITextManager textManager)
+        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
-            this._context = context;
             _settingHandler = settingHandler;
             _textManager = textManager;
+            _unitOfWork = unitOfWork;
         }
 
-        public void SaveUpdate(Data.TelegramTypes.Update update)
+        public void SaveUpdate(Data.TelegramTypes.TelegramUpdate update)
         {
             UpdateType updateType;
             var fromId = -1;
@@ -67,25 +64,26 @@ namespace Kondor.Service.Handlers
             // todo save updates
             //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
             //{
-                _context.Updates.Add(new Update
-                {
-                    UpdateId = update.UpdateId,
-                    FromId = fromId,
-                    Status = UpdateStatus.Unprocessed,
-                    CreationDatetime = DateTime.Now,
-                    ModifiedDatetime = DateTime.Now,
-                    UpdateType = updateType,
-                    SerializedUpdate = update.ToJson()
-                });
-            //}
+            var newUpdate = new Domain.Models.Update
+            {
+                UpdateId = update.UpdateId,
+                FromId = fromId,
+                Status = UpdateStatus.Unprocessed,
+                CreationDatetime = DateTime.Now,
+                ModifiedDatetime = DateTime.Now,
+                UpdateType = updateType,
+                SerializedUpdate = update.ToJson()
+            };
 
-            _context.SaveChanges();
+            _unitOfWork.UpdateRepository.Insert(newUpdate);
+            //}
+            _unitOfWork.Save();
         }
 
         public void SaveUpdates()
         {
             int? lastUpdateId = null;
-            var lastUpdate = _context.Updates.OrderByDescending(p => p.UpdateId).FirstOrDefault();
+            var lastUpdate = _unitOfWork.UpdateRepository.GetLastUpdate();
             if (lastUpdate != null)
             {
                 lastUpdateId = lastUpdate.UpdateId;
@@ -125,9 +123,9 @@ namespace Kondor.Service.Handlers
                     updateType = UpdateType.Unclear;
                 }
 
-                if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
+                if (_unitOfWork.UpdateRepository.GetUpdateByUpdateId(update.UpdateId) == null)
                 {
-                    _context.Updates.Add(new Update
+                    var newUpdate = new Domain.Models.Update
                     {
                         UpdateId = update.UpdateId,
                         FromId = fromId,
@@ -136,22 +134,24 @@ namespace Kondor.Service.Handlers
                         ModifiedDatetime = DateTime.Now,
                         UpdateType = updateType,
                         SerializedUpdate = update.ToJson()
-                    });
+                    };
+                    
+                    _unitOfWork.UpdateRepository.Insert(newUpdate);
                 }
             }
 
-            _context.SaveChanges();
+            _unitOfWork.Save();
 
         }
 
         public int ProcessMessages()
         {
 
-            var unprocessed = _context.Updates.Where(p => p.Status == UpdateStatus.Unprocessed).ToList();
+            var unprocessed = _unitOfWork.UpdateRepository.GetUpdatesByStatus(UpdateStatus.Unprocessed);
 
             foreach (var update in unprocessed)
             {
-                var model = JsonConvert.DeserializeObject<Data.TelegramTypes.Update>(update.SerializedUpdate);
+                var model = JsonConvert.DeserializeObject<TelegramUpdate>(update.SerializedUpdate);
                 try
                 {
                     if (model.Message != null)
@@ -185,8 +185,11 @@ namespace Kondor.Service.Handlers
                     Console.WriteLine(exception.Message);
                 }
                 update.Status = UpdateStatus.Processed;
+
+                _unitOfWork.UpdateRepository.Update(update);
             }
-            _context.SaveChanges();
+
+            _unitOfWork.Save();
 
             return 0;
 
@@ -221,11 +224,12 @@ namespace Kondor.Service.Handlers
             {
                 var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.WelcomeMessage));
 
-                var user = _context.Set<ApplicationUser>().FirstOrDefault(p => p.TelegramUserId == message.From.Id);
+                var user = _unitOfWork.UserRepository.GetUserByTelegramId(message.From.Id);
                 if (user != null)
                 {
                     user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
-                    _context.SaveChanges();
+                    _unitOfWork.UserRepository.Update(user);
+                    _unitOfWork.Save();
                 }
 
                 if (!_userApi.IsRegisteredUser(message.From.Id))

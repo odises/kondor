@@ -8,11 +8,11 @@ using Kondor.Data;
 using Kondor.Data.ApiModels;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
 using Kondor.Service.Handlers;
 using Newtonsoft.Json;
-using Update = Kondor.Data.TelegramTypes.Update;
 
 namespace Kondor.Service.Managers
 {
@@ -25,8 +25,8 @@ namespace Kondor.Service.Managers
 
     public class TelegramApiManager : ITelegramApiManager
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly string _apiKey;
-        private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
 
         public event EventHandler<MessageSentEventArgs> MessageSent;
@@ -36,10 +36,10 @@ namespace Kondor.Service.Managers
             MessageSent?.Invoke(this, e);
         }
 
-        public TelegramApiManager(IDbContext context, ISettingHandler settingHandler)
+        public TelegramApiManager(IDbContext context, ISettingHandler settingHandler, IUnitOfWork unitOfWork)
         {
-            _context = context;
             _settingHandler = settingHandler;
+            _unitOfWork = unitOfWork;
 
 
             _apiKey = _settingHandler.GetSettings<GeneralSettings>().TelegramApiKey;
@@ -49,18 +49,20 @@ namespace Kondor.Service.Managers
 
         private void TelegramApiManager_MessageSent(object sender, MessageSentEventArgs e)
         {
-            _context.Responses.Add(new Response
+            var newResponse = new Response
             {
                 TelegramUserId = e.TelegramUserId,
                 ChatId = e.ChatId,
                 MessageId = e.MessageId,
                 Status = ResponseStatus.New
-            });
+            };
 
-            _context.SaveChanges();
+            _unitOfWork.ResponseRepository.Insert(newResponse);
+
+            _unitOfWork.Save();
         }
 
-        public List<Update> GetUpdates(int? lastUpdateId = null)
+        public List<TelegramUpdate> GetUpdates(int? lastUpdateId = null)
         {
             var webClient = new WebClient();
             var getUpdatesEndPoint = _settingHandler.GetSettings<GeneralSettings>().GetUpdatesEndPoint;
@@ -83,7 +85,7 @@ namespace Kondor.Service.Managers
 
             if (responseModel.Ok)
             {
-                return JsonConvert.DeserializeObject<List<Update>>(responseModel.Result.ToString());
+                return JsonConvert.DeserializeObject<List<TelegramUpdate>>(responseModel.Result.ToString());
             }
 
             throw new InvalidDataException();

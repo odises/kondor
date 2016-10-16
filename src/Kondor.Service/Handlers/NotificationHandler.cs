@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using Kondor.Data;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
+using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
 using Kondor.Service.Managers;
@@ -13,19 +12,19 @@ namespace Kondor.Service.Handlers
 {
     public class NotificationHandler : INotificationHandler
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITelegramApiManager _telegramApiManager;
-        private readonly IDbContext _context;
         private readonly IUserApi _userApi;
         private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IDbContext context, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork)
         {
             _telegramApiManager = telegramApiManager;
-            _context = context;
             _userApi = userApi;
             _settingHandler = settingHandler;
             _textManager = textManager;
+            _unitOfWork = unitOfWork;
         }
 
         public void SendNotification()
@@ -39,9 +38,7 @@ namespace Kondor.Service.Handlers
 
                 var users = UsersThatShouldBeNotified(maximumNumberOfAlert, alertsInterval);
 
-                var responseGroups = _context.Responses
-                    .Where(p => p.Status == ResponseStatus.New)
-                    .GroupBy(p => p.TelegramUserId).ToList();
+                var responseGroups = _unitOfWork.ResponseRepository.GetResponsesGroupedByTelegramUserId();
 
                 foreach (var responseGroup in responseGroups)
                 {
@@ -57,18 +54,21 @@ namespace Kondor.Service.Handlers
                                     _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), removedMessagesText, "Markdown", true);
 
                                     response.Status = ResponseStatus.Removed;
-                                    _context.Entry(response).State = EntityState.Modified;
+                                    _unitOfWork.ResponseRepository.Update(response);
                                 }
 
                                 var telegramUserId = temp.TelegramUserId;
 
-                                _context.Notifications.Add(new Notification
+
+                                var notification = new Notification
                                 {
                                     TelegramUserId = telegramUserId,
                                     CreationDatetime = DateTime.Now
-                                });
+                                };
 
-                                _context.SaveChanges();
+                                _unitOfWork.NotificationRepository.Insert(notification);
+
+                                _unitOfWork.Save();
 
 
                                 _telegramApiManager.SendMessage(temp.ChatId,
@@ -115,17 +115,9 @@ namespace Kondor.Service.Handlers
 
         protected virtual List<ApplicationUser> UsersThatShouldBeNotified(int maximumAlert, int alertsInterval)
         {
-            var datetime = DateTime.Now.AddHours(alertsInterval * -1);
+            var timeSpan = new TimeSpan(alertsInterval, 0, 0);
 
-            var query = from user in _context.CardStates.Where(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now)
-                .GroupBy(p => p.UserId).Select(s => s.FirstOrDefault().User)
-                        where
-                            !_context.Notifications.Any(
-                                p => p.TelegramUserId == user.TelegramUserId && p.CreationDatetime > datetime)
-                        //&& _context.Notifications.Count(p => p.TelegramUserId == user.TelegramUserId) < maximumAlert
-                        select user;
-
-            var result = query.ToList();
+            var result = _unitOfWork.UserRepository.GetUsersThatShouldBeNotified(maximumAlert, timeSpan).ToList();
             return result;
         }
     }

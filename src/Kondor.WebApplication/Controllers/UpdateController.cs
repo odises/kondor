@@ -24,7 +24,7 @@ namespace Kondor.WebApplication.Controllers
             {
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 var data = reader.ReadToEnd();
-                var update = JsonConvert.DeserializeObject<Update>(data);
+                var update = JsonConvert.DeserializeObject<TelegramUpdate>(data);
 
                 _telegramMessageHandler.SaveUpdate(update);
             }

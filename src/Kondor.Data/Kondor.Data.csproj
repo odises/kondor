@@ -94,6 +94,15 @@
   <ItemGroup>
     <Compile Include="ApiModels\TelegramApiResponseModel.cs" />
     <Compile Include="Constants\RegexPatterns.cs" />
+    <Compile Include="Dapper\DapperRepository.cs" />
+    <Compile Include="EF\EFCardRepository.cs" />
+    <Compile Include="EF\EFExampleViewRepository.cs" />
+    <Compile Include="EF\EFExampleRepository.cs" />
+    <Compile Include="EF\EFRepository.cs" />
+    <Compile Include="EF\EFResponseRepository.cs" />
+    <Compile Include="EF\EFUnitOfWork.cs" />
+    <Compile Include="EF\EFUpdateRepository.cs" />
+    <Compile Include="EF\EFSettingRepository.cs" />
     <Compile Include="EF\EFUserRepository.cs" />
     <Compile Include="IDbContext.cs" />
     <Compile Include="KondorDataContext.cs" />
@@ -269,6 +278,7 @@
       <Name>Kondor.Domain</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

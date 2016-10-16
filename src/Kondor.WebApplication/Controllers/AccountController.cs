@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Kondor.Data;
 using Kondor.Data.SettingModels;
+using Kondor.Domain;
 using Kondor.Domain.Models;
 using Kondor.Service;
 using Kondor.Service.Extensions;
@@ -19,23 +20,27 @@ namespace Kondor.WebApplication.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private IUnitOfWork _unitOfWork;
         private ApplicationSignInManager _signInManager;
+        private readonly IUserRepository _userRepository;
         private ApplicationUserManager _userManager;
-        private readonly IDbContext _context;
+        //private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
 
-        public AccountController(IDbContext context, ISettingHandler settingHandler)
+        public AccountController(ISettingHandler settingHandler, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
-            _context = context;
             _settingHandler = settingHandler;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDbContext context, ISettingHandler settingHandler)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISettingHandler settingHandler, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            _context = context;
             _settingHandler = settingHandler;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public ApplicationSignInManager SignInManager
@@ -183,7 +188,7 @@ namespace Kondor.WebApplication.Controllers
                 {
                     var parsedTelegramUserId = int.Parse(telegramUserId);
                     
-                    if (_context.Set<ApplicationUser>().Any(p => p.TelegramUserId == parsedTelegramUserId))
+                    if (_userRepository.GetUserByTelegramId(parsedTelegramUserId) != null)
                     {
                         ModelState.AddModelError("Username", validationErrorMessage);
                     }
@@ -196,7 +201,8 @@ namespace Kondor.WebApplication.Controllers
 
             if (ModelState.IsValid)
             {
-                var language = _context.Languages.FirstOrDefault(p => p.Name == "English");
+                // todo refactor
+                var language = _unitOfWork.LanguageRepository.Get(p => p.Name == "English").FirstOrDefault();
 
                 var user = new ApplicationUser
                 {

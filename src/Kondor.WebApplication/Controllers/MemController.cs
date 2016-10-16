@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Data.Entity;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Web.Mvc;
-using Kondor.Data;
 using Kondor.Data.SettingModels;
+using Kondor.Domain;
 using Kondor.Service;
 using Kondor.Service.Handlers;
 
@@ -14,13 +11,13 @@ namespace Kondor.WebApplication.Controllers
 {
     public class MemController : Controller
     {
-        private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MemController(IDbContext context, ISettingHandler settingHandler)
+        public MemController(ISettingHandler settingHandler, IUnitOfWork unitOfWork)
         {
-            _context = context;
             _settingHandler = settingHandler;
+            _unitOfWork = unitOfWork;
         }
 
         [Route("learning/mem/{id}/images")]
@@ -41,9 +38,10 @@ namespace Kondor.WebApplication.Controllers
             throw new NotImplementedException();
         }
 
-        public async Task<ActionResult> RenderImage(int id)
+        public ActionResult RenderImage(int id)
         {
-            var medium = await _context.Media.FirstOrDefaultAsync(p => p.Id == id);
+            var medium = _unitOfWork.MediumRepository.GetById(id);
+
             if (medium == null)
             {
                 throw new ArgumentNullException();
@@ -54,7 +52,7 @@ namespace Kondor.WebApplication.Controllers
 
         public ActionResult Speak(int id)
         {
-            var example = _context.Examples.FirstOrDefault(p => p.Id == id);
+            var example = _unitOfWork.ExampleRepository.GetById(id);
 
             using (BrainiumFrameworkBase.Cache.Ignore())
             {
