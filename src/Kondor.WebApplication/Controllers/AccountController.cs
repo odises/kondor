@@ -20,26 +20,22 @@ namespace Kondor.WebApplication.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private ApplicationSignInManager _signInManager;
-        private readonly IUserRepository _userRepository;
         private ApplicationUserManager _userManager;
-        //private readonly IDbContext _context;
         private readonly ISettingHandler _settingHandler;
 
-        public AccountController(ISettingHandler settingHandler, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public AccountController(ISettingHandler settingHandler, IUnitOfWork unitOfWork)
         {
             _settingHandler = settingHandler;
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISettingHandler settingHandler, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ISettingHandler settingHandler, IUnitOfWork unitOfWork)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             _settingHandler = settingHandler;
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -188,7 +184,7 @@ namespace Kondor.WebApplication.Controllers
                 {
                     var parsedTelegramUserId = int.Parse(telegramUserId);
                     
-                    if (_userRepository.GetUserByTelegramId(parsedTelegramUserId) != null)
+                    if (_unitOfWork.UserRepository.GetUserByTelegramId(parsedTelegramUserId) != null)
                     {
                         ModelState.AddModelError("Username", validationErrorMessage);
                     }
