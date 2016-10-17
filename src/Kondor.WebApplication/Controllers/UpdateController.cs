@@ -20,7 +20,7 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public void Update()
         {
-            using (var reader =new StreamReader(Request.InputStream))
+            using (var reader = new StreamReader(Request.InputStream))
             {
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 var data = reader.ReadToEnd();

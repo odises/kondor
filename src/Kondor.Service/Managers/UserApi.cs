@@ -8,16 +8,15 @@ namespace Kondor.Service.Managers
 {
     public class UserApi : IUserApi
     {
-        private readonly IUserRepository _userRepository;
-
-        public UserApi(IUserRepository userRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public UserApi(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public bool IsRegisteredUser(int telegramUserId)
         {
-            var user = _userRepository.GetUserByTelegramId(telegramUserId);
+            var user = _unitOfWork.UserRepository.GetUserByTelegramId(telegramUserId);
             if (user != null)
             {
                 return true;
@@ -30,8 +29,8 @@ namespace Kondor.Service.Managers
 
         public UserState GetUserState(int telegramUserId, int minutes)
         {
-            var user = _userRepository.GetUserByTelegramId(telegramUserId);
-            var updates = _userRepository.GetUserUpdates(user.Id, new TimeSpan(0, minutes, 0));
+            var user = _unitOfWork.UserRepository.GetUserByTelegramId(telegramUserId);
+            var updates = _unitOfWork.UserRepository.GetUserUpdates(user.Id, new TimeSpan(0, minutes, 0));
             if (updates.Any())
             {
                 return UserState.Active;

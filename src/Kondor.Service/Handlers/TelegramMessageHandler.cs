@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Domain;
@@ -28,7 +29,7 @@ namespace Kondor.Service.Handlers
             _unitOfWork = unitOfWork;
         }
 
-        public void SaveUpdate(Data.TelegramTypes.TelegramUpdate update)
+        public void SaveUpdate(TelegramUpdate update)
         {
             UpdateType updateType;
             var fromId = -1;
@@ -147,7 +148,7 @@ namespace Kondor.Service.Handlers
         public int ProcessMessages()
         {
 
-            var unprocessed = _unitOfWork.UpdateRepository.GetUpdatesByStatus(UpdateStatus.Unprocessed);
+            var unprocessed = _unitOfWork.UpdateRepository.GetUpdatesByStatus(UpdateStatus.Unprocessed).ToList();
 
             foreach (var update in unprocessed)
             {
