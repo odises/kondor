@@ -80,6 +80,10 @@
       <Project>{B5F0A400-AD33-456F-A087-ED0DAE2366C8}</Project>
       <Name>Kondor.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Kondor.Domain\Kondor.Domain.csproj">
+      <Project>{8a7283d3-670c-471f-9b41-5c9d603f2c99}</Project>
+      <Name>Kondor.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Kondor.Service\Kondor.Service.csproj">
       <Project>{f77dc05e-7790-46e2-82d8-ff4237b395d3}</Project>
       <Name>Kondor.Service</Name>

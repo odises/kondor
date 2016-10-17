@@ -13,6 +13,31 @@ namespace Kondor.Data.Dapper
             throw new NotImplementedException();
         }
 
+        public int Count(Expression<Func<TEntity, bool>> filter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Any(Expression<Func<TEntity, bool>> filter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IGrouping<TKey, TEntity>> FilterThenGroupBy<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IGrouping<TKey, TEntity>> GroupBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            throw new NotImplementedException();
+        }
+
         public TEntity GetById(object id)
         {
             throw new NotImplementedException();

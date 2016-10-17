@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Kondor.Data;
 using Kondor.Data.SettingModels;
 using Kondor.Domain;
 using Kondor.Domain.Enums;
@@ -13,7 +12,6 @@ namespace Kondor.Service.Leitner
 {
     public class LeitnerService : ILeitnerService
     {
-        //private readonly IDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         protected int OverStoppingTolerance;
         private readonly TimeUnit _timeUnit;
@@ -23,9 +21,8 @@ namespace Kondor.Service.Leitner
         /// <summary>
         /// Initialization
         /// </summary>
-        public LeitnerService(IDbContext context, ISettingHandler settingHandler, IUnitOfWork unitOfWork)
+        public LeitnerService(ISettingHandler settingHandler, IUnitOfWork unitOfWork)
         {
-            //_context = context;
             _settingHandler = settingHandler;
             _unitOfWork = unitOfWork;
 
@@ -41,14 +38,10 @@ namespace Kondor.Service.Leitner
         /// <exception cref="OverflowException">Maximum card in first position exceeded.</exception>
         protected virtual void ValidateMaximumCardInFirstPosition(string userId)
         {
-            // todo refactor
-            var count =
-                _unitOfWork.CardStateRepository.Get(
-                    p =>
-                        p.UserId == userId && p.CardPosition == Position.First &&
-                        p.Status == InboxCardsStatus.NewInPosition).Count();
+            var userFirstBoxCount = _unitOfWork.CardStateRepository
+                .Count(p => p.UserId == userId && p.CardPosition == Position.First && p.Status == InboxCardsStatus.NewInPosition);
 
-            if (count > FirstBoxCapacity)
+            if (userFirstBoxCount > FirstBoxCapacity)
             {
                 throw new OverflowException();
             }
@@ -61,11 +54,15 @@ namespace Kondor.Service.Leitner
         public int BoxCleanUp()
         {
             var count = 0;
-            // todo refactor
-            var cards =
+
+            var expiredCardStates =
                 _unitOfWork.CardStateRepository.Get(
-                    p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.First && p.CardPosition != Position.Finished && p.ExaminationDateTime <= DateTime.Now).ToList();
-            foreach (var card in cards)
+                    p => p.Status == InboxCardsStatus.NewInPosition &&
+                    p.CardPosition != Position.First &&
+                    p.CardPosition != Position.Finished &&
+                    p.ExaminationDateTime <= DateTime.Now);
+
+            foreach (var card in expiredCardStates)
             {
                 var diff = DateTime.Now.GetRounded() - card.ExaminationDateTime;
                 if (diff.TotalMinutes > 0)
@@ -79,7 +76,6 @@ namespace Kondor.Service.Leitner
                         count++;
                     }
                 }
-
             }
 
             return count;
@@ -99,23 +95,21 @@ namespace Kondor.Service.Leitner
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            // todo refactor
-            var cards = _unitOfWork.CardRepository.Get(m => !_unitOfWork.CardStateRepository.Get(p => p.CardId == m.Id, null, null).Any() && m.UserId == userId).ToList();
+            var availableCardsToLearn = _unitOfWork.CardRepository.GetAvailableCardsToLearn(userId).ToList();
 
-            if (cards.Count == 0)
+            if (!availableCardsToLearn.Any())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var card = cards.GetRandom();
+            var card = availableCardsToLearn.GetRandom();
 
 
             var cardState = AddCardInFirstState(Position.First, userId, card.Id);
 
             foreach (var example in card.Examples)
             {
-                // todo refactor
-                if (!_unitOfWork.ExampleViewRepository.Get().Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
+                if (!_unitOfWork.ExampleViewRepository.Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
                 {
                     var newExampleView = new ExampleView
                     {
@@ -145,12 +139,20 @@ namespace Kondor.Service.Leitner
         public CardState GetCardForExam(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
-            // todo refactor
-            var card = _unitOfWork.CardStateRepository.Get(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now).FirstOrDefault();
+
+            var card =
+                _unitOfWork.CardStateRepository.FirstOrDefault(
+                    p =>
+                        p.Status == InboxCardsStatus.NewInPosition &&
+                        p.CardPosition != Position.Finished &&
+                        p.UserId == userId &&
+                        p.ExaminationDateTime <= DateTime.Now);
+
             if (card == null)
             {
                 throw new IndexOutOfRangeException();
             }
+
             return card;
         }
 
@@ -158,38 +160,45 @@ namespace Kondor.Service.Leitner
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
 
-            var cards = _unitOfWork.CardStateRepository.Get(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId);
-            if (!cards.Any())
+            var groupedByCardStates = _unitOfWork
+                                    .CardStateRepository
+                                    .FilterThenGroupBy(p => p.Status == InboxCardsStatus.NewInPosition 
+                                    && p.CardPosition != Position.Finished 
+                                    && p.UserId == userId, g => g.ExaminationDateTime)
+                                    .OrderBy(p => p.Key)
+                                    .ToList();
+
+            if (!groupedByCardStates.Any())
             {
                 throw new IndexOutOfRangeException();
             }
             else
             {
-                var groupedByExaminationDateTime = cards.GroupBy(p => p.ExaminationDateTime).OrderBy(p => p.Key);
-                var count = groupedByExaminationDateTime.FirstOrDefault().Count();
-                var date = groupedByExaminationDateTime.FirstOrDefault().Key;
+                var count = groupedByCardStates.FirstOrDefault().Count();
+                var date = groupedByCardStates.FirstOrDefault().Key;
 
                 return new Tuple<int, DateTime>(count, date);
             }
         }
 
-        public CardState GetCard(int cardId)
+        public CardState GetCardState(int cardId)
         {
-            var card = _unitOfWork.CardStateRepository.GetById(cardId);
+            var card = _unitOfWork.CardStateRepository.FirstOrDefault(p => p.CardId == cardId);
             return card;
         }
 
         /// <summary>
         /// Moves the card one step next
         /// </summary>
-        /// <param name="card"></param>
-        public void MoveNext(CardState card)
+        /// <param name="cardState"></param>
+        public void MoveNext(CardState cardState)
         {
-            card.Status = InboxCardsStatus.Passed;
-            card.ModifiedDateTime = DateTime.Now;
+            cardState.Status = InboxCardsStatus.Passed;
+            cardState.ModifiedDateTime = DateTime.Now;
+            _unitOfWork.CardStateRepository.Update(cardState);
 
-            var nextPosition = GetNextPosition(card.CardPosition);
-            var newCard = AddCardInFirstState(nextPosition, card.UserId, card.CardId);
+            var nextPosition = GetNextPosition(cardState.CardPosition);
+            var newCard = AddCardInFirstState(nextPosition, cardState.UserId, cardState.CardId);
 
             _unitOfWork.CardStateRepository.Insert(newCard);
             _unitOfWork.Save();
@@ -208,8 +217,8 @@ namespace Kondor.Service.Leitner
         /// <param name="cardId"></param>
         public void MoveNext(int cardId)
         {
-            var card = GetCard(cardId);
-            MoveNext(card);
+            var cardState = GetCardState(cardId);
+            MoveNext(cardState);
         }
 
         /// <summary>
@@ -219,29 +228,30 @@ namespace Kondor.Service.Leitner
         /// <param name="overStoppingMode"></param>
         public void MoveBack(int cardId, bool overStoppingMode = false)
         {
-            var card = GetCard(cardId);
+            var card = GetCardState(cardId);
             MoveBack(card, overStoppingMode);
         }
 
         /// <summary>
         /// Moves the card one step back
         /// </summary>
-        /// <param name="card"></param>
+        /// <param name="cardState"></param>
         /// <param name="overStoppingMode"></param>
-        public void MoveBack(CardState card, bool overStoppingMode = false)
+        public void MoveBack(CardState cardState, bool overStoppingMode = false)
         {
             if (overStoppingMode)
             {
-                card.Status = InboxCardsStatus.CleanedUp;
+                cardState.Status = InboxCardsStatus.CleanedUp;
             }
             else
             {
-                card.Status = InboxCardsStatus.Failed;
+                cardState.Status = InboxCardsStatus.Failed;
             }
-            card.ModifiedDateTime = DateTime.Now;
+            cardState.ModifiedDateTime = DateTime.Now;
+            _unitOfWork.CardStateRepository.Update(cardState);
 
-            var prevPosition = GetPreviousPosition(card.CardPosition);
-            var newCard = AddCardInFirstState(prevPosition, card.UserId, card.CardId);
+            var prevPosition = GetPreviousPosition(cardState.CardPosition);
+            var newCard = AddCardInFirstState(prevPosition, cardState.UserId, cardState.CardId);
 
             _unitOfWork.CardStateRepository.Insert(newCard);
             _unitOfWork.Save();
@@ -251,8 +261,10 @@ namespace Kondor.Service.Leitner
         {
             var user = GetUserByTelegramId(telegramUserId);
 
+            // todo refactor
             var exampleView =
-                _unitOfWork.ExampleViewRepository.Get(p => p.UserId == user.Id).GroupBy(p => p.Views).OrderBy(p => p.Key).FirstOrDefault().GetRandom();
+                _unitOfWork.ExampleViewRepository.FilterThenGroupBy(p => p.UserId == user.Id, p => p.Views).OrderBy(p => p.Key).FirstOrDefault().GetRandom();
+
             if (exampleView == null)
             {
                 throw new IndexOutOfRangeException();
@@ -260,6 +272,7 @@ namespace Kondor.Service.Leitner
             else
             {
                 exampleView.Views = exampleView.Views + 1;
+                _unitOfWork.ExampleViewRepository.Update(exampleView);
                 _unitOfWork.Save();
 
                 return exampleView.Example;

@@ -228,7 +228,7 @@ namespace Kondor.Service.Processors
             }
             else
             {
-                var cardState = _leitnerService.GetCard(int.Parse(queryData.Data));
+                var cardState = _leitnerService.GetCardState(int.Parse(queryData.Data));
                 var response = cardState.Card.DeserializeCardData().GetBackExamView();
 
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]

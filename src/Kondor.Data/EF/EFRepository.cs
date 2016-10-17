@@ -43,6 +43,57 @@ namespace Kondor.Data.EF
             }
         }
 
+        public int Count(Expression<Func<TEntity, bool>> filter = null)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.Count();
+        }
+
+        public bool Any(Expression<Func<TEntity, bool>> filter = null)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.Any();
+        }
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.FirstOrDefault();
+        }
+
+        public IEnumerable<IGrouping<TKey, TEntity>> FilterThenGroupBy<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.GroupBy(keySelector);
+        }
+
+        public IEnumerable<IGrouping<TKey, TEntity>> GroupBy<TKey>(Expression<Func<TEntity, TKey>> keySelector)
+        {
+            IQueryable<TEntity> query = DbSet;
+
+            return query.GroupBy(keySelector);
+        }
+
         public virtual TEntity GetById(object id)
         {
             return DbSet.Find(id);
