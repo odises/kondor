@@ -6,6 +6,6 @@ namespace Kondor.Domain
     public interface ICardRepository : IRepository<Card>
     {
         IEnumerable<Card> GetCardsByUserId(string id);
-        Card GetAvailableCardsToLearnRandomly(string userId);
+        Card GetRandomlyCardToLearn(string userId);
     }
 }

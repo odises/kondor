@@ -17,7 +17,7 @@ namespace Kondor.Data.EF
             return DbSet.Where(p => p.UserId == id);
         }
 
-        public Card GetAvailableCardsToLearnRandomly(string userId)
+        public Card GetRandomlyCardToLearn(string userId)
         {
             var availableCards = DbSet.Where(m => !DbContext.CardStates.Any(p => p.CardId == m.Id) && m.UserId == userId);
             return availableCards.OrderBy(p => Guid.NewGuid()).FirstOrDefault();

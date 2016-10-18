@@ -95,7 +95,7 @@ namespace Kondor.Service.Leitner
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var randomCard = _unitOfWork.CardRepository.GetAvailableCardsToLearnRandomly(userId);
+            var randomCard = _unitOfWork.CardRepository.GetRandomlyCardToLearn(userId);
 
             if (randomCard == null)
             {
