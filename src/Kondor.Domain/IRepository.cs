@@ -16,6 +16,7 @@ namespace Kondor.Domain
         IEnumerable<IGrouping<TKey, TEntity>> FilterThenGroupBy<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector);
         IEnumerable<IGrouping<TKey, TEntity>> GroupBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         TEntity GetById(object id);
+        IEnumerable<TEntity> Random(Expression<Func<TEntity, bool>> filter = null, int count = 0);
         void Insert(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);

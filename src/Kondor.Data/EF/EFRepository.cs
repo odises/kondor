@@ -99,6 +99,22 @@ namespace Kondor.Data.EF
             return DbSet.Find(id);
         }
 
+        public IEnumerable<TEntity> Random(Expression<Func<TEntity, bool>> filter = null, int count = 0)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            query = query.OrderBy(p => Guid.NewGuid());
+            if (count > 0)
+            {
+                query = query.Take(count);
+            }
+
+            return query;
+        }
+
         public void Insert(TEntity entity)
         {
             DbSet.Add(entity);

@@ -95,19 +95,16 @@ namespace Kondor.Service.Leitner
 
             ValidateMaximumCardInFirstPosition(userId);
 
-            var availableCardsToLearn = _unitOfWork.CardRepository.GetAvailableCardsToLearn(userId).ToList();
+            var randomCard = _unitOfWork.CardRepository.GetAvailableCardsToLearnRandomly(userId);
 
-            if (!availableCardsToLearn.Any())
+            if (randomCard == null)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var card = availableCardsToLearn.GetRandom();
+            var cardState = AddCardInFirstState(Position.First, userId, randomCard.Id);
 
-
-            var cardState = AddCardInFirstState(Position.First, userId, card.Id);
-
-            foreach (var example in card.Examples)
+            foreach (var example in randomCard.Examples)
             {
                 if (!_unitOfWork.ExampleViewRepository.Any(p => p.ExampleId == example.Id && p.UserId == example.Card.UserId))
                 {
@@ -126,7 +123,7 @@ namespace Kondor.Service.Leitner
 
             _unitOfWork.Save();
 
-            return card;
+            return randomCard;
         }
 
         /// <summary>
@@ -141,12 +138,12 @@ namespace Kondor.Service.Leitner
             var userId = GetUserIdByTelegramUserId(telegramUserId);
 
             var card =
-                _unitOfWork.CardStateRepository.FirstOrDefault(
+                _unitOfWork.CardStateRepository.Random(
                     p =>
                         p.Status == InboxCardsStatus.NewInPosition &&
                         p.CardPosition != Position.Finished &&
                         p.UserId == userId &&
-                        p.ExaminationDateTime <= DateTime.Now);
+                        p.ExaminationDateTime <= DateTime.Now, 1).FirstOrDefault();
 
             if (card == null)
             {

@@ -43,6 +43,11 @@ namespace Kondor.Data.Dapper
             throw new NotImplementedException();
         }
 
+        public IEnumerable<TEntity> Random(Expression<Func<TEntity, bool>> filter = null, int count = 0)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Insert(TEntity entity)
         {
             throw new NotImplementedException();

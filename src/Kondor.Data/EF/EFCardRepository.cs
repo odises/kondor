@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Kondor.Domain;
 using Kondor.Domain.Models;
@@ -16,10 +17,10 @@ namespace Kondor.Data.EF
             return DbSet.Where(p => p.UserId == id);
         }
 
-        public IEnumerable<Card> GetAvailableCardsToLearn(string userId)
+        public Card GetAvailableCardsToLearnRandomly(string userId)
         {
             var availableCards = DbSet.Where(m => !DbContext.CardStates.Any(p => p.CardId == m.Id) && m.UserId == userId);
-            return availableCards;
+            return availableCards.OrderBy(p => Guid.NewGuid()).FirstOrDefault();
         }
     }
 }
