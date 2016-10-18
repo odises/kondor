@@ -21,5 +21,6 @@ namespace Kondor.Domain
         void Update(TEntity entity);
         void Delete(TEntity entity);
         void Delete(object id);
+        TEntity Create();
     }
 }

@@ -11,6 +11,7 @@ namespace Kondor.Domain.Models
         public Card()
         {
             CardStates = new HashSet<CardState>();
+            Examples = new HashSet<Example>();
         }
         public string UserId { get; set; }
         public CardType CardType { get; set; }

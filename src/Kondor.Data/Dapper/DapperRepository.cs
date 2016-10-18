@@ -67,5 +67,10 @@ namespace Kondor.Data.Dapper
         {
             throw new NotImplementedException();
         }
+
+        public TEntity Create()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

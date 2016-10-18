@@ -140,5 +140,10 @@ namespace Kondor.Data.EF
             var entity = GetById(id);
             Delete(entity);
         }
+
+        public TEntity Create()
+        {
+            return DbSet.Create();
+        }
     }
 }

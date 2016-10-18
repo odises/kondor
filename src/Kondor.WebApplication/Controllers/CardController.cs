@@ -107,7 +107,7 @@ namespace Kondor.WebApplication.Controllers
                         CardData = serializedCard
                     };
 
-                    _unitOfWork.CardRepository.Insert(card);
+                    
 
                     var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
 
@@ -120,7 +120,7 @@ namespace Kondor.WebApplication.Controllers
                         });
                     }
 
-                    _unitOfWork.CardRepository.Update(card);
+                    _unitOfWork.CardRepository.Insert(card);
 
                     _unitOfWork.Save();
 
