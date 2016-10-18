@@ -181,10 +181,10 @@ namespace Kondor.Service.Leitner
             }
         }
 
-        public CardState GetCardState(int cardId)
+        public CardState GetCardStateById(int id)
         {
-            var card = _unitOfWork.CardStateRepository.FirstOrDefault(p => p.CardId == cardId);
-            return card;
+            var cardState = _unitOfWork.CardStateRepository.GetById(id);
+            return cardState;
         }
 
         /// <summary>
@@ -214,21 +214,21 @@ namespace Kondor.Service.Leitner
         /// <summary>
         /// Moves the card one step next
         /// </summary>
-        /// <param name="cardId"></param>
-        public void MoveNext(int cardId)
+        /// <param name="cardStateId"></param>
+        public void MoveNext(int cardStateId)
         {
-            var cardState = GetCardState(cardId);
+            var cardState = GetCardStateById(cardStateId);
             MoveNext(cardState);
         }
 
         /// <summary>
         /// Moves the card one step back
         /// </summary>
-        /// <param name="cardId"></param>
+        /// <param name="cardStateId"></param>
         /// <param name="overStoppingMode"></param>
-        public void MoveBack(int cardId, bool overStoppingMode = false)
+        public void MoveBack(int cardStateId, bool overStoppingMode = false)
         {
-            var card = GetCardState(cardId);
+            var card = GetCardStateById(cardStateId);
             MoveBack(card, overStoppingMode);
         }
 

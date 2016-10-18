@@ -6,14 +6,14 @@ namespace Kondor.Service.Leitner
     public interface ILeitnerService
     {
         int BoxCleanUp();
-        CardState GetCardState(int cardId);
+        CardState GetCardStateById(int cardId);
         CardState GetCardForExam(int telegramUserId);
         Tuple<int, DateTime> GetNextExamInformation(int telegramUserId);
         Example GetExample(int telegramUserId);
         Card AddOneNewCardToBox(int telegramUserId);
-        void MoveBack(int cardId, bool overStoppingMode = false);
+        void MoveBack(int cardStateId, bool overStoppingMode = false);
         void MoveBack(CardState cardState, bool overStoppingMode = false);
-        void MoveNext(int cardId);
+        void MoveNext(int cardStateId);
         void MoveNext(CardState cardState);
         int GetNumberOfCardsReadyToTry(int telegramUserId);
     }

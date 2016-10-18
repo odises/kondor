@@ -102,16 +102,16 @@ namespace Kondor.Service.Processors
 
         protected virtual void ProcessAnswerCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
-            var cardId = int.Parse(queryData.Data);
+            var cardStateId = int.Parse(queryData.Data);
 
             if (queryData.Action == _textManager.GetText(StringResources.KeyboardRejectTitle))
             {
-                _leitnerService.MoveBack(cardId);
+                _leitnerService.MoveBack(cardStateId);
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.MovedBackMessage), true);
             }
             else if (queryData.Action == _textManager.GetText(StringResources.KeyboardAcceptTitle))
             {
-                _leitnerService.MoveNext(cardId);
+                _leitnerService.MoveNext(cardStateId);
                 _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.MovedNextMessage), true);
             }
             else
@@ -228,7 +228,8 @@ namespace Kondor.Service.Processors
             }
             else
             {
-                var cardState = _leitnerService.GetCardState(int.Parse(queryData.Data));
+                var cardStateId = int.Parse(queryData.Data);
+                var cardState = _leitnerService.GetCardStateById(cardStateId);
                 var response = cardState.Card.DeserializeCardData().GetBackExamView();
 
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
