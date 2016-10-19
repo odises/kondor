@@ -37,6 +37,7 @@ namespace Kondor.Data.EF
 
         public IEnumerable<ApplicationUser> GetUsersThatShouldBeNotified(int maximumAlertsNumber, TimeSpan interval)
         {
+            // maximum alert number
             var originDateTime = DateTime.Now - interval;
 
             var result =
@@ -49,7 +50,7 @@ namespace Kondor.Data.EF
                 where
                     !DbContext.Notifications.Any(
                         p => p.TelegramUserId == user.TelegramUserId && p.CreationDatetime > originDateTime)
-                && DbContext.Notifications.Count(p => p.TelegramUserId == user.TelegramUserId) < maximumAlertsNumber
+                //&& DbContext.Notifications.Count(p => p.TelegramUserId == user.TelegramUserId) < maximumAlertsNumber
                 select user;
 
             return result;
