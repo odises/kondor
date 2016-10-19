@@ -45,9 +45,9 @@ namespace Kondor.WebApplication.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Kondor.WebApplication.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -152,12 +152,12 @@ namespace Kondor.WebApplication.Controllers
         {
             var telegramUserId = Session["telegramUserId"] as string;
             var telegramUsername = Session["telegramUsername"] as string;
-            if (telegramUsername == null || telegramUserId == null)
+            if (string.IsNullOrEmpty(telegramUserId))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var model = new RegisterViewModel {Username = telegramUsername};
+            var model = new RegisterViewModel { Username = telegramUsername };
 
             return View(model);
         }
@@ -174,7 +174,7 @@ namespace Kondor.WebApplication.Controllers
             var telegramUserId = Session["telegramUserId"] as string;
             var telegramUsername = Session["telegramUsername"] as string;
 
-            if (string.IsNullOrEmpty(telegramUserId) || string.IsNullOrEmpty(telegramUsername))
+            if (string.IsNullOrEmpty(telegramUserId))
             {
                 ModelState.AddModelError("Username", validationErrorMessage);
             }
@@ -183,7 +183,7 @@ namespace Kondor.WebApplication.Controllers
                 try
                 {
                     var parsedTelegramUserId = int.Parse(telegramUserId);
-                    
+
                     if (_unitOfWork.UserRepository.GetUserByTelegramId(parsedTelegramUserId) != null)
                     {
                         ModelState.AddModelError("Username", validationErrorMessage);
@@ -200,28 +200,35 @@ namespace Kondor.WebApplication.Controllers
                 // todo refactor
                 var language = _unitOfWork.LanguageRepository.Get(p => p.Name == "English").FirstOrDefault();
 
-                var user = new ApplicationUser
+                if (language != null && !string.IsNullOrEmpty(telegramUserId))
                 {
-                    UserName = model.Username,
-                    Email = model.Email,
-                    TelegramUserId = int.Parse(telegramUserId),
-                    TelegramUsername = telegramUsername,
-                    LanguageId = language.Id
-                };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    var user = new ApplicationUser
+                    {
+                        UserName = model.Username,
+                        Email = model.Email,
+                        TelegramUserId = int.Parse(telegramUserId),
+                        TelegramUsername = string.IsNullOrEmpty(telegramUsername) ? "Empty" : telegramUsername,
+                        LanguageId = language.Id
+                    };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    return RedirectToAction("Index", "Home");
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result);
                 }
-                AddErrors(result);
+                else
+                {
+                    throw new NullReferenceException();
+                }
             }
 
             // If we got this far, something failed, redisplay form
