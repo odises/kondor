@@ -211,6 +211,8 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public ActionResult Edit(int id, RawCardViewModel model)
         {
+            // todo check
+
             if (ModelState.IsValid)
             {
                 var parser = ObjectManager.GetInstance<IParser>();
@@ -264,14 +266,12 @@ namespace Kondor.WebApplication.Controllers
 
                             foreach (var beforeEditExample in beforeEditExamples)
                             {
-                                beforeEditExample.RowStatus = RowStatus.Removed;
-                                _unitOfWork.ExampleRepository.Update(beforeEditExample);
+                                _unitOfWork.ExampleRepository.Delete(beforeEditExample);
                             }
 
                             foreach (var exampleView in exampleViews)
                             {
-                                exampleView.RowStatus = RowStatus.Removed;
-                                _unitOfWork.ExampleViewRepository.Update(exampleView);
+                                _unitOfWork.ExampleViewRepository.Delete(exampleView);
                             }
 
                             var examples = backSide.PartsOfSpeech.SelectMany(p => p.Definitions).SelectMany(x => x.Examples);
