@@ -30,7 +30,7 @@ namespace Kondor.WebApplication.Controllers
         {
             var model = new List<CardViewModel>();
             var userId = User.Identity.GetUserId();
-            var cards = _unitOfWork.CardRepository.GetCardsByUserId(userId);
+            var cards = _unitOfWork.CardRepository.GetCardsByUserId(userId).OrderByDescending(p => p.Id);
 
             foreach (var card in cards)
             {
@@ -124,7 +124,7 @@ namespace Kondor.WebApplication.Controllers
 
                     _unitOfWork.Save();
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index");
                 }
             }
             else
@@ -164,7 +164,7 @@ namespace Kondor.WebApplication.Controllers
                 _unitOfWork.CardRepository.Insert(newCard);
                 _unitOfWork.Save();
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
             else
             {
@@ -211,8 +211,6 @@ namespace Kondor.WebApplication.Controllers
         [HttpPost]
         public ActionResult Edit(int id, RawCardViewModel model)
         {
-            // todo check
-
             if (ModelState.IsValid)
             {
                 var parser = ObjectManager.GetInstance<IParser>();
@@ -321,6 +319,21 @@ namespace Kondor.WebApplication.Controllers
             else
             {
                 return View(model);
+            }
+        }
+
+        public ActionResult Delete(int id)
+        {
+            var card = _unitOfWork.CardRepository.GetById(id);
+            if (card == null)
+            {
+                throw new NullReferenceException();
+            }
+            else
+            {
+                _unitOfWork.CardRepository.Delete(card);
+                _unitOfWork.Save();
+                return RedirectToAction("Index");
             }
         }
 
