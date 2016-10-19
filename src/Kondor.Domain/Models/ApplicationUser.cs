@@ -19,7 +19,7 @@ namespace Kondor.Domain.Models
 
         public string TelegramUsername { get; set; }
         public int TelegramUserId { get; set; }
-        public int WelcomeMessageId { get; set; }
+        //public int WelcomeMessageId { get; set; }
         public Guid LanguageId { get; set; }
         public virtual Language Language { get; set; }
         public virtual ICollection<CardState> UserCards { get; set; }

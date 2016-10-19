@@ -33,12 +33,12 @@ namespace Kondor.Service.Handlers
             {
                 var maximumNumberOfAlert = _settingHandler.GetSettings<GeneralSettings>().MaximumNumberOfAlert;
                 var alertsInterval = _settingHandler.GetSettings<GeneralSettings>().AlertsInterval;
-                var userStateTolerance = _settingHandler.GetSettings<GeneralSettings>().UserStateTolerance;
+                var durationToBeIdle = _settingHandler.GetSettings<GeneralSettings>().DurationToBeIdle;
                 var removedMessagesText = _settingHandler.GetSettings<GeneralSettings>().RemovedMessagesText;
 
                 var users = UsersThatShouldBeNotified(maximumNumberOfAlert, alertsInterval);
 
-                var responseGroups = _unitOfWork.ResponseRepository.GetResponsesGroupedByTelegramUserId();
+                var responseGroups = _unitOfWork.ResponseRepository.GetResponsesGroupedByTelegramUserId().ToList();
 
                 foreach (var responseGroup in responseGroups)
                 {
@@ -47,12 +47,19 @@ namespace Kondor.Service.Handlers
                     {
                         if (users.Any(p => p.TelegramUserId == temp.TelegramUserId))
                         {
-                            if (_userApi.GetUserState(temp.TelegramUserId, userStateTolerance) == UserState.Idle)
+                            if (_userApi.GetUserState(temp.TelegramUserId, durationToBeIdle) == UserState.Idle)
                             {
                                 foreach (var response in responseGroup)
                                 {
-                                    _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), removedMessagesText, "Markdown", true);
-
+                                    try
+                                    {
+                                        _telegramApiManager.EditMessageText(response.ChatId, int.Parse(response.MessageId), removedMessagesText, "Markdown", true);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Console.WriteLine($"Notification {exception.Message}");
+                                        // todo log critical
+                                    }
                                     response.Status = ResponseStatus.Removed;
                                     _unitOfWork.ResponseRepository.Update(response);
                                 }

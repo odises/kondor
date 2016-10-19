@@ -184,6 +184,10 @@
     <Compile Include="Migrations\201610191044253_BaseEntityChanged.Designer.cs">
       <DependentUpon>201610191044253_BaseEntityChanged.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610191445523_WelcomeMessageIdRemoved.cs" />
+    <Compile Include="Migrations\201610191445523_WelcomeMessageIdRemoved.Designer.cs">
+      <DependentUpon>201610191445523_WelcomeMessageIdRemoved.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryData.cs" />
@@ -277,6 +281,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610191044253_BaseEntityChanged.resx">
       <DependentUpon>201610191044253_BaseEntityChanged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610191445523_WelcomeMessageIdRemoved.resx">
+      <DependentUpon>201610191445523_WelcomeMessageIdRemoved.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

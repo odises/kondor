@@ -12,7 +12,7 @@ namespace Kondor.Data.SettingModels
         public string GetUpdatesEndPoint { get; set; }
         public int MaximumNumberOfAlert { get; set; }
         public int AlertsInterval { get; set; }
-        public int UserStateTolerance { get; set; }
+        public int DurationToBeIdle { get; set; }
         public string RemovedMessagesText { get; set; }
         public TimeUnit LeitnerTimeUnit { get; set; }
         public int FirstBoxCapacity { get; set; }

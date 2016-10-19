@@ -136,7 +136,7 @@ namespace Kondor.Service.Handlers
                         UpdateType = updateType,
                         SerializedUpdate = update.ToJson()
                     };
-                    
+
                     _unitOfWork.UpdateRepository.Insert(newUpdate);
                 }
             }
@@ -219,16 +219,11 @@ namespace Kondor.Service.Handlers
 
         public void MessageProcessor(Message message)
         {
-            Console.WriteLine(_textManager.GetText(StringResources.WelcomeMessage));
-
             if (message.Text == "/start")
             {
-                var welcomeMessage = _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.WelcomeMessage));
-
                 var user = _unitOfWork.UserRepository.GetUserByTelegramId(message.From.Id);
                 if (user != null)
                 {
-                    user.WelcomeMessageId = int.Parse(welcomeMessage.MessageId);
                     _unitOfWork.UserRepository.Update(user);
                     _unitOfWork.Save();
                 }

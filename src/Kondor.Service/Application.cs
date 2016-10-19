@@ -40,7 +40,6 @@ namespace Kondor.Service
             try
             {
                 _notificationHandler.SendNotification();
-                Console.WriteLine("Notification");
             }
             catch (Exception exception)
             {
@@ -52,14 +51,11 @@ namespace Kondor.Service
         {
             try
             {
-                // todo webhook
-                //_telegramMessageHandler.SaveUpdates();
                 _telegramMessageHandler.ProcessMessages();
-                Console.WriteLine("T Job");
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Telegram:");
+                Console.WriteLine("Telegram Message Handler:");
                 Console.WriteLine(exception.Message);
             }
         }
@@ -67,8 +63,7 @@ namespace Kondor.Service
         {
             try
             {
-                var cleanerResult = _leitnerService.BoxCleanUp();
-                Console.WriteLine("Cleaner: " + cleanerResult);
+                _leitnerService.BoxCleanUp();
             }
             catch (Exception exception)
             {
