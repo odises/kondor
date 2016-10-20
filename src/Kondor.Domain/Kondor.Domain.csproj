@@ -84,6 +84,7 @@
     <Compile Include="LeitnerDataModels\ISide.cs" />
     <Compile Include="LeitnerDataModels\ISimpleCard.cs" />
     <Compile Include="LeitnerDataModels\PartOfSpeech.cs" />
+    <Compile Include="LeitnerDataModels\Pronunciation.cs" />
     <Compile Include="LeitnerDataModels\RichCard.cs" />
     <Compile Include="LeitnerDataModels\RichSide.cs" />
     <Compile Include="LeitnerDataModels\SimpleCard.cs" />

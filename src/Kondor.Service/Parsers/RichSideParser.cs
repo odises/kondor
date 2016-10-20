@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Kondor.Data.LeitnerDataModels;
+using Kondor.Domain.LeitnerDataModels;
 
 namespace Kondor.Service.Parsers
 {
@@ -16,9 +17,32 @@ namespace Kondor.Service.Parsers
         public ISide ParseRichSide(string input)
         {
             var richSide = new RichSide();
-
             var regex = new Regex(Data.Constants.RegexPatterns.RichSideFirstRegex);
-            var text = input;
+            var pronunciationRegex = new Regex(Data.Constants.RegexPatterns.PronunciationRegex);
+            var pronunciationMatch = pronunciationRegex.Match(input);
+            string text;
+            if (pronunciationMatch.Success)
+            {
+                text = input.Replace(pronunciationMatch.Value, string.Empty);
+
+                var rawPronunciations = pronunciationMatch.Groups[1].Captures.Cast<Capture>().ToList();
+                var insidePronunciationRegex = new Regex(Data.Constants.RegexPatterns.InsidePronunciationRegex);
+                foreach (var rawPronunciation in rawPronunciations)
+                {
+                    var processedPronunciation = insidePronunciationRegex.Match(rawPronunciation.Value);
+                    var pronunciation = new Pronunciation
+                    {
+                        Region = processedPronunciation.Groups[2].Value,
+                        Value = processedPronunciation.Groups[3].Value
+                    };
+                    richSide.Pronunciations.Add(pronunciation);
+                }    
+            }
+            else
+            {
+                text = input;
+            }
+
             var temp = regex.Matches(text);
 
             var match = temp.Cast<Match>();

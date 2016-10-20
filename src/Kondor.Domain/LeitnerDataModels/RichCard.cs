@@ -1,4 +1,6 @@
-﻿namespace Kondor.Data.LeitnerDataModels
+﻿using Kondor.Domain.LeitnerDataModels;
+
+namespace Kondor.Data.LeitnerDataModels
 {
     public class RichCard : ICard
     {

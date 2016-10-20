@@ -1,20 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using Kondor.Data.LeitnerDataModels;
 
-namespace Kondor.Data.LeitnerDataModels
+namespace Kondor.Domain.LeitnerDataModels
 {
     public class RichSide : ISide
     {
         public RichSide()
         {
             PartsOfSpeech = new List<PartOfSpeech>();
+            Pronunciations = new List<Pronunciation>();
         }
 
         public List<PartOfSpeech> PartsOfSpeech { get; set; }
+        public List<Pronunciation> Pronunciations { get; set; } 
 
         public string Raw()
         {
             var result = "";
+            foreach (var pronunciation in Pronunciations)
+            {
+                result = result + $"@@{pronunciation.Region}({pronunciation.Value}){Environment.NewLine}";
+            }
             foreach (var partOfSpeech in PartsOfSpeech)
             {
                 result = result + $"##{partOfSpeech.Title}{Environment.NewLine}";
@@ -34,9 +41,19 @@ namespace Kondor.Data.LeitnerDataModels
         public string Display()
         {
             var result = "";
+
             foreach (var partOfSpeech in PartsOfSpeech)
             {
-                result = result + $"`{partOfSpeech.Title}`{Environment.NewLine}{Environment.NewLine}";
+                result = result + $"`{partOfSpeech.Title}`{Environment.NewLine}";
+                if (Pronunciations.Count > 0)
+                {
+                    foreach (var pronunciation in Pronunciations)
+                    {
+                        result = result + $"`{pronunciation.Region} /{pronunciation.Value}/`{Environment.NewLine}";
+                    }
+                }
+
+                result = result + Environment.NewLine;
 
                 var defCount = 0;
                 foreach (var definition in partOfSpeech.Definitions)
