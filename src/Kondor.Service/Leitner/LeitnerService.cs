@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using Kondor.Data.SettingModels;
 using Kondor.Domain;
@@ -184,74 +185,11 @@ namespace Kondor.Service.Leitner
             return cardState;
         }
 
-        /// <summary>
-        /// Moves the card one step next
-        /// </summary>
-        /// <param name="cardState"></param>
-        public void MoveNext(CardState cardState)
-        {
-            cardState.Status = InboxCardsStatus.Passed;
-            cardState.ModifiedDateTime = DateTime.Now;
-            _unitOfWork.CardStateRepository.Update(cardState);
-
-            var nextPosition = GetNextPosition(cardState.CardPosition);
-            var newCard = AddCardInFirstState(nextPosition, cardState.UserId, cardState.CardId);
-
-            _unitOfWork.CardStateRepository.Insert(newCard);
-            _unitOfWork.Save();
-        }
-
         public int GetNumberOfCardsReadyToTry(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
             var cards = _unitOfWork.CardStateRepository.Get(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
             return cards.Count();
-        }
-
-        /// <summary>
-        /// Moves the card one step next
-        /// </summary>
-        /// <param name="cardStateId"></param>
-        public void MoveNext(int cardStateId)
-        {
-            var cardState = GetCardStateById(cardStateId);
-            MoveNext(cardState);
-        }
-
-        /// <summary>
-        /// Moves the card one step back
-        /// </summary>
-        /// <param name="cardStateId"></param>
-        /// <param name="overStoppingMode"></param>
-        public void MoveBack(int cardStateId, bool overStoppingMode = false)
-        {
-            var card = GetCardStateById(cardStateId);
-            MoveBack(card, overStoppingMode);
-        }
-
-        /// <summary>
-        /// Moves the card one step back
-        /// </summary>
-        /// <param name="cardState"></param>
-        /// <param name="overStoppingMode"></param>
-        public void MoveBack(CardState cardState, bool overStoppingMode = false)
-        {
-            if (overStoppingMode)
-            {
-                cardState.Status = InboxCardsStatus.CleanedUp;
-            }
-            else
-            {
-                cardState.Status = InboxCardsStatus.Failed;
-            }
-            cardState.ModifiedDateTime = DateTime.Now;
-            _unitOfWork.CardStateRepository.Update(cardState);
-
-            var prevPosition = GetPreviousPosition(cardState.CardPosition);
-            var newCard = AddCardInFirstState(prevPosition, cardState.UserId, cardState.CardId);
-
-            _unitOfWork.CardStateRepository.Insert(newCard);
-            _unitOfWork.Save();
         }
 
         public Example GetExample(int telegramUserId)
@@ -429,6 +367,102 @@ namespace Kondor.Service.Leitner
             {
                 return user;
             }
+        }
+
+        /// <summary>
+        /// Moves the card one step next
+        /// </summary>
+        /// <param name="cardStateId"></param>
+        public void MoveNext(int cardStateId)
+        {
+            var cardState = GetCardStateById(cardStateId);
+            var cardId = cardState.CardId;
+            if (!IsDuplicateCardState(cardId))
+            {
+                MoveNext(cardState);
+            }
+            else
+            {
+                // todo log
+                Console.WriteLine($"Duplicated {cardId}");
+            }
+        }
+
+        /// <summary>
+        /// Moves the card one step back
+        /// </summary>
+        /// <param name="cardStateId"></param>
+        /// <param name="overStoppingMode"></param>
+        public void MoveBack(int cardStateId, bool overStoppingMode = false)
+        {
+            var cardState = GetCardStateById(cardStateId);
+            var cardId = cardState.CardId;
+            if (!IsDuplicateCardState(cardId))
+            {
+                MoveBack(cardState, overStoppingMode);
+            }
+            else
+            {
+                // todo log
+                Console.WriteLine($"Duplicated {cardId}");
+            }
+        }
+
+
+        protected bool IsDuplicateCardState(int cardId)
+        {
+            var now = DateTime.Now;
+
+            if (_unitOfWork.CardStateRepository.Any(
+                p => p.CardId == cardId && DbFunctions.DiffSeconds(p.CreationDateTime, now) < 10))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Moves the card one step next
+        /// </summary>
+        /// <param name="cardState"></param>
+        protected void MoveNext(CardState cardState)
+        {
+            cardState.Status = InboxCardsStatus.Passed;
+            cardState.ModifiedDateTime = DateTime.Now;
+            _unitOfWork.CardStateRepository.Update(cardState);
+
+            var nextPosition = GetNextPosition(cardState.CardPosition);
+            var newCard = AddCardInFirstState(nextPosition, cardState.UserId, cardState.CardId);
+
+            _unitOfWork.CardStateRepository.Insert(newCard);
+            _unitOfWork.Save();
+        }
+
+        /// <summary>
+        /// Moves the card one step back
+        /// </summary>
+        /// <param name="cardState"></param>
+        /// <param name="overStoppingMode"></param>
+        protected void MoveBack(CardState cardState, bool overStoppingMode = false)
+        {
+            if (overStoppingMode)
+            {
+                cardState.Status = InboxCardsStatus.CleanedUp;
+            }
+            else
+            {
+                cardState.Status = InboxCardsStatus.Failed;
+            }
+            cardState.ModifiedDateTime = DateTime.Now;
+            _unitOfWork.CardStateRepository.Update(cardState);
+
+            var prevPosition = GetPreviousPosition(cardState.CardPosition);
+            var newCard = AddCardInFirstState(prevPosition, cardState.UserId, cardState.CardId);
+
+            _unitOfWork.CardStateRepository.Insert(newCard);
+            _unitOfWork.Save();
         }
     }
 }

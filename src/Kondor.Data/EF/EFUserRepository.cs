@@ -37,7 +37,7 @@ namespace Kondor.Data.EF
 
         public IEnumerable<ApplicationUser> GetUsersThatShouldBeNotified(int maximumAlertsNumber, TimeSpan interval)
         {
-            // maximum alert number
+            // todo maximum alert number
             var originDateTime = DateTime.Now - interval;
 
             var result =
