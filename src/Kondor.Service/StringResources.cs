@@ -33,5 +33,6 @@
         public static string HumanizerMinutesFromNow => "humanizer.minutes.from.now";
         public static string HumanizerHoursFromNow => "humanizer.hours.from.now";
         public static string HumanizerDaysFromNow => "humanizer.days.from.now";
+        public static string NoCardToDisplay => "exception.NoCardToDisplay";
     }
 }

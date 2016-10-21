@@ -182,6 +182,10 @@ namespace Kondor.Service.Leitner
         public CardState GetCardStateById(int id)
         {
             var cardState = _unitOfWork.CardStateRepository.GetById(id);
+            if (cardState == null)
+            {
+                throw new NullReferenceException();
+            }
             return cardState;
         }
 
