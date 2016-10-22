@@ -13,6 +13,8 @@ namespace Kondor.Data.EF
         private IRepository<Language> _languageRepository;
         private IRepository<Medium> _mediumRepository;
         private IRepository<CardState> _cardStateRepository;
+        private IRepository<Deck> _deckRepository;
+        private IRepository<SubDeck> _subDeckRepository;
         private ICardRepository _cardRepository;
         private IExampleRepository _exampleRepository;
         private IExampleViewRepository _exampleViewRepository;
@@ -30,6 +32,8 @@ namespace Kondor.Data.EF
         public IRepository<Language> LanguageRepository => _languageRepository ?? (_languageRepository = new EFRepository<Language>(_context));
         public IRepository<Medium> MediumRepository => _mediumRepository ?? (_mediumRepository = new EFRepository<Medium>(_context));
         public IRepository<CardState> CardStateRepository => _cardStateRepository ?? (_cardStateRepository = new EFRepository<CardState>(_context));
+        public IRepository<Deck> DeckRepository => _deckRepository ?? (_deckRepository = new EFRepository<Deck>(_context));
+        public IRepository<SubDeck> SubDeckRepository => _subDeckRepository ?? (_subDeckRepository = new EFRepository<SubDeck>(_context));
         public ICardRepository CardRepository => _cardRepository ?? (_cardRepository = new EFCardRepository(_context));
         public IExampleRepository ExampleRepository => _exampleRepository ?? (_exampleRepository = new EFExampleRepository(_context));
         public IExampleViewRepository ExampleViewRepository => _exampleViewRepository ?? (_exampleViewRepository = new EFExampleViewRepository(_context));

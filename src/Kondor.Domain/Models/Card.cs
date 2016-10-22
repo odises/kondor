@@ -13,6 +13,7 @@ namespace Kondor.Domain.Models
             CardStates = new HashSet<CardState>();
             Examples = new HashSet<Example>();
         }
+
         public string UserId { get; set; }
         public CardType CardType { get; set; }
         public CardStatus CardStatus { get; set; }
@@ -20,6 +21,10 @@ namespace Kondor.Domain.Models
         public virtual ICollection<CardState> CardStates { get; set; }
         public virtual ICollection<Example> Examples { get; set; }
         public virtual ApplicationUser User { get; set; }
+        public virtual int? DeckId { get; set; }
+        public virtual Deck Deck { get; set; }
+        public virtual int? SubDeckId { get; set; }
+        public virtual SubDeck SubDeck { get; set; }
 
         public ISimpleCard DeserializeCardData()
         {

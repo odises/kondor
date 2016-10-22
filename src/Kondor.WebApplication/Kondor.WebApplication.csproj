@@ -206,6 +206,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CardController.cs" />
+    <Compile Include="Controllers\DeckController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MemController.cs" />
@@ -216,6 +217,7 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CardViewModel.cs" />
+    <Compile Include="Models\DeckViewModel.cs" />
     <Compile Include="Models\RichCardViewModels.cs" />
     <Compile Include="Models\SimpleCardViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -292,6 +294,8 @@
     <Content Include="Views\Card\Index.cshtml" />
     <Content Include="Views\Card\CreateRichCard.cshtml" />
     <Content Include="Views\Card\Edit.cshtml" />
+    <Content Include="Views\Deck\Decks.cshtml" />
+    <Content Include="Views\Deck\CreateDeck.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
