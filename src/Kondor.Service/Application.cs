@@ -47,10 +47,14 @@ namespace Kondor.Service
                 Console.WriteLine(exception.Message);
             }
         }
-        private  void TelegramJob()
+        private void TelegramJob()
         {
             try
             {
+                #if DEBUG
+                _telegramMessageHandler.SaveUpdates();
+                #endif
+
                 _telegramMessageHandler.ProcessMessages();
             }
             catch (Exception exception)

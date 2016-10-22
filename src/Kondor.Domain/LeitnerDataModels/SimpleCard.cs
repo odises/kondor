@@ -1,6 +1,6 @@
-﻿namespace Kondor.Data.LeitnerDataModels
+﻿namespace Kondor.Domain.LeitnerDataModels
 {
-    public class SimpleCard : ICard
+    public class SimpleCard : ISimpleCard
     {
         public SimpleCard()
         {

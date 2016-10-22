@@ -1,11 +1,9 @@
-﻿namespace Kondor.Data.LeitnerDataModels
+﻿namespace Kondor.Domain.LeitnerDataModels
 {
-    public interface ICard
+    public interface ISimpleCard
     {
         string GetLearnView();
         string GetFrontExamView();
         string GetBackExamView();
-        ISide Front { get; set; }
-        ISide Back { get; set; }
     }
 }

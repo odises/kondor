@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Kondor.Data.LeitnerDataModels;
 
 namespace Kondor.Domain.LeitnerDataModels
 {
-    public class RichSide : ISide
+    public class RichSide : IRichSide
     {
         public RichSide()
         {
@@ -36,6 +35,37 @@ namespace Kondor.Domain.LeitnerDataModels
                 }
             }
             return result.TrimEnd(Environment.NewLine.ToCharArray());
+        }
+
+        public string DisplayWithoutExamples()
+        {
+            var result = "";
+
+            foreach (var partOfSpeech in PartsOfSpeech)
+            {
+                result = result + $"`{partOfSpeech.Title}`{Environment.NewLine}";
+                if (Pronunciations.Count > 0)
+                {
+                    foreach (var pronunciation in Pronunciations)
+                    {
+                        result = result + $"`{pronunciation.Region} /{pronunciation.Value}/`{Environment.NewLine}";
+                    }
+                }
+
+                result = result + Environment.NewLine;
+
+                var defCount = 0;
+                foreach (var definition in partOfSpeech.Definitions)
+                {
+                    result = result + $"{defCount + 1}. {definition.Value}{Environment.NewLine}";
+
+                    defCount++;
+                }
+
+                result = result + Environment.NewLine + Environment.NewLine;
+            }
+
+            return result;
         }
 
         public string Display()

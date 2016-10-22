@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using Kondor.Data.LeitnerDataModels;
 using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.LeitnerDataModels;

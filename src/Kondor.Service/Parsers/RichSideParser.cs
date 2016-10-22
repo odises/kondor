@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Kondor.Data.LeitnerDataModels;
 using Kondor.Domain.LeitnerDataModels;
 
 namespace Kondor.Service.Parsers
@@ -14,7 +13,7 @@ namespace Kondor.Service.Parsers
             return simpleSide;
         }
 
-        public ISide ParseRichSide(string input)
+        public IRichSide ParseRichSide(string input)
         {
             var richSide = new RichSide();
             var regex = new Regex(Data.Constants.RegexPatterns.RichSideFirstRegex);

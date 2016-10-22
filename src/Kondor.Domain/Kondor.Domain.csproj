@@ -81,6 +81,8 @@
     <Compile Include="IResponseRepository.cs" />
     <Compile Include="ISettingRepository.cs" />
     <Compile Include="LeitnerDataModels\Definition.cs" />
+    <Compile Include="LeitnerDataModels\IRichCard.cs" />
+    <Compile Include="LeitnerDataModels\IRichSide.cs" />
     <Compile Include="LeitnerDataModels\ISide.cs" />
     <Compile Include="LeitnerDataModels\ISimpleCard.cs" />
     <Compile Include="LeitnerDataModels\PartOfSpeech.cs" />

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Kondor.Data.LeitnerDataModels;
 using Kondor.Domain.Enums;
+using Kondor.Domain.LeitnerDataModels;
 using Newtonsoft.Json;
 
 namespace Kondor.Domain.Models
@@ -21,7 +21,7 @@ namespace Kondor.Domain.Models
         public virtual ICollection<Example> Examples { get; set; }
         public virtual ApplicationUser User { get; set; }
 
-        public ICard DeserializeCardData()
+        public ISimpleCard DeserializeCardData()
         {
             if (CardType == CardType.SimpleCard)
             {

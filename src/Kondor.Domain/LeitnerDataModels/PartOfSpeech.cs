@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kondor.Data.LeitnerDataModels
+namespace Kondor.Domain.LeitnerDataModels
 {
     public class PartOfSpeech
     {

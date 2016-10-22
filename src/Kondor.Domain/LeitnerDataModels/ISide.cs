@@ -1,4 +1,4 @@
-﻿namespace Kondor.Data.LeitnerDataModels
+﻿namespace Kondor.Domain.LeitnerDataModels
 {
     public interface ISide
     {

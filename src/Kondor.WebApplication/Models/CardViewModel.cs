@@ -1,5 +1,5 @@
-﻿using Kondor.Data.LeitnerDataModels;
-using Kondor.Domain.Enums;
+﻿using Kondor.Domain.Enums;
+using Kondor.Domain.LeitnerDataModels;
 
 namespace Kondor.WebApplication.Models
 {

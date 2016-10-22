@@ -1,8 +1,8 @@
-﻿using Kondor.Domain.LeitnerDataModels;
+﻿using System;
 
-namespace Kondor.Data.LeitnerDataModels
+namespace Kondor.Domain.LeitnerDataModels
 {
-    public class RichCard : ICard
+    public class RichCard : IRichCard
     {
         public RichCard()
         {
@@ -22,10 +22,15 @@ namespace Kondor.Data.LeitnerDataModels
 
         public string GetBackExamView()
         {
-            return GetLearnView();
+            var back = Back as RichSide;
+            if (back == null)
+            {
+                throw new InvalidCastException();
+            }
+            return $"*{Front.Display()}*\n\n{back.DisplayWithoutExamples()}";
         }
 
         public ISide Front { get; set; }
-        public ISide Back { get; set; }
+        public IRichSide Back { get; set; }
     }
 }

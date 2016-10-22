@@ -61,10 +61,6 @@ namespace Kondor.Service.Handlers
                 updateType = UpdateType.Unclear;
             }
 
-
-            // todo save updates
-            //if (!_context.Updates.Any(p => p.UpdateId == update.UpdateId))
-            //{
             var newUpdate = new Domain.Models.Update
             {
                 UpdateId = update.UpdateId,
@@ -77,7 +73,7 @@ namespace Kondor.Service.Handlers
             };
 
             _unitOfWork.UpdateRepository.Insert(newUpdate);
-            //}
+            
             _unitOfWork.Save();
         }
 
