@@ -438,9 +438,13 @@ namespace Kondor.Service.Leitner
             _unitOfWork.CardStateRepository.Update(cardState);
 
             var nextPosition = GetNextPosition(cardState.CardPosition);
-            var newCard = AddCardInFirstState(nextPosition, cardState.UserId, cardState.CardId);
+            if (nextPosition != Position.Finished)
+            {
+                var newCard = AddCardInFirstState(nextPosition, cardState.UserId, cardState.CardId);
 
-            _unitOfWork.CardStateRepository.Insert(newCard);
+                _unitOfWork.CardStateRepository.Insert(newCard);
+            }
+            
             _unitOfWork.Save();
         }
 
