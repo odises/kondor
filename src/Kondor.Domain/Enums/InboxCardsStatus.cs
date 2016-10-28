@@ -5,6 +5,7 @@
         NewInPosition,
         Passed,
         Failed,
-        CleanedUp
+        CleanedUp,
+        Again
     }
 }

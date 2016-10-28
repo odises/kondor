@@ -14,5 +14,7 @@ namespace Kondor.Service.Leitner
         void MoveBack(int cardStateId, bool overStoppingMode = false);
         void MoveNext(int cardStateId);
         int GetNumberOfCardsReadyToTry(int telegramUserId);
+        bool IsDifficult(CardState cardState);
+        void Again(int cardStateId);
     }
 }

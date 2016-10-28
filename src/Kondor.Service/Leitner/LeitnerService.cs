@@ -196,6 +196,34 @@ namespace Kondor.Service.Leitner
             return cards.Count();
         }
 
+        public bool IsDifficult(CardState cardState)
+        {
+            return _unitOfWork.CardRepository.IsDifficult(cardState.CardId);
+        }
+
+        public void Again(int cardStateId)
+        {
+            var cardState = GetCardStateById(cardStateId);
+            cardState.Status = InboxCardsStatus.Again;
+            cardState.ModifiedDateTime = DateTime.Now;
+            _unitOfWork.CardStateRepository.Update(cardState);
+
+            var nextPosition = Position.First;
+
+            var newCardState = new CardState
+            {
+                CardPosition = nextPosition,
+                CreationDateTime = DateTime.Now,
+                ExaminationDateTime = DateTime.Now.AddSeconds(-5),
+                Status = InboxCardsStatus.NewInPosition,
+                UserId = cardState.UserId,
+                CardId = cardState.CardId
+            };
+
+            _unitOfWork.CardStateRepository.Insert(newCardState);
+            _unitOfWork.Save();
+        }
+
         public Example GetExample(int telegramUserId)
         {
             var user = GetUserByTelegramId(telegramUserId);

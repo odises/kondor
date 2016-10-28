@@ -65,7 +65,7 @@ namespace Kondor.Data.EF
             return query.Any();
         }
 
-        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null)
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
         {
             IQueryable<TEntity> query = DbSet;
             if (filter != null)
@@ -73,7 +73,14 @@ namespace Kondor.Data.EF
                 query = query.Where(filter);
             }
 
-            return query.FirstOrDefault();
+            if (orderBy != null)
+            {
+                return orderBy(query).FirstOrDefault();
+            }
+            else
+            {
+                return query.FirstOrDefault();
+            }
         }
 
         public IEnumerable<IGrouping<TKey, TEntity>> FilterThenGroupBy<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector)

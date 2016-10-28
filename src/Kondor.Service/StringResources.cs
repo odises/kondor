@@ -34,5 +34,8 @@
         public static string HumanizerHoursFromNow => "humanizer.hours.from.now";
         public static string HumanizerDaysFromNow => "humanizer.days.from.now";
         public static string NoCardToDisplay => "exception.NoCardToDisplay";
+        public static string KeyboardNextMemTitle => "keyboard.nextmem.title";
+        public static string KeyboardAgainTitle => "keyboard.again.title";
+        public static string AgainMessage => "againMessage";
     }
 }

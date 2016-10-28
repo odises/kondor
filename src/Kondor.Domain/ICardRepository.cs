@@ -7,5 +7,6 @@ namespace Kondor.Domain
     {
         IEnumerable<Card> GetCardsByUserId(string id);
         Card GetRandomlyCardToLearn(string userId);
+        bool IsDifficult(int id);
     }
 }

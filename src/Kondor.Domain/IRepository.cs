@@ -12,7 +12,7 @@ namespace Kondor.Domain
             string includeProperties = "");
         int Count(Expression<Func<TEntity, bool>> filter = null);
         bool Any(Expression<Func<TEntity, bool>> filter = null);
-        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null);
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
         IEnumerable<IGrouping<TKey, TEntity>> FilterThenGroupBy<TKey>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TKey>> keySelector);
         IEnumerable<IGrouping<TKey, TEntity>> GroupBy<TKey>(Expression<Func<TEntity, TKey>> keySelector);
         TEntity GetById(object id);
