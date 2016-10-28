@@ -9,6 +9,8 @@ namespace Kondor.Domain
         IRepository<Language> LanguageRepository { get; }
         IRepository<Medium> MediumRepository { get; }
         IRepository<CardState> CardStateRepository { get; }
+        IRepository<Deck> DeckRepository { get; }
+        IRepository<SubDeck> SubDeckRepository { get; }
         ICardRepository CardRepository { get; }
         IExampleRepository ExampleRepository { get; }
         IExampleViewRepository ExampleViewRepository { get; }

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Kondor.WebApplication.Models.DeckViewModel>
+@{
+    ViewBag.Title = "Decks";
+}
+
+<h2>Decks</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Create Deck</h3>
+        <p><a class="btn btn-success" href="@Url.Action("CreateDeck", "Deck")">Create</a></p>
+    </div>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var deck in Model)
+    {
+        <tr>
+            <td>@deck.Id</td>
+            <td>@deck.Title</td>
+            <td>
+                <div class="btn-group">
+                    @Html.ActionLink("Edit", "EditDeck", new { id = deck.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Add Subdeck", "CreateSubDeck", new { id = deck.Id }, new { @class = "btn btn-success" })
+                    <button class="btn btn-default" data-href="@Url.Action("DeleteDeck", new { id = deck.Id })" data-toggle="modal" data-target="#confirm-delete">
+                        Remove
+                    </button>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Delete
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script type="text/javascript">
+        $('#confirm-delete').on('show.bs.modal', function (e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        });
+    </script>
+}

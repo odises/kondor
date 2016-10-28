@@ -94,6 +94,7 @@
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\CardState.cs" />
+    <Compile Include="Models\Deck.cs" />
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Example.cs" />
     <Compile Include="Models\ExampleView.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Models\Response.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\StringResource.cs" />
+    <Compile Include="Models\SubDeck.cs" />
     <Compile Include="Models\Update.cs" />
     <Compile Include="IUserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
