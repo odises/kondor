@@ -147,6 +147,11 @@ namespace Kondor.Service.Managers
             }
         }
 
+        public Message SendMessage(int chatId, RenderedViewModel view)
+        {
+            return SendMessage(chatId, view.MessageBody, view.Keyboards);
+        }
+
         public void AnswerCallbackQuery(string callbackQueryId, string text, bool showAlert, string url = null)
         {
             try

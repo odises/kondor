@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using Kondor.Data.SettingModels;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Extensions;
 using Kondor.Service.Handlers;
@@ -17,14 +16,21 @@ namespace Kondor.Service.Processors
         private readonly ILeitnerService _leitnerService;
         private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
+        private readonly IViews _views;
 
-        public QueryProcessor(IUserApi userApi, ITelegramApiManager telegramApiManager, ILeitnerService leitnerService, ISettingHandler settingHandler, ITextManager textManager)
+        public QueryProcessor(IUserApi userApi, 
+                              ITelegramApiManager telegramApiManager, 
+                              ILeitnerService leitnerService, 
+                              ISettingHandler settingHandler, 
+                              ITextManager textManager, 
+                              IViews views)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _leitnerService = leitnerService;
             _settingHandler = settingHandler;
             _textManager = textManager;
+            _views = views;
         }
         public void Process(CallbackQuery callbackQuery)
         {
@@ -51,50 +57,18 @@ namespace Kondor.Service.Processors
                     ProcessBackCommand(callbackQuery);
                     break;
                 case "ExampleBoardRefresh":
-                    ProcessExampleBoardRefreshCommand(queryData, callbackQuery);
+                    //ProcessExampleBoardRefreshCommand(queryData, callbackQuery);
                     break;
-            }
-        }
-        protected virtual void ProcessExampleBoardRefreshCommand(QueryData queryData, CallbackQuery callbackQuery)
-        {
-            try
-            {
-                var example = _leitnerService.GetExample(callbackQuery.From.Id);
-
-                var messageFormatter = _textManager.GetText(StringResources.ExampleBoardMessageFormatter);
-                var messageBody = string.Format(messageFormatter, example.Sentence);
-
-
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId),
-                    messageBody, "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[]
-                {
-                        new[]
-                        {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
-                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
-                            },
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.ExampleBoardSpeakKeyboardTitle),
-                                Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().SpeakBaseUri, example.Id)
-                            }
-                        }
-                }));
-            }
-            catch (IndexOutOfRangeException)
-            {
-                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NoExampleYet), true);
             }
         }
         protected virtual void ProcessBackCommand(CallbackQuery callbackQuery)
         {
-            _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), _textManager.GetText(StringResources.BackMessage), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
-                    {
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardLearnTitle), CallbackData = QueryData.NewQueryString("Learn", null, null)},
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardExamTitle), CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+            _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 
+                int.Parse(callbackQuery.Message.MessageId), 
+                _textManager.GetText(StringResources.BackMessage), 
+                "Markdown", 
+                true, 
+                _views.Index().Keyboards);
         }
         protected virtual void ProcessAnswerCommand(QueryData queryData, CallbackQuery callbackQuery)
         {
@@ -126,11 +100,7 @@ namespace Kondor.Service.Processors
         {
             if (_userApi.IsRegisteredUser(callbackQuery.From.Id))
             {
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), _textManager.GetText(StringResources.BackMessage), "Markdown", true, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
-                    {
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardLearnTitle), CallbackData = QueryData.NewQueryString("Learn", null, null)},
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardExamTitle), CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                    }}));
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), _textManager.GetText(StringResources.BackMessage), "Markdown", true, _views.Index().Keyboards);
             }
             else
             {
@@ -145,11 +115,11 @@ namespace Kondor.Service.Processors
 
                 var response = card.DeserializeCardData().GetLearnView();
 
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", false, TelegramHelper.GetInlineKeyboardMarkup(new[] {new []
-                    {
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardImagesTitle), Url = string.Format(_settingHandler.GetSettings<GeneralSettings>().ImagesBaseUri, card.Id)},
-                        new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardBackTitle), CallbackData = QueryData.NewQueryString("Back", null, null)}
-                    }}));
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 
+                    int.Parse(callbackQuery.Message.MessageId), 
+                    response, "Markdown", 
+                    false, 
+                    _views.Learn().Keyboards);
             }
             catch (IndexOutOfRangeException)
             {
@@ -170,35 +140,13 @@ namespace Kondor.Service.Processors
             {
                 var cardState = _leitnerService.GetCardForExam(callbackQuery.From.Id);
 
-                var examView = TelegramHelper.GetInlineKeyboardMarkup(new[]
-                {
-                    new[]
-                    {
-                        new InlineKeyboardButton
-                        {
-                            Text = _textManager.GetText(StringResources.KeyboardDisplayTitle),
-                            CallbackData = QueryData.NewQueryString("Display", null, cardState.Id.ToString())
-                        },
-                        new InlineKeyboardButton
-                        {
-                            Text = _textManager.GetText(StringResources.KeyboardNextMemTitle),
-                            CallbackData = QueryData.NewQueryString("Exam", null, null)
-                        }
-
-                    },
-                    new[]
-                    {
-                        new InlineKeyboardButton
-                        {
-                            Text = _textManager.GetText(StringResources.KeyboardBackTitle),
-                            CallbackData = QueryData.NewQueryString("Back", null, null)
-                        }
-                    }
-                });
-
                 var response = cardState.Card.DeserializeCardData().GetFrontExamView();
 
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, examView);
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 
+                    int.Parse(callbackQuery.Message.MessageId), 
+                    response, "Markdown", 
+                    true, 
+                    _views.Exam(cardState.Id).Keyboards);
 
             }
             catch (IndexOutOfRangeException)
@@ -218,7 +166,9 @@ namespace Kondor.Service.Processors
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NoCardForExam), true);
+                    _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, 
+                        _textManager.GetText(StringResources.NoCardForExam), 
+                        true);
                 }
             }
             catch (ValidationException)
@@ -227,7 +177,9 @@ namespace Kondor.Service.Processors
                 {
                     ProcessBackCommand(callbackQuery);
                 }
-                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.UserIsNotValidMessage), true);
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, 
+                    _textManager.GetText(StringResources.UserIsNotValidMessage), 
+                    true);
             }
 
         }
@@ -239,54 +191,13 @@ namespace Kondor.Service.Processors
                 var cardState = _leitnerService.GetCardStateById(cardStateId);
                 var response = cardState.Card.DeserializeCardData().GetBackExamView();
 
-                string view;
+                var isDifficult = _leitnerService.IsDifficult(cardState);
 
-                if (_leitnerService.IsDifficult(cardState))
-                {
-                    view = TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
-                        new[]
-                        {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardRejectTitle),
-                                CallbackData = QueryData.NewQueryString("Answer", "Reject", cardState.Id.ToString())
-                            },
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardAgainTitle),
-                                CallbackData = QueryData.NewQueryString("Answer", "Again", cardState.Id.ToString())
-                            }
-                        }
-                    });
-                }
-                else
-                {
-                    view = TelegramHelper.GetInlineKeyboardMarkup(new[]
-                    {
-                        new[]
-                        {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardAcceptTitle),
-                                CallbackData = QueryData.NewQueryString("Answer", "Accept", cardState.Id.ToString())
-                            },
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardRejectTitle),
-                                CallbackData = QueryData.NewQueryString("Answer", "Reject", cardState.Id.ToString())
-                            },
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardAgainTitle),
-                                CallbackData = QueryData.NewQueryString("Answer", "Again", cardState.Id.ToString())
-                            }
-                        }
-                    });
-                }
-
-
-                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, int.Parse(callbackQuery.Message.MessageId), response, "Markdown", true, view);
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 
+                    int.Parse(callbackQuery.Message.MessageId), 
+                    response, "Markdown", 
+                    true, 
+                    _views.Display(isDifficult, cardStateId).Keyboards);
             }
             catch (NullReferenceException)
             {

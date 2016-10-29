@@ -63,6 +63,8 @@ namespace Kondor.Service
 
             builder.RegisterType<EFUnitOfWork>().As<IUnitOfWork>();
 
+            builder.RegisterType<Views>().As<IViews>();
+
             return builder;
         }
 

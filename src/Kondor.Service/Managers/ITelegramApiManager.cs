@@ -13,5 +13,6 @@ namespace Kondor.Service.Managers
         void EditMessageText(int chatId, int messageId, string text, string parseMode, bool disableWebPagePreview, string replyMarkup = null);
         List<TelegramUpdate> GetUpdates(int? lastUpdateId = default(int?));
         Message SendMessage(int chatId, string text, string replyMarkup = null);
+        Message SendMessage(int chatId, RenderedViewModel view);
     }
 }

@@ -17,16 +17,18 @@ namespace Kondor.Service.Handlers
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly ISettingHandler _settingHandler;
-        private readonly ITextManager _textManager;
+        private readonly IViews _views;
+        private readonly IQueryProcessor _queryProcessor;
 
 
-        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork)
+        public TelegramMessageHandler(IUserApi userApi, ITelegramApiManager telegramApiManager, ISettingHandler settingHandler, IUnitOfWork unitOfWork, IViews views, IQueryProcessor queryProcessor)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _settingHandler = settingHandler;
-            _textManager = textManager;
             _unitOfWork = unitOfWork;
+            _views = views;
+            _queryProcessor = queryProcessor;
         }
 
         public void SaveUpdate(TelegramUpdate update)
@@ -194,8 +196,7 @@ namespace Kondor.Service.Handlers
 
         private void CallbackQueryProcessor(CallbackQuery callbackQuery)
         {
-            var queryProcessor = ObjectManager.GetInstance<IQueryProcessor>();
-            queryProcessor.Process(callbackQuery);
+            _queryProcessor.Process(callbackQuery);
         }
 
         private void ChosenInlineResultProcessor(ChosenInlineResult chosenInlineResult)
@@ -229,50 +230,15 @@ namespace Kondor.Service.Handlers
                     var registrationBaseUri = _settingHandler.GetSettings<GeneralSettings>().RegistrationBaseUri;
                     var cipherKey = _settingHandler.GetSettings<GeneralSettings>().CipherKey;
 
+                    var registrationUrl = _userApi.GetRegistrationLink(message.From.Id, message.From.Username,
+                        registrationBaseUri, cipherKey);
+
                     // send registration link
-                    _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.RegistrationMessage),
-                        TelegramHelper.GetInlineKeyboardMarkup(new[]
-                        {
-                        new[]
-                        {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardEnterTitle),
-                                CallbackData = QueryData.NewQueryString("Enter", null, null)
-                            },
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.KeyboardRegistrationTitle),
-                                Url = _userApi.GetRegistrationLink(message.From.Id, message.From.Username, registrationBaseUri, cipherKey)
-                            }
-                        }
-                        }));
+                    _telegramApiManager.SendMessage(message.Chat.Id, _views.Login(registrationUrl));
                 }
                 else
                 {
-                    _telegramApiManager.SendMessage(message.Chat.Id,
-                        _textManager.GetText(StringResources.ExampleBoardMessage),
-                        TelegramHelper.GetInlineKeyboardMarkup(new[]
-                        {
-                        new[]
-                        {
-                            new InlineKeyboardButton
-                            {
-                                Text = _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
-                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
-                            }
-                        }
-                        }));
-
-                    _telegramApiManager.SendMessage(message.Chat.Id, _textManager.GetText(StringResources.AlreadyRegistered),
-                        TelegramHelper.GetInlineKeyboardMarkup(new[]
-                        {
-                        new[]
-                        {
-                            new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardLearnTitle), CallbackData = QueryData.NewQueryString("Learn", null, null)},
-                            new InlineKeyboardButton {Text = _textManager.GetText(StringResources.KeyboardExamTitle), CallbackData = QueryData.NewQueryString("Exam", null, null)}
-                        }
-                        }));
+                    _telegramApiManager.SendMessage(message.Chat.Id, _views.Index());
                 }
             }
         }
