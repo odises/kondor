@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Kondor.Data.SettingModels;
-using Kondor.Data.TelegramTypes;
 using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
@@ -17,14 +16,16 @@ namespace Kondor.Service.Handlers
         private readonly IUserApi _userApi;
         private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
+        private readonly IViews _views;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork, IViews views)
         {
             _telegramApiManager = telegramApiManager;
             _userApi = userApi;
             _settingHandler = settingHandler;
             _textManager = textManager;
             _unitOfWork = unitOfWork;
+            _views = views;
         }
 
         public void SendNotification()
@@ -78,37 +79,7 @@ namespace Kondor.Service.Handlers
                                 _unitOfWork.Save();
 
 
-                                _telegramApiManager.SendMessage(temp.ChatId,
-                                _textManager.GetText(StringResources.ExampleBoardMessage),
-                                TelegramHelper.GetInlineKeyboardMarkup(new[]
-                                    {
-                                        new[]
-                                        {
-                                            new InlineKeyboardButton
-                                            {
-                                                Text = _textManager.GetText(StringResources.ExampleBoardRefreshKeyboardTitle),
-                                                CallbackData = QueryData.NewQueryString("ExampleBoardRefresh", null, null)
-                                            }
-                                        }
-                                    }));
-
-                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.BackMessage),
-                                    TelegramHelper.GetInlineKeyboardMarkup(new[]
-                                    {
-                            new[]
-                            {
-                                new InlineKeyboardButton
-                                {
-                                    Text = _textManager.GetText(StringResources.KeyboardLearnTitle),
-                                    CallbackData = QueryData.NewQueryString("Learn", null, null)
-                                },
-                                new InlineKeyboardButton
-                                {
-                                    Text = _textManager.GetText(StringResources.KeyboardExamTitle),
-                                    CallbackData = QueryData.NewQueryString("Exam", null, null)
-                                }
-                            }
-                                    }));
+                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.BackMessage), _views.Index().Keyboards);
                             }
                         }
                     }

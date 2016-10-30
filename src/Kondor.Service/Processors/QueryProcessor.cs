@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Kondor.Data.TelegramTypes;
 using Kondor.Service.Extensions;
-using Kondor.Service.Handlers;
 using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
 
@@ -14,21 +13,18 @@ namespace Kondor.Service.Processors
         private readonly IUserApi _userApi;
         private readonly ITelegramApiManager _telegramApiManager;
         private readonly ILeitnerService _leitnerService;
-        private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
         private readonly IViews _views;
 
         public QueryProcessor(IUserApi userApi, 
                               ITelegramApiManager telegramApiManager, 
                               ILeitnerService leitnerService, 
-                              ISettingHandler settingHandler, 
                               ITextManager textManager, 
                               IViews views)
         {
             _userApi = userApi;
             _telegramApiManager = telegramApiManager;
             _leitnerService = leitnerService;
-            _settingHandler = settingHandler;
             _textManager = textManager;
             _views = views;
         }
@@ -56,11 +52,45 @@ namespace Kondor.Service.Processors
                 case "Back":
                     ProcessBackCommand(callbackQuery);
                     break;
-                case "ExampleBoardRefresh":
-                    //ProcessExampleBoardRefreshCommand(queryData, callbackQuery);
+                case "Examples":
+                    ProcessExamplesCommand(callbackQuery);
+                    break;
+                case "Refresh":
+                    ProcessRefreshCommand(callbackQuery);
                     break;
             }
         }
+
+        private void ProcessRefreshCommand(CallbackQuery callbackQuery)
+        {
+            ProcessExamplesCommand(callbackQuery);
+        }
+
+        private void ProcessExamplesCommand(CallbackQuery callbackQuery)
+        {
+            try
+            {
+                var example = _leitnerService.GetExample(callbackQuery.From.Id);
+
+                var messageBody =
+                    $"{example.Card.DeserializeCardData().GetFrontExamView()}{Environment.NewLine}{Environment.NewLine}{example.Sentence}";
+
+                _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id,
+                int.Parse(callbackQuery.Message.MessageId),
+                messageBody,
+                "Markdown",
+                true,
+                _views.Examples().Keyboards);
+
+            }
+            catch (IndexOutOfRangeException)
+            {
+                _telegramApiManager.AnswerCallbackQuery(callbackQuery.Id, _textManager.GetText(StringResources.NoExampleYet), true);
+                ProcessBackCommand(callbackQuery);
+            }
+            
+        }
+
         protected virtual void ProcessBackCommand(CallbackQuery callbackQuery)
         {
             _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 

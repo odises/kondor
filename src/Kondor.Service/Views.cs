@@ -24,6 +24,11 @@ namespace Kondor.Service
                 {
                     new InlineKeyboardButton
                     {
+                        Text = _textManager.GetText(StringResources.KeyboardExampleTitle),
+                        CallbackData = QueryData.NewQueryString("Examples", null, null)
+                    },
+                    new InlineKeyboardButton
+                    {
                         Text = _textManager.GetText(StringResources.KeyboardLearnTitle),
                         CallbackData = QueryData.NewQueryString("Learn", null, null)
                     },
@@ -174,6 +179,31 @@ namespace Kondor.Service
 
             result.Keyboards = TelegramHelper.GetInlineKeyboardMarkup(keyboards);
 
+            return result;
+        }
+
+        public RenderedViewModel Examples()
+        {
+            var result = new RenderedViewModel();
+
+            var keyboards = new[]
+            {
+                new[]
+                {
+                    new InlineKeyboardButton
+                    {
+                        Text = _textManager.GetText(StringResources.RefreshKeyboardTitle),
+                        CallbackData = QueryData.NewQueryString("Refresh", null, null)
+                    },
+                    new InlineKeyboardButton
+                    {
+                        Text = _textManager.GetText(StringResources.KeyboardBackTitle),
+                        CallbackData = QueryData.NewQueryString("Back", null, null)
+                    }
+                }
+            };
+
+            result.Keyboards = TelegramHelper.GetInlineKeyboardMarkup(keyboards);
             return result;
         }
     }

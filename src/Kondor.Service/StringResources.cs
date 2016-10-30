@@ -37,5 +37,7 @@
         public static string KeyboardNextMemTitle => "keyboard.nextmem.title";
         public static string KeyboardAgainTitle => "keyboard.again.title";
         public static string AgainMessage => "againMessage";
+        public static string KeyboardExampleTitle => "keyboard.example.title";
+        public static string RefreshKeyboardTitle => "keyboard.refresh.title";
     }
 }

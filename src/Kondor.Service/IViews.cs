@@ -7,5 +7,6 @@
         RenderedViewModel Learn();
         RenderedViewModel Exam(int cardStateId);
         RenderedViewModel Display(bool isDifficult, int cardStateId);
+        RenderedViewModel Examples();
     }
 }
