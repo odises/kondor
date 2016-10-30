@@ -5,6 +5,7 @@ using Kondor.Data.SettingModels;
 using Kondor.Domain;
 using Kondor.Domain.Enums;
 using Kondor.Domain.Models;
+using Kondor.Service.Leitner;
 using Kondor.Service.Managers;
 
 namespace Kondor.Service.Handlers
@@ -17,8 +18,9 @@ namespace Kondor.Service.Handlers
         private readonly ISettingHandler _settingHandler;
         private readonly ITextManager _textManager;
         private readonly IViews _views;
+        private readonly ILeitnerService _leitnerService;
 
-        public NotificationHandler(ITelegramApiManager telegramApiManager, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork, IViews views)
+        public NotificationHandler(ITelegramApiManager telegramApiManager, IUserApi userApi, ISettingHandler settingHandler, ITextManager textManager, IUnitOfWork unitOfWork, IViews views, ILeitnerService leitnerService)
         {
             _telegramApiManager = telegramApiManager;
             _userApi = userApi;
@@ -26,6 +28,7 @@ namespace Kondor.Service.Handlers
             _textManager = textManager;
             _unitOfWork = unitOfWork;
             _views = views;
+            _leitnerService = leitnerService;
         }
 
         public void SendNotification()
@@ -79,7 +82,18 @@ namespace Kondor.Service.Handlers
                                 _unitOfWork.Save();
 
 
-                                _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.BackMessage), _views.Index().Keyboards);
+                                try
+                                {
+                                    var cardState = _leitnerService.GetCardForExam(telegramUserId);
+
+                                    var notificationMessageBody = cardState.Card.DeserializeCardData().GetFrontExamView();
+
+                                    _telegramApiManager.SendMessage(temp.ChatId, notificationMessageBody, _views.Exam(cardState.Id).Keyboards);
+                                }
+                                catch (IndexOutOfRangeException)
+                                {
+                                    _telegramApiManager.SendMessage(temp.ChatId, _textManager.GetText(StringResources.BackMessage), _views.Index().Keyboards);
+                                }
                             }
                         }
                     }
