@@ -68,10 +68,7 @@ namespace Kondor.Service.Leitner
                 var diff = DateTime.Now.GetRounded() - card.ExaminationDateTime;
                 if (diff.TotalMinutes > 0)
                 {
-                    var positionStopTime = GetStopTimeForPositionInMinute(card.CardPosition, _timeUnit);
-                    var tolerance = positionStopTime * (double)OverStoppingTolerance / 100;
-
-                    if (diff.TotalMinutes > tolerance)
+                    if (diff.TotalMinutes > 1440) // fixed value for 2 days in minutes
                     {
                         MoveBack(card, true);
                         count++;
@@ -280,23 +277,7 @@ namespace Kondor.Service.Leitner
         /// <returns></returns>
         protected virtual Position GetPreviousPosition(Position cardPosition)
         {
-            switch (cardPosition)
-            {
-                case Position.First:
-                    return Position.First;
-                case Position.Second:
-                    return Position.First;
-                case Position.Third:
-                    return Position.First;
-                case Position.Fourth:
-                    return Position.First;
-                case Position.Fifth:
-                    return Position.First;
-                case Position.Finished:
-                    throw new ArgumentOutOfRangeException(nameof(cardPosition), cardPosition, null);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(cardPosition), cardPosition, null);
-            }
+            return Position.First;
         }
 
         /// <summary>
@@ -408,15 +389,22 @@ namespace Kondor.Service.Leitner
         public void MoveNext(int cardStateId)
         {
             var cardState = GetCardStateById(cardStateId);
-            var cardId = cardState.CardId;
-            if (!IsDuplicateCardState(cardId))
+            if (!cardState.ModifiedDateTime.HasValue)
             {
-                MoveNext(cardState);
+                var cardId = cardState.CardId;
+                if (!IsDuplicateCardState(cardId))
+                {
+                    MoveNext(cardState);
+                }
+                else
+                {
+                    // todo log
+                    Console.WriteLine($"Duplicated {cardId}");
+                }
             }
             else
             {
-                // todo log
-                Console.WriteLine($"Duplicated {cardId}");
+                Console.WriteLine($"Already answered {cardState.CardId}");
             }
         }
 
@@ -428,15 +416,22 @@ namespace Kondor.Service.Leitner
         public void MoveBack(int cardStateId, bool overStoppingMode = false)
         {
             var cardState = GetCardStateById(cardStateId);
-            var cardId = cardState.CardId;
-            if (!IsDuplicateCardState(cardId))
+            if (!cardState.ModifiedDateTime.HasValue)
             {
-                MoveBack(cardState, overStoppingMode);
+                var cardId = cardState.CardId;
+                if (!IsDuplicateCardState(cardId))
+                {
+                    MoveBack(cardState, overStoppingMode);
+                }
+                else
+                {
+                    // todo log
+                    Console.WriteLine($"Duplicated {cardId}");
+                }
             }
             else
             {
-                // todo log
-                Console.WriteLine($"Duplicated {cardId}");
+                Console.WriteLine($"Already answered {cardState.CardId}");
             }
         }
 
@@ -494,8 +489,12 @@ namespace Kondor.Service.Leitner
             cardState.ModifiedDateTime = DateTime.Now;
             _unitOfWork.CardStateRepository.Update(cardState);
 
-            var prevPosition = GetPreviousPosition(cardState.CardPosition);
-            var newCard = AddCardInFirstState(prevPosition, cardState.UserId, cardState.CardId);
+            
+            var newCard = AddCardInFirstState(Position.First, cardState.UserId, cardState.CardId);
+            if (overStoppingMode)
+            {
+                newCard.ExaminationDateTime = DateTime.Now;
+            }
 
             _unitOfWork.CardStateRepository.Insert(newCard);
             _unitOfWork.Save();
