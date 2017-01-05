@@ -39,5 +39,7 @@
         public static string AgainMessage => "againMessage";
         public static string KeyboardExampleTitle => "keyboard.example.title";
         public static string RefreshKeyboardTitle => "keyboard.refresh.title";
+        public static string RemainingCards => "exam.cards.remaining.count";
+        public static string Star => "star";
     }
 }

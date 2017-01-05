@@ -170,7 +170,13 @@ namespace Kondor.Service.Processors
             {
                 var cardState = _leitnerService.GetCardForExam(callbackQuery.From.Id);
 
-                var response = cardState.Card.DeserializeCardData().GetFrontExamView();
+                var position = string.Empty;
+                for (var i = 0; i < (int)cardState.CardPosition + 1; i++)
+                {
+                    position += _textManager.GetText(StringResources.Star);
+                }
+
+                var response = $"{_textManager.GetText(StringResources.RemainingCards)} {_leitnerService.GetNumberOfCardsReadyToTry(callbackQuery.From.Id)}\n\n{position}\n{cardState.Card.DeserializeCardData().GetFrontExamView()}";
 
                 _telegramApiManager.EditMessageText(callbackQuery.Message.Chat.Id, 
                     int.Parse(callbackQuery.Message.MessageId), 
