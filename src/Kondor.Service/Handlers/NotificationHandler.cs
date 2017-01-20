@@ -86,9 +86,16 @@ namespace Kondor.Service.Handlers
                                 {
                                     var cardState = _leitnerService.GetCardForExam(telegramUserId);
 
-                                    var notificationMessageBody = cardState.Card.DeserializeCardData().GetFrontExamView();
+                                    var position = string.Empty;
+                                    for (var i = 0; i < (int)cardState.CardPosition + 1; i++)
+                                    {
+                                        position += _textManager.GetText(StringResources.Star);
+                                    }
+
+                                    var notificationMessageBody = $"{_textManager.GetText(StringResources.RemainingCards)} {_leitnerService.GetNumberOfCardsReadyToTry(telegramUserId)}\n\n{position}\n{cardState.Card.DeserializeCardData().GetFrontExamView()}";
 
                                     _telegramApiManager.SendMessage(temp.ChatId, notificationMessageBody, _views.Exam(cardState.Id).Keyboards);
+
                                 }
                                 catch (IndexOutOfRangeException)
                                 {
