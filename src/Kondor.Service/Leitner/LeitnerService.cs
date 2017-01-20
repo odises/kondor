@@ -31,7 +31,6 @@ namespace Kondor.Service.Leitner
             _timeUnit = _settingHandler.GetSettings<GeneralSettings>().LeitnerTimeUnit;
             OverStoppingTolerance = _settingHandler.GetSettings<GeneralSettings>().LeitnerOverstoppingTolerance;
         }
-
         /// <summary>
         /// Validates maximum card in first position
         /// </summary>
@@ -47,7 +46,6 @@ namespace Kondor.Service.Leitner
                 throw new OverflowException();
             }
         }
-
         /// <summary>
         /// Cleans up box
         /// </summary>
@@ -68,7 +66,7 @@ namespace Kondor.Service.Leitner
                 var diff = DateTime.Now.GetRounded() - card.ExaminationDateTime;
                 if (diff.TotalMinutes > 0)
                 {
-                    if (diff.TotalMinutes > 1440) // fixed value for 2 days in minutes
+                    if (diff.TotalMinutes > 10080) // fixed value for 7 days in minutes
                     {
                         MoveBack(card, true);
                         count++;
@@ -78,7 +76,6 @@ namespace Kondor.Service.Leitner
 
             return count;
         }
-
         /// <summary>
         /// Adds a new card to user's leitner box
         /// </summary>
@@ -123,7 +120,6 @@ namespace Kondor.Service.Leitner
 
             return randomCard;
         }
-
         /// <summary>
         /// Gets a card for examination
         /// </summary>
@@ -150,7 +146,6 @@ namespace Kondor.Service.Leitner
 
             return card;
         }
-
         public Tuple<int, DateTime> GetNextExamInformation(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
@@ -175,7 +170,6 @@ namespace Kondor.Service.Leitner
                 return new Tuple<int, DateTime>(count, date);
             }
         }
-
         public CardState GetCardStateById(int id)
         {
             var cardState = _unitOfWork.CardStateRepository.GetById(id);
@@ -185,19 +179,16 @@ namespace Kondor.Service.Leitner
             }
             return cardState;
         }
-
         public int GetNumberOfCardsReadyToTry(int telegramUserId)
         {
             var userId = GetUserIdByTelegramUserId(telegramUserId);
             var cards = _unitOfWork.CardStateRepository.Get(p => p.Status == InboxCardsStatus.NewInPosition && p.CardPosition != Position.Finished && p.UserId == userId && p.ExaminationDateTime <= DateTime.Now);
             return cards.Count();
         }
-
         public bool IsDifficult(CardState cardState)
         {
             return _unitOfWork.CardRepository.IsDifficult(cardState.CardId);
         }
-
         public void Again(int cardStateId)
         {
             var cardState = GetCardStateById(cardStateId);
@@ -220,7 +211,6 @@ namespace Kondor.Service.Leitner
             _unitOfWork.CardStateRepository.Insert(newCardState);
             _unitOfWork.Save();
         }
-
         public Example GetExample(int telegramUserId)
         {
             var user = GetUserByTelegramId(telegramUserId);
@@ -243,7 +233,6 @@ namespace Kondor.Service.Leitner
             }
 
         }
-
         /// <summary>
         /// Gets next position
         /// </summary>
@@ -269,7 +258,6 @@ namespace Kondor.Service.Leitner
                     throw new ArgumentOutOfRangeException(nameof(cardPosition), cardPosition, null);
             }
         }
-
         /// <summary>
         /// Gets previous position
         /// </summary>
@@ -279,7 +267,6 @@ namespace Kondor.Service.Leitner
         {
             return Position.First;
         }
-
         /// <summary>
         /// Gets time-stop for a specific position
         /// </summary>
@@ -324,7 +311,6 @@ namespace Kondor.Service.Leitner
                     throw new ArgumentOutOfRangeException(nameof(timeUnit), timeUnit, null);
             }
         }
-
         /// <summary>
         /// Add a card to first state
         /// </summary>
@@ -348,7 +334,6 @@ namespace Kondor.Service.Leitner
 
             return cardState;
         }
-
         /// <summary>
         /// Returns user id by his/her Telegram user id
         /// </summary>
@@ -368,7 +353,6 @@ namespace Kondor.Service.Leitner
                 return user.Id;
             }
         }
-
         protected virtual ApplicationUser GetUserByTelegramId(int telegramUserId)
         {
             var user = _unitOfWork.UserRepository.GetUserByTelegramId(telegramUserId);
@@ -381,7 +365,6 @@ namespace Kondor.Service.Leitner
                 return user;
             }
         }
-
         /// <summary>
         /// Moves the card one step next
         /// </summary>
@@ -407,7 +390,6 @@ namespace Kondor.Service.Leitner
                 Console.WriteLine($"Already answered {cardState.CardId}");
             }
         }
-
         /// <summary>
         /// Moves the card one step back
         /// </summary>
@@ -434,8 +416,6 @@ namespace Kondor.Service.Leitner
                 Console.WriteLine($"Already answered {cardState.CardId}");
             }
         }
-
-
         protected bool IsDuplicateCardState(int cardId)
         {
             var now = DateTime.Now;
@@ -448,8 +428,6 @@ namespace Kondor.Service.Leitner
 
             return false;
         }
-
-
         /// <summary>
         /// Moves the card one step next
         /// </summary>
@@ -470,7 +448,6 @@ namespace Kondor.Service.Leitner
             
             _unitOfWork.Save();
         }
-
         /// <summary>
         /// Moves the card one step back
         /// </summary>
